@@ -1,3 +1,6 @@
+SUBDIRS = design_spec
+
+all: docs
 docs: apidocs
 
 apidocs: doxygen/html/index.html
