@@ -22,19 +22,37 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef _BITBAKE_H
-# define _BITBAKE_H
+#ifndef _BB_RECIPE_H
+# define _BB_RECIPE_H
 
-#include <bitbake/common.h>
-#include <bitbake/data.h>
-#include <bitbake/recipe.h>
-#include <bitbake/recipe-modules.h>
+# include <bitbake/common.h>
+# include <glib/gtypes.h>
 
 BITBAKE_HDR_BEGIN
 
-/** @file bitbake.h
- *  @brief Bitbake primary header file */
+
+/** @file recipe.h
+ *  @brief Header for bitbake recipe handling (frontend) */
+
+BBAPI gpointer bb_recipe_new(void);
+
+BBAPI gboolean bb_recipe_load(gpointer recipe, gchar *location);
+BBAPI gboolean bb_recipe_load_into_box(gpointer recipe, gpointer recipe_box, gchar *location);
+BBAPI gboolean bb_recipe_sync(gpointer recipe);
+
+BBAPI gboolean bb_recipe_add_parent(gpointer recipe, gpointer parent);
+BBAPI gpointer bb_recipe_foreach_parent(gpointer recipe, char *callback);
+BBAPI gboolean bb_recipe_remove_parent(gpointer recipe, gchar *parent_loc);
+
+gchar *bb_recipe_lookup_var(gpointer recipe, gchar *var);
+BBAPI gpointer bb_recipe_get_metadata(gpointer recipe);
+
+BBAPI gboolean bb_recipe_can_execute(gpointer recipe);
+BBAPI gboolean bb_recipe_execute(gpointer recipe);
+
+BBAPI void bb_recipe_destroy(gpointer recipe);
+
 
 BITBAKE_HDR_END
 
-#endif /* _BITBAKE_H */
+#endif /* _BB_RECIPE_H */

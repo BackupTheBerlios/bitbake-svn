@@ -22,19 +22,29 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef _BITBAKE_H
-# define _BITBAKE_H
+#ifndef _BB_RECIPE_MODULES_H
+# define _BB_RECIPE_MODULES_H
 
-#include <bitbake/common.h>
-#include <bitbake/data.h>
-#include <bitbake/recipe.h>
-#include <bitbake/recipe-modules.h>
+# include <bitbake/common.h>
+# include <glib/gtypes.h>
 
 BITBAKE_HDR_BEGIN
 
-/** @file bitbake.h
- *  @brief Bitbake primary header file */
+
+/** @file recipe-modules.h
+ *  @brief Header for bitbake recipe handling (backend modules) */
+
+BBAPI gboolean bb_recipe_load_parsers();
+BBAPI gboolean bb_recipe_register_parser();
+BBAPI void bb_recipe_unregister_parser();
+BBAPI void bb_recipe_unload_parsers();
+
+BBAPI gboolean bb_recipe_load_workers();
+BBAPI gboolean bb_recipe_register_worker();
+BBAPI void bb_recipe_unregister_worker();
+BBAPI void bb_recipe_unload_workers();
+
 
 BITBAKE_HDR_END
 
-#endif /* _BITBAKE_H */
+#endif /* _BB_RECIPE_MODULES_H */
