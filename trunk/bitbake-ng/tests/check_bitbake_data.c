@@ -98,25 +98,28 @@ END_TEST
 
 Suite *bitbake_data_suite(void)
 {
-  Suite *s = suite_create("Bitbake Data");
-  TCase *tc_core = tcase_create("Core");
+    Suite *s = suite_create("Bitbake Data");
+    TCase *tc_core = tcase_create("Core");
+    TCase *tc_var = tcase_create("Variable");
 
-  suite_add_tcase (s, tc_core);
-  tcase_add_test(tc_core, test_data_create_destroy);
-  tcase_add_test(tc_core, test_data_var_insert);
-  tcase_add_test(tc_core, test_data_var_lookup);
-  tcase_add_test(tc_core, test_data_var_remove);
+    suite_add_tcase (s, tc_core);
+    suite_add_tcase (s, tc_var);
 
-  return s;
+    tcase_add_test(tc_core, test_data_create_destroy);
+
+    tcase_add_test(tc_var, test_data_var_insert);
+    tcase_add_test(tc_var, test_data_var_lookup);
+    tcase_add_test(tc_var, test_data_var_remove);
+    return s;
 }
 
 int main(void)
 {
-  int nf;
-  Suite *s = bitbake_data_suite();
-  SRunner *sr = srunner_create(s);
-  srunner_run_all(sr, CK_NORMAL);
-  nf = srunner_ntests_failed(sr);
-  srunner_free(sr);
-  return (nf == 0) ? EXIT_SUCCESS : EXIT_FAILURE;
+    int nf;
+    Suite *s = bitbake_data_suite();
+    SRunner *sr = srunner_create(s);
+    srunner_run_all(sr, CK_NORMAL);
+    nf = srunner_ntests_failed(sr);
+    srunner_free(sr);
+    return (nf == 0) ? EXIT_SUCCESS : EXIT_FAILURE;
 }

@@ -79,7 +79,12 @@ struct bb_var {
     /**
      * Cached value (post-expansion)
      */
-    gchar *cached_val;
+    gchar *val;
+
+    /**
+     * Uncached value (pre-expansion)
+     */
+    gchar *orig_val;
 
     /**
      * List of variable chunks (of type struct bb_var_chunk)

@@ -1,6 +1,7 @@
 # get our package versions
 m4_include([config/version.m4])
 
+
 # initialization
 AC_INIT(bitbake-ng, BITBAKE_PKGVER, kergoth@handhelds.org)
 AC_PREREQ(2.57)
@@ -91,13 +92,16 @@ if test x"$enable_tests" != "xno"; then
   AM_PATH_CHECK
 fi
 
+
 # other
 AM_BINRELOC
+
 
 # This variable is used to indicate whether we're compiling
 # a part of our library itself, or external binaries.
 BBDLL_EXPORTS="-DBBDLL_EXPORTS"
 AC_SUBST([BBDLL_EXPORTS])
+
 
 # output
 AC_CONFIG_FILES([Makefile

@@ -35,12 +35,29 @@ static void _bb_data_destroy_element(gpointer data)
     g_free(data);
 }
 
+static void _bb_data_var_list_free(gpointer data, gpointer user_data)
+{
+    g_free(data);
+}
+
+static void _bb_data_destroy_var(gpointer data)
+{
+    struct bb_var *var = data;
+    g_free(var->key);
+    g_free(var->val);
+    g_list_foreach(var->chunks, _bb_data_var_list_free, NULL);
+    g_list_free(var->chunks);
+    g_list_foreach(var->referrers, _bb_data_var_list_free, NULL);
+    g_list_free(var->referrers);
+    g_hash_table_destroy(var->attributes);
+}
+
 gpointer bb_data_new(void)
 {
     struct bb_data *data;
 
     data = g_new0(struct bb_data, 1);
-    data->data = g_hash_table_new_full(g_str_hash, g_str_equal, _bb_data_destroy_element, _bb_data_destroy_element);
+    data->data = g_hash_table_new_full(g_str_hash, g_str_equal, _bb_data_destroy_element, _bb_data_destroy_var);
 
     return data;
 }
@@ -48,23 +65,45 @@ gpointer bb_data_new(void)
 gchar *bb_data_lookup(gconstpointer ptr, gchar *var)
 {
     const struct bb_data *data = ptr;
+    const struct bb_var *bbvar;
 
     g_return_val_if_fail(G_LIKELY(data != NULL), FALSE);
     g_return_val_if_fail(G_LIKELY(data->data != NULL), FALSE);
     g_return_val_if_fail(G_LIKELY(var != NULL), FALSE);
 
-    return g_hash_table_lookup(data->data, var);
+    bbvar = g_hash_table_lookup(data->data, var);
+    return bbvar->val;
 }
 
 gboolean bb_data_insert(gpointer ptr, gchar *var, gchar *val)
 {
     struct bb_data *data = ptr;
+    struct bb_var *bbvar;
+    struct bb_var_chunk *main_chunk;
 
     g_return_val_if_fail(G_LIKELY(data != NULL), FALSE);
     g_return_val_if_fail(G_LIKELY(data->data != NULL), FALSE);
     g_return_val_if_fail(G_LIKELY(var != NULL), FALSE);
 
-    g_hash_table_insert(data->data, var, val);
+    bbvar = g_new0(struct bb_var, 1);
+    bbvar->attributes = g_hash_table_new_full(g_str_hash, g_str_equal, _bb_data_destroy_element, _bb_data_destroy_element);
+    bbvar->key = var;
+
+    /* FIXME: rip apart the string into its chunks, and update our
+     *        referrers list based on our variable reference chunks */
+    main_chunk = g_new0(struct bb_var_chunk, 1);
+    main_chunk->data = (void *)val;
+    main_chunk->type = BB_VAR_STR;
+    g_list_append(bbvar->chunks, main_chunk);
+
+    /* FIXME: set our cached value correctly, using the values of the vars
+     *        that we reference */
+    bbvar->val = val;
+
+    /* FIXME: need to check the hash table before inserting.  if this key
+     *        already exists, then we need to update its value and update
+     *        the cached value of any variables that reference us */
+    g_hash_table_insert(data->data, var, bbvar);
 
     return TRUE;
 }
@@ -72,6 +111,7 @@ gboolean bb_data_insert(gpointer ptr, gchar *var, gchar *val)
 gboolean bb_data_remove(gpointer ptr, gchar *var)
 {
     struct bb_data *data = ptr;
+
     g_return_val_if_fail(G_LIKELY(data != NULL), FALSE);
     g_return_val_if_fail(G_LIKELY(data->data != NULL), FALSE);
     g_return_val_if_fail(G_LIKELY(var != NULL), FALSE);
@@ -80,9 +120,46 @@ gboolean bb_data_remove(gpointer ptr, gchar *var)
     return TRUE;
 }
 
-gchar *bb_data_lookup_attr(gconstpointer ptr, gchar *var, gchar *attr);
-gboolean bb_data_insert_attr(gpointer ptr, gchar *var, gchar *attr, gchar *val);
-gboolean bb_data_remove_attr(gpointer ptr, gchar *var, gchar *attr);
+gchar *bb_data_lookup_attr(gconstpointer ptr, gchar *var, gchar *attr)
+{
+    const struct bb_data *data = ptr;
+
+    g_return_val_if_fail(G_LIKELY(data != NULL), FALSE);
+    g_return_val_if_fail(G_LIKELY(data->data != NULL), FALSE);
+    g_return_val_if_fail(G_LIKELY(var != NULL), FALSE);
+    g_return_val_if_fail(G_LIKELY(attr != NULL), FALSE);
+
+    return NULL;
+}
+
+gboolean bb_data_insert_attr(gpointer ptr, gchar *var, gchar *attr, gchar *val)
+{
+    struct bb_data *data = ptr;
+
+    g_return_val_if_fail(G_LIKELY(data != NULL), FALSE);
+    g_return_val_if_fail(G_LIKELY(data->data != NULL), FALSE);
+    g_return_val_if_fail(G_LIKELY(var != NULL), FALSE);
+    g_return_val_if_fail(G_LIKELY(attr != NULL), FALSE);
+    g_return_val_if_fail(G_LIKELY(val != NULL), FALSE);
+
+    g_assert_not_reached(); /* unimplemented */
+
+    return FALSE;
+}
+
+gboolean bb_data_remove_attr(gpointer ptr, gchar *var, gchar *attr)
+{
+    struct bb_data *data = ptr;
+
+    g_return_val_if_fail(G_LIKELY(data != NULL), FALSE);
+    g_return_val_if_fail(G_LIKELY(data->data != NULL), FALSE);
+    g_return_val_if_fail(G_LIKELY(var != NULL), FALSE);
+    g_return_val_if_fail(G_LIKELY(attr != NULL), FALSE);
+
+    g_assert_not_reached(); /* unimplemented */
+
+    return FALSE;
+}
 
 void bb_data_destroy(gpointer ptr)
 {
