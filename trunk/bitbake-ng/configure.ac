@@ -1,4 +1,7 @@
+# get our package versions
 m4_include([config/version.m4])
+
+# initialization
 AC_INIT(bitbake-ng, BITBAKE_PKGVER, kergoth@handhelds.org)
 AC_PREREQ(2.57)
 
@@ -58,6 +61,7 @@ AM_BINRELOC
 BBDLL_EXPORTS="-DBBDLL_EXPORTS"
 AC_SUBST([BBDLL_EXPORTS])
 
+# output
 AC_CONFIG_FILES([Makefile
                  src/Makefile
 		 doc/Makefile])
