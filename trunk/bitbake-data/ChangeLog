@@ -18,6 +18,7 @@
 	* Makefile.am: Create a .pc based on LT_RELEASE, and install our .pc.
 	* src/Makefile.am: Don't hardcode the library release.  Use
 	  @LT_RELEASE@ where appropriate instead.
+	* README, AUTHORS: New file.
 
 2005-02-02  Chris Larson <kergoth@handhelds.org>
 
