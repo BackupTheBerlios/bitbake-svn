@@ -1,5 +1,8 @@
-/**@file
- * Bitbake primary header file
+/* ex:ts=4:sw=4:sts=4:et
+ * -*- tab-width: 4; c-basic-offset: 4; indent-tabs-mode: nil -*- */
+
+/** \file bitbake.h
+ *  \brief Bitbake primary header file
  *
  * Copyright (C) 2004, 2005 Chris Larson <kergoth@handhelds.org>
  *

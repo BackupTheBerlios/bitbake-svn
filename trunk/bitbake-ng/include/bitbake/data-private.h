@@ -1,5 +1,8 @@
-/**@file
- * Private header for bitbake metadata handling
+/* ex:ts=4:sw=4:sts=4:et
+ * -*- tab-width: 4; c-basic-offset: 4; indent-tabs-mode: nil -*- */
+
+/** \file data-private.h
+ *  \brief Private header for bitbake metadata handling
  *
  * Copyright (C) 2004, 2005 Chris Larson <kergoth@handhelds.org>
  *
@@ -46,7 +49,7 @@ enum bb_var_chunk_type {
 
 
 /**
- * BitBake variable chunk
+ * \brief BitBake variable chunk
  *
  * BitBake variables consist of multiple pieces, including, but not
  * limited to, strings and references to other variables.
