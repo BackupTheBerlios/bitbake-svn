@@ -13,7 +13,7 @@ AM_CONFIG_HEADER([config.h])
 AM_INIT_AUTOMAKE
 
 
-PACKAGE_DESCRIPTION="A supplementary library to the bitbake-data project to act as a datastore."
+PACKAGE_DESCRIPTION="A supplementary library to the bitbake project to act as a datastore."
 AC_SUBST([PACKAGE_DESCRIPTION])
 
 # library versioning
@@ -66,15 +66,15 @@ PKG_CHECK_MODULES([GLIB2], [glib-2.0])
 # AC_CHECK_PROGS([XSLTPROC], [xsltproc])
 
 # doxygen documentation
-# DX_HTML_FEATURE(ON)
-# DX_CHM_FEATURE(OFF)
-# DX_CHI_FEATURE(OFF)
-# DX_MAN_FEATURE(ON)
-# DX_RTF_FEATURE(OFF)
-# DX_XML_FEATURE(OFF)
-# DX_PDF_FEATURE(ON)
-# DX_PS_FEATURE(OFF)
-# DX_INIT_DOXYGEN($PACKAGE, [doc/doxygen.cfg], [doc/doxygen])
+DX_HTML_FEATURE(ON)
+DX_CHM_FEATURE(OFF)
+DX_CHI_FEATURE(OFF)
+DX_MAN_FEATURE(ON)
+DX_RTF_FEATURE(OFF)
+DX_XML_FEATURE(OFF)
+DX_PDF_FEATURE(ON)
+DX_PS_FEATURE(OFF)
+DX_INIT_DOXYGEN($PACKAGE, [doc/doxygen.cfg], [doc/doxygen])
 
 
 # options
@@ -99,18 +99,18 @@ fi
 
 # This variable is used to indicate whether we're compiling
 # a part of our library itself, or external binaries.
-BBDLL_EXPORTS="-DBBDATADLL_EXPORTS"
+BBDATA_DLL_EXPORTS="-DBBDATA_DLL_EXPORTS"
 AC_SUBST([BBDATADLL_EXPORTS])
 
 
 # output
 AC_CONFIG_FILES([Makefile
+		 src/Makefile
+		 doc/Makefile
 		 bitbake-data-0.0.pc])
 # AC_CONFIG_FILES([Makefile
 # 		 include/Makefile
-# 		 src/Makefile
 # 		 tests/Makefile
-# 		 doc/Makefile
 # 		 doc/design_spec/Makefile
 # 		 bitbake-data-0.0.pc])
 AC_OUTPUT
