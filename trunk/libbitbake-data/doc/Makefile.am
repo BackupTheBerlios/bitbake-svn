@@ -7,3 +7,4 @@ all: doxygen-doc
 
 maintainer-clean-local:
 	rm -f $(srcdir)/Makefile.in
+	rmdir doxygen
