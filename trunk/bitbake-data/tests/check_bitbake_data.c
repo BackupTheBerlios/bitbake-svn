@@ -27,7 +27,6 @@
 
 #include <stdlib.h>
 #include <string.h>
-#include <glib.h>
 #include <check.h>
 #include <bitbake-data.h>
 
@@ -38,20 +37,20 @@
 
 START_TEST (test_data_create_destroy)
 {
-    gpointer data;
+    void *data;
 
     data = bb_data_new("test_data_create_destroy");
     if (data == NULL)
         fail("Metadata store allocation returned a NULL pointer");
-    bb_data_destroy(data, TRUE);
+    bb_data_destroy(data, 1);
 }
 END_TEST
 
 START_TEST (test_data_var_insert)
 {
-    gpointer data;
-    gchar *var, *val;
-    gboolean ret;
+    void *data;
+    unsigned char *var, *val;
+    int ret;
 
     data = bb_data_new("test_data_var_insert");
     var = "CC";
@@ -65,9 +64,9 @@ END_TEST
 
 START_TEST (test_data_var_lookup)
 {
-    gpointer data;
-    gchar *var, *val;
-    gboolean ret;
+    void *data;
+    unsigned char *var, *val;
+    int ret;
 
     data = bb_data_new("test_data_var_lookup");
 
@@ -83,15 +82,15 @@ START_TEST (test_data_var_lookup)
     if (strcmp(val, "gcc") != 0)
         fail("CC does not have the correct value");
 
-    bb_data_destroy(data, TRUE);
+    bb_data_destroy(data, 1);
 }
 END_TEST
 
 START_TEST (test_data_var_remove)
 {
-    gpointer data;
-    gchar *var, *val;
-    gboolean ret;
+    void *data;
+    unsigned char *var, *val;
+    int ret;
 
     data = bb_data_new("test_data_var_remove");
 
@@ -104,16 +103,16 @@ START_TEST (test_data_var_remove)
     if (!ret)
         fail("Failed to remove");
 
-    bb_data_destroy(data, TRUE);
+    bb_data_destroy(data, 1);
 }
 END_TEST
 
 #if 0
 START_TEST (test_data_attr_insert)
 {
-    gpointer data;
-    gchar *var, *val, *attr;
-    gboolean ret;
+    void *data;
+    unsigned char *var, *val, *attr;
+    int ret;
 
     data = bb_data_new("test_data_attr_insert");
     var = "CC";
@@ -128,9 +127,9 @@ END_TEST
 
 START_TEST (test_data_attr_lookup)
 {
-    gpointer data;
-    gchar *var, *val, *attr;
-    gboolean ret;
+    void *data;
+    unsigned char *var, *val, *attr;
+    int ret;
 
     data = bb_data_new("test_data_attr_lookup");
 
@@ -147,15 +146,15 @@ START_TEST (test_data_attr_lookup)
     if (strcmp(val, "1") != 0)
         fail("CC export attribute does not have the correct value");
 
-    bb_data_destroy(data, TRUE);
+    bb_data_destroy(data, 1);
 }
 END_TEST
 
 START_TEST (test_data_attr_remove)
 {
-    gpointer data;
-    gchar *var, *val, *attr;
-    gboolean ret;
+    void *data;
+    unsigned char *var, *val, *attr;
+    int ret;
 
     data = bb_data_new("test_data_attr_remove");
 
@@ -169,7 +168,7 @@ START_TEST (test_data_attr_remove)
     if (!ret)
         fail("Failed to remove attribute");
 
-    bb_data_destroy(data, TRUE);
+    bb_data_destroy(data, 1);
 }
 END_TEST
 #endif

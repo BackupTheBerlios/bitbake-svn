@@ -1,3 +1,9 @@
+2005-02-17  Chris Larson <kergoth@handhelds.org>
+
+	* src/backend-sqlite3.c, include/bitbake-data.h: Adjust the API so
+	  that bitbake-data users aren't required to link against glib-2.0
+	  themselves.
+
 2005-02-03  Chris Larson <kergoth@handhelds.org>
 
 	* doc/doxygen.cfg, doc/doxygen.m4, doc/Makefile.am, configure.ac,

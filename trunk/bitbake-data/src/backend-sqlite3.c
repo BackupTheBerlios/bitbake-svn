@@ -21,10 +21,12 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-#include <bitbake-data.h>
-#include <bitbake-data/private.h>
+#include <stdio.h> /* for printf */
+#include <stdlib.h> /* for strtol */
 #include <glib.h>
 #include <sqlite3.h>
+#include <bitbake-data.h>
+#include <bitbake-data/private.h>
 
 #include "config.h"
 
@@ -34,9 +36,9 @@
  * sqlite3 database, its path, and so on.  Protected by a GStaticMutex.
  */
 static struct {
-    gboolean initialized;
+    int initialized;
     GStaticMutex mutex;
-    gchar *datapath;
+    unsigned char *datapath;
     sqlite3 *db;
     guint users;
 } bbdata_setup = {
@@ -45,7 +47,7 @@ static struct {
 };
 
 
-static inline gboolean add_tables()
+static inline int add_tables()
 {
     char **results;
     int nrow, ncol;
@@ -89,11 +91,11 @@ static inline gboolean add_tables()
 /**
  * Process wide initialization
  */
-static gboolean __bb_data_init(void)
+static int __bb_data_init(void)
 {
-    gboolean ret = TRUE;
+    int ret = TRUE;
     const gchar *datapath = g_getenv("BBDATAPATH");
-    gchar *fpath = NULL;
+    unsigned char *fpath = NULL;
     guint sret;
 
     if (datapath)
@@ -137,7 +139,7 @@ static void __bb_data_shutdown(void)
 /**
  * Wrapper that initializes when necessary
  */
-static inline gboolean bb_data_init(void)
+static inline int bb_data_init(void)
 {
     if (!bbdata_setup.initialized)
         return __bb_data_init();
@@ -159,7 +161,7 @@ static inline void bb_data_shutdown(void)
 }
 
 
-static inline gboolean add_recipe_to_db(const char *recipe)
+static inline int add_recipe_to_db(const char *recipe)
 {
     char **results;
     char *query;
@@ -180,9 +182,9 @@ static inline gboolean add_recipe_to_db(const char *recipe)
     return TRUE;
 }
 
-gpointer bb_data_new(const gchar *recipe)
+void *bb_data_new(const unsigned char *recipe)
 {
-    gpointer ret = NULL;
+    void *ret = NULL;
     struct bb_data *data;
     int sret;
 
@@ -220,7 +222,7 @@ sqliteerror:
     return NULL;
 }
 
-void bb_data_destroy(gpointer data, gboolean flush)
+void bb_data_destroy(void *data, int flush)
 {
     struct bb_data *d = (struct bb_data *)data;
     if (flush) {
@@ -250,13 +252,13 @@ void bb_data_destroy(gpointer data, gboolean flush)
     g_static_mutex_unlock(&bbdata_setup.mutex);
 }
 
-gchar *bb_data_lookup(gconstpointer data, const gchar *var)
+unsigned char *bb_data_lookup(const void *data, const unsigned char *var)
 {
     struct bb_data *d = (struct bb_data *)data;
     char **results;
     char *query;
     int nrow, ncol;
-    gchar *ret = NULL;
+    unsigned char *ret = NULL;
 
     query = sqlite3_mprintf("select val from vars join scopes on vars.recipe = scopes.scope join recipes on recipes.key = scopes.recipe where var = '%q' and recipes.recipe = '%q' order by scopes.priority desc limit 1", var, d->recipe);
     sqlite3_get_table(bbdata_setup.db, query, &results, &nrow, &ncol, NULL);
@@ -269,7 +271,7 @@ gchar *bb_data_lookup(gconstpointer data, const gchar *var)
     return ret;
 }
 
-long __get_recipe_num(gpointer data)
+long __get_recipe_num(void *data)
 {
     struct bb_data *d = (struct bb_data *)data;
     char *query;
@@ -284,13 +286,13 @@ long __get_recipe_num(gpointer data)
     if (nrow > 0)
         if (results && results[1]) {
             recipenum = strtol(results[1], NULL, 10);
-            printf("recipenum is %d\n", recipenum);
+            printf("recipenum is %ld\n", recipenum);
         }
     sqlite3_free_table(results);
     return recipenum;
 }
 
-gboolean bb_data_insert(gpointer data, const gchar *var, const gchar *val)
+int bb_data_insert(void *data, const unsigned char *var, const unsigned char *val)
 {
     char *query;
     int sret;
@@ -304,7 +306,7 @@ gboolean bb_data_insert(gpointer data, const gchar *var, const gchar *val)
     return TRUE;
 }
 
-gboolean bb_data_remove(gpointer data, const gchar *var)
+int bb_data_remove(void *data, const unsigned char *var)
 {
     struct bb_data *d = (struct bb_data *)data;
     char *query;
@@ -319,13 +321,13 @@ gboolean bb_data_remove(gpointer data, const gchar *var)
     return TRUE;
 }
 
-gchar *bb_data_lookup_attr(gconstpointer data, const gchar *var, const gchar *attr)
+unsigned char *bb_data_lookup_attr(const void *data, const unsigned char *var, const unsigned char *attr)
 {
     struct bb_data *d = (struct bb_data *)data;
     char **results;
     char *query;
     int nrow, ncol;
-    gchar *ret = NULL;
+    unsigned char *ret = NULL;
 
     query = sqlite3_mprintf("select attr from '%q' where var = '%q' and attr not null and val = '%q'", d->recipe, var, attr);
     sqlite3_get_table(bbdata_setup.db, query, &results, &nrow, &ncol, NULL);
@@ -337,7 +339,7 @@ gchar *bb_data_lookup_attr(gconstpointer data, const gchar *var, const gchar *at
     return ret;
 }
 
-gboolean bb_data_insert_attr(gpointer data, const gchar *var, const gchar *attr, const gchar *val)
+int bb_data_insert_attr(void *data, const unsigned char *var, const unsigned char *attr, const unsigned char *val)
 {
     struct bb_data *d = (struct bb_data *)data;
     char *query;
@@ -355,7 +357,7 @@ gboolean bb_data_insert_attr(gpointer data, const gchar *var, const gchar *attr,
     return TRUE;
 }
 
-gboolean bb_data_remove_attr(gpointer data, const gchar *var, const gchar *attr)
+int bb_data_remove_attr(void *data, const unsigned char *var, const unsigned char *attr)
 {
     struct bb_data *d = (struct bb_data *)data;
     char *query;

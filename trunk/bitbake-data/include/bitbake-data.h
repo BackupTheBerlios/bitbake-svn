@@ -26,7 +26,6 @@
 # define _BITBAKE_DATA_H
 
 # include <bitbake-data/common.h>
-# include <glib/gtypes.h>
 
 BBDATA_HDR_BEGIN
 
@@ -45,7 +44,7 @@ BBDATA_HDR_BEGIN
  *        Will be empty if we have no info about this recipe, or if the store backend
  *        is not persistant.
  */
-BBDATA_API gpointer bb_data_new(const gchar *recipe);
+BBDATA_API void *bb_data_new(const unsigned char *recipe);
 
 /**
  *@brief Obtains the last modification date of this metadata store.
@@ -54,7 +53,7 @@ BBDATA_API gpointer bb_data_new(const gchar *recipe);
  *
  *@return Last modification date of the datastore.
  */
-BBDATA_API GTimeVal bb_data_get_modif_date(gpointer data);
+BBDATA_API struct timeval bb_data_get_modif_date(void *data);
 
 /**
  *@brief Obtains the value of an bitbake variable
@@ -62,10 +61,10 @@ BBDATA_API GTimeVal bb_data_get_modif_date(gpointer data);
  *@param data      The bitbake metadata store in question.
  *@param var       The variable name.
  *
- *@return The variable's value as a gchar *.  This was malloc'd for the caller's use.
+ *@return The variable's value as a unsigned char *.  This was malloc'd for the caller's use.
  *        The caller is therefore responsible for freeing this.
  */
-BBDATA_API gchar *bb_data_lookup(gconstpointer data, const gchar *var);
+BBDATA_API unsigned char *bb_data_lookup(const void *data, const unsigned char *var);
 
 
 /**
@@ -77,7 +76,7 @@ BBDATA_API gchar *bb_data_lookup(gconstpointer data, const gchar *var);
  *
  *@return TRUE if succeeded, FALSE if failed.
  */
-BBDATA_API gboolean bb_data_insert(gpointer data, const gchar *var, const gchar *val);
+BBDATA_API int bb_data_insert(void *data, const unsigned char *var, const unsigned char *val);
 
 
 /**
@@ -88,7 +87,7 @@ BBDATA_API gboolean bb_data_insert(gpointer data, const gchar *var, const gchar 
  *
  *@return TRUE if succeeded, FALSE if failed.
  */
-BBDATA_API gboolean bb_data_remove(gpointer data, const gchar *var);
+BBDATA_API int bb_data_remove(void *data, const unsigned char *var);
 
 
 /**
@@ -98,10 +97,10 @@ BBDATA_API gboolean bb_data_remove(gpointer data, const gchar *var);
  *@param var       The variable name.
  *@param attr      The attribute name.
  *
- *@return The attribute in question as a gchar *.  This was malloc'd for the
+ *@return The attribute in question as a unsigned char *.  This was malloc'd for the
  *        caller's use.  The caller is therefore responsible for freeing this.
  */
-BBDATA_API gchar *bb_data_lookup_attr(gconstpointer data, const gchar *var, const gchar *attr);
+BBDATA_API unsigned char *bb_data_lookup_attr(const void *data, const unsigned char *var, const unsigned char *attr);
 
 
 /**
@@ -114,7 +113,7 @@ BBDATA_API gchar *bb_data_lookup_attr(gconstpointer data, const gchar *var, cons
  *
  *@return TRUE if succeeded, FALSE if failed.
  */
-BBDATA_API gboolean bb_data_insert_attr(gpointer data, const gchar *var, const gchar *attr, const gchar *val);
+BBDATA_API int bb_data_insert_attr(void *data, const unsigned char *var, const unsigned char *attr, const unsigned char *val);
 
 
 /**
@@ -126,7 +125,7 @@ BBDATA_API gboolean bb_data_insert_attr(gpointer data, const gchar *var, const g
  *
  *@return TRUE if succeeded, FALSE if failed.
  */
-BBDATA_API gboolean bb_data_remove_attr(gpointer data, const gchar *var, const gchar *attr);
+BBDATA_API int bb_data_remove_attr(void *data, const unsigned char *var, const unsigned char *attr);
 
 /**
  *@brief Deletes a given attribute from an bitbake variable
@@ -137,7 +136,7 @@ BBDATA_API gboolean bb_data_remove_attr(gpointer data, const gchar *var, const g
  *                 truly be removed, when is no longer needed.  That is the
  *                 purpose of this parameter.
  */
-BBDATA_API void bb_data_destroy(gpointer data, gboolean flush);
+BBDATA_API void bb_data_destroy(void *data, int flush);
 
 
 BBDATA_HDR_END
