@@ -110,7 +110,7 @@ AC_CONFIG_FILES([Makefile
 		 doc/Makefile
 		 doc/doxygen/Makefile
 		 tests/Makefile
-		 bitbake-data.pc])
+		 bitbake-data-$LT_RELEASE.pc:bitbake-data.pc.in])
 # AC_CONFIG_FILES([Makefile
 # 		 include/Makefile
 # 		 doc/design_spec/Makefile
