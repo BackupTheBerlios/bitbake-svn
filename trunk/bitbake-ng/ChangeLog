@@ -1,3 +1,8 @@
+2005-01-17 Chris Larson <kergoth@handhelds.org>
+
+	* design_spec.xml: Add specification of the metadata component,
+	  update vim modeline to set the filetype to 'docbk'.
+
 2005-01-13 Chris Larson <kergoth@handhelds.org>
 
 	* Minor rearranging.. now we have m4/internal and m4/external,

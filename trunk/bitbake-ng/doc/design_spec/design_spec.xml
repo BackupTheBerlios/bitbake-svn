@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <!--
-  ex:ts=4:sw=4:sts=4:et
+  ex:ts=4:sw=4:sts=4:et:ft=docbk
   -*- tab-width: 4; c-basic-offset: 4; indent-tabs-mode: nil -*-
 -->
 <!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
@@ -22,7 +22,34 @@
     </bookinfo>
     <preface>
         <title>Introduction</title>
-        <para>This is a short document outlining the design for bitbake-ng, the upcoming rewrite of the BitBake project.  It is grouped by logical section, and within each section we go into detail about the requirements that led to the design decisions for that section, various possible solutions that were reviewed, and the actual implementation which was decided upon.</para>
+        <para>It is said that a developer should always plan on at least one rewrite in a given project.  Such is the case here.  This document outlines the design of bitbake 2.0, the upcoming rewrite of the BitBake project.  It is expected that the reader will have at least a passing familiarity with the bitbake project.  I would recommend perusing the <ulink url="http://bitbake.berlios.de/manual/">bitbake users manual</ulink> if this is not the case.</para>
+    </preface>
+    <preface>
+        <title>Terminology</title>
+        <table><title>Terminology</title>
+            <tgroup cols='2'>
+                <colspec colname='term'/>
+                <colspec colname='definition'/>
+                <tbody>
+                    <row>
+                        <entry>Recipe</entry>
+                        <entry>A set of directions with a list of ingredients for making or preparing something.  In this context, an ordered sequence of steps to be executed, with associated metadata.</entry>
+                    </row>
+                    <row>
+                        <entry>Recipe Box</entry>
+                        <entry>The bitbake component that manages the available recipes.</entry>
+                    </row>
+                    <row>
+                        <entry>Metadata</entry>
+                        <entry>The bitbake component that manages the metadata for bitbake recipes.  The <quote>ingredients</quote>, as it were.</entry>
+                    </row>
+                    <row>
+                        <entry>Bakers</entry>
+                        <entry>The bitbake component consisting of the threads that execute recipes, obeying recipe interdependencies.</entry>
+                    </row>
+                </tbody>
+            </tgroup>
+        </table>
     </preface>
     <chapter>
         <title>General Requirements</title>
@@ -35,6 +62,10 @@
         <section>
             <title>Metadata</title>
             <section>
+                <title>Overview</title>
+                <para>The <quote>metadata</quote> component governs the backend datastore for bitbake.  It will store all the metadata associated with bitbake's recipes.  This may or may not include actual functions, depending on the nature of the recipes being used.</para>
+            </section>
+            <section>
                 <title>Requirements</title>
                 <itemizedlist>
                     <listitem><para>The metadata is expected to be in the form of key/value pairs.</para></listitem>
@@ -44,14 +75,17 @@
                 </itemizedlist>
             </section>
             <section>
-                <title>Possible Solutions</title>
-                <itemizedlist>
-                    <listitem><para><emphasis>Insert content here.</emphasis></para></listitem>
-                </itemizedlist>
-            </section>
-            <section>
-                <title>Implementation Decision</title>
-                <para><emphasis>Insert content here.</emphasis></para>
+                <title>Component Architecture</title>
+                <para>The metadata for a given recipe will be laid out as a hash table.  Each key (UTF-8 string) in the table will be associated with a <quote>BitBake variable</quote>.  A BitBake variable consists of the following:</para>
+                <para>
+                    <itemizedlist>
+                        <listitem><para>linked list of variables that refer to this one</para></listitem>
+                        <listitem><para>linked list of <quote>variable chunks</quote></para></listitem>
+                        <listitem><para>a cached value (UTF-8 string), which is the resolved form of the variable chunks</para></listitem>
+                        <listitem><para><quote>dirty</quote> flag to indicate whether the cached value is current</para></listitem>
+                    </itemizedlist>
+                </para>
+                <para>Variable chunks are independent, ordered, components of the value of a given piece of metadata.  A chunk can take the form of a string or a reference to another variable.  The cached form will be updated automatically whenever a variable that we refer to changes.</para>
             </section>
         </section>
         <section>
@@ -59,7 +93,7 @@
             <section>
                 <title>Requirements</title>
                 <itemizedlist>
-                    <listitem><para>The parser should be token-based rather than regular expression based.</para></listitem>
+                    <listitem><para>The parsers should be token-based rather than regular expression based.</para></listitem>
                     <listitem>
                         <para>We need to support multiple file formats for our metadata:</para>
                         <itemizedlist>
