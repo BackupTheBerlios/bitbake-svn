@@ -21,6 +21,9 @@
 	* README, AUTHORS: New file.
 	* configure.ac, Makefile.am, tests/Makefile.am, tests/check_bitbake_data.c:
 	  Add the first of our unit tests using 'check'.
+	* src/backend-sqlite3.c, include/bitbake-data/private.h, tests/check_bitbake_data.c:
+	  Add the variable and variable attribute lookup, insertion, and
+	  removal routines.
 
 2005-02-02  Chris Larson <kergoth@handhelds.org>
 

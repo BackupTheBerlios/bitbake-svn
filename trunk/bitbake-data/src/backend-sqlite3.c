@@ -23,15 +23,11 @@
  */
 
 #include <bitbake-data.h>
+#include <bitbake-data/private.h>
 #include <glib.h>
 #include <sqlite3.h>
 
 #include "config.h"
-
-/* FIXME: If this datastore is persistant, then we need a way to know when
- * data can be removed from the store.  We may need a function call to remove
- * the data completely when we do a destroy.  A gboolean argument to bb_data_destroy
- * which is only used by persistant stores would do.  gboolean flush perhaps. */
 
 /**
  * Static structure to hold process wide information associated with
@@ -49,7 +45,10 @@ static struct {
     .mutex = G_STATIC_MUTEX_INIT,
 };
 
-static gboolean bb_data_init(void)
+/**
+ * Process wide initialization
+ */
+static gboolean __bb_data_init(void)
 {
     gboolean ret = TRUE;
     const gchar *datapath = g_getenv("BBDATAPATH");
@@ -77,92 +76,161 @@ static gboolean bb_data_init(void)
     return ret;
 }
 
-static void bb_data_shutdown(void)
+/**
+ * Process wide shutdown
+ */
+static void __bb_data_shutdown(void)
 {
     bbdata_setup.initialized = FALSE;
     sqlite3_close(bbdata_setup.db);
     g_free(bbdata_setup.datapath);
 }
 
-#if 0
-#include <stdio.h>
-#include <sqlite3.h>
-
-static int callback(void *NotUsed, int argc, char **argv, char **azColName){
-  int i;
-  for(i=0; i<argc; i++){
-    printf("%s = %s\n", azColName[i], argv[i] ? argv[i] : "NULL");
-  }
-  printf("\n");
-  return 0;
+/**
+ * Wrapper that initializes when necessary
+ */
+static inline gboolean bb_data_init(void)
+{
+    if (!bbdata_setup.initialized)
+        return __bb_data_init();
+    else
+        return TRUE;
 }
 
-int main(int argc, char **argv){
-  sqlite3 *db;
-  char *zErrMsg = 0;
-  int rc;
+/**
+ * Wrapper that shuts down when necessary
+ */
+static inline void bb_data_shutdown(void)
+{
+    if (bbdata_setup.initialized) {
+        bbdata_setup.users -= 1;
 
-  if( argc!=3 ){
-    fprintf(stderr, "Usage: %s DATABASE SQL-STATEMENT\n", argv[0]);
-    exit(1);
-  }
-  rc = sqlite3_open(argv[1], &db);
-  if( rc ){
-    fprintf(stderr, "Can't open database: %s\n", sqlite3_errmsg(db));
-    sqlite3_close(db);
-    exit(1);
-  }
-  rc = sqlite3_exec(db, argv[2], callback, 0, &zErrMsg);
-  if( rc!=SQLITE_OK ){
-    fprintf(stderr, "SQL error: %s\n", zErrMsg);
-  }
-  sqlite3_close(db);
-  return 0;
+        if (bbdata_setup.users < 1)
+            __bb_data_shutdown();
+    }
 }
-#endif
 
-struct bb_data {
-    gchar *recipe;
-};
+
+static inline gboolean add_recipes_table()
+{
+    char **results;
+    int nrow, ncol;
+
+    sqlite3_get_table(bbdata_setup.db, "select name from sqlite_master where type = 'table' and name = 'recipes'",
+                      &results, &nrow, &ncol, NULL);
+    sqlite3_free_table(results);
+    if (nrow < 1) {
+        int sret;
+        /* no recipes table */
+        sret = sqlite3_exec(bbdata_setup.db, "create table recipes(key integer primary key, recipe text)",
+                            NULL, 0, NULL);
+        if (sret != SQLITE_OK)
+            return FALSE;
+    }
+    return TRUE;
+}
+
+static inline gboolean add_recipe_to_recipes_table(const char *recipe)
+{
+    char **results;
+    char *query;
+    int nrow, ncol;
+
+    query = sqlite3_mprintf("select key from recipes where recipe = '%q'", recipe);
+    sqlite3_get_table(bbdata_setup.db, query, &results, &nrow, &ncol, NULL);
+    sqlite3_free_table(results);
+    sqlite3_free(query);
+    if (nrow < 1) {
+        int sret;
+        char *insert = sqlite3_mprintf("insert into recipes values(NULL, '%q')", recipe);
+        sret = sqlite3_exec(bbdata_setup.db, insert, NULL, 0, NULL);
+        sqlite3_free(insert);
+        if (sret != SQLITE_OK)
+            return FALSE;
+    }
+    return TRUE;
+}
+
+static inline gboolean add_table_for_recipe(const char *recipe)
+{
+    char **results;
+    char *query;
+    int nrow, ncol;
+
+    query = sqlite3_mprintf("select name from sqlite_master where type = 'table' and name = '%q'", recipe);
+    sqlite3_get_table(bbdata_setup.db, query, &results, &nrow, &ncol, NULL);
+    sqlite3_free_table(results);
+    sqlite3_free(query);
+    if (nrow < 1) {
+        int sret;
+        query = sqlite3_mprintf("create table '%q'(key integer primary key, var text, val text, attr text)", recipe);
+        sret = sqlite3_exec(bbdata_setup.db, query, NULL, 0, NULL);
+        sqlite3_free(query);
+        if (sret != SQLITE_OK)
+            return FALSE;
+    }
+    return TRUE;
+}
 
 gpointer bb_data_new(const gchar *recipe)
 {
     gpointer ret = NULL;
     struct bb_data *data;
+    int sret;
 
     g_static_mutex_lock(&bbdata_setup.mutex);
-
-    if (!bbdata_setup.initialized) {
-        if (!bb_data_init()) {
-            g_static_mutex_unlock(&bbdata_setup.mutex);
-            return ret;
-        }
+    if (!bb_data_init()) {
+        g_static_mutex_unlock(&bbdata_setup.mutex);
+        return ret;
     }
 
-    if (bbdata_setup.initialized)
-        bbdata_setup.users += 1;
-
+    bbdata_setup.users += 1;
     g_static_mutex_unlock(&bbdata_setup.mutex);
 
     ret = g_malloc0(sizeof(struct bb_data));
     data = (struct bb_data *)ret;
     data->recipe = g_strdup(recipe);
 
-    /* FIXME: create table in sqlite db for this recipe */
-    return ret;
-}
+    sret = sqlite3_exec(bbdata_setup.db, "begin", NULL, 0, NULL);
+    if (sret != SQLITE_OK)
+        goto sqliteerror;
 
-GTimeVal bb_data_get_modif_date(gpointer data);
-gchar *bb_data_lookup(gconstpointer data, const gchar *var);
-gboolean bb_data_insert(gpointer data, const gchar *var, const gchar *val);
-gboolean bb_data_remove(gpointer data, const gchar *var);
-gchar *bb_data_lookup_attr(gconstpointer data, const gchar *var, const gchar *attr);
-gboolean bb_data_insert_attr(gpointer data, const gchar *var, const gchar *attr, const gchar *val);
-gboolean bb_data_remove_attr(gpointer data, const gchar *var, const gchar *attr);
+    if (!add_recipes_table())
+        goto sqliteerror;
+
+    if (!add_recipe_to_recipes_table(recipe))
+        goto sqliteerror;
+
+    if (!add_table_for_recipe(recipe))
+        goto sqliteerror;
+
+    sret = sqlite3_exec(bbdata_setup.db, "commit", NULL, 0, NULL);
+    if (sret != SQLITE_OK)
+        goto sqliteerror;
+    return ret;
+sqliteerror:
+    sqlite3_exec(bbdata_setup.db, "rollback", NULL, 0, NULL);
+    g_static_mutex_lock(&bbdata_setup.mutex);
+    bbdata_setup.users -= 1;
+    bb_data_shutdown();
+    g_static_mutex_unlock(&bbdata_setup.mutex);
+    g_free(ret);
+    return NULL;
+}
 
 void bb_data_destroy(gpointer data, gboolean flush)
 {
-    /* FIXME: remove recipe's table in the database if flush is TRUE */
+    struct bb_data *d = (struct bb_data *)data;
+    if (flush) {
+        char *str;
+        str = sqlite3_mprintf("drop table '%q'", d->recipe);
+        sqlite3_exec(bbdata_setup.db, str, NULL, 0, NULL);
+        sqlite3_free(str);
+        str = sqlite3_mprintf("delete from recipes where recipe = '%q'", d->recipe);
+        sqlite3_exec(bbdata_setup.db, str, NULL, 0, NULL);
+        sqlite3_free(str);
+    }
+
     g_free(data);
 
     g_static_mutex_lock(&bbdata_setup.mutex);
@@ -176,4 +244,104 @@ void bb_data_destroy(gpointer data, gboolean flush)
     }
 
     g_static_mutex_unlock(&bbdata_setup.mutex);
+}
+
+gchar *bb_data_lookup(gconstpointer data, const gchar *var)
+{
+    struct bb_data *d = (struct bb_data *)data;
+    char **results;
+    char *query;
+    int nrow, ncol;
+    gchar *ret = NULL;
+
+    query = sqlite3_mprintf("select val from '%q' where var = '%q' and attr isnull", d->recipe, var);
+    sqlite3_get_table(bbdata_setup.db, query, &results, &nrow, &ncol, NULL);
+    sqlite3_free(query);
+    if (nrow > 0)
+        if (results && results[1])
+            ret = g_strdup(results[1]);
+    sqlite3_free_table(results);
+    return ret;
+}
+
+gboolean bb_data_insert(gpointer data, const gchar *var, const gchar *val)
+{
+    struct bb_data *d = (struct bb_data *)data;
+    char *query;
+    int sret;
+
+    query = sqlite3_mprintf("delete from '%q' where var = '%q' and attr isnull", d->recipe, var);
+    sret = sqlite3_exec(bbdata_setup.db, query, NULL, 0, NULL);
+    sqlite3_free(query);
+
+    query = sqlite3_mprintf("insert into '%q' values(NULL, '%q', '%q', NULL)", d->recipe, var, val);
+    sret = sqlite3_exec(bbdata_setup.db, query, NULL, 0, NULL);
+    sqlite3_free(query);
+    if (sret != SQLITE_OK)
+        return FALSE;
+    return TRUE;
+}
+
+gboolean bb_data_remove(gpointer data, const gchar *var)
+{
+    struct bb_data *d = (struct bb_data *)data;
+    char *query;
+    int sret;
+
+    query = sqlite3_mprintf("delete from '%q' where var = '%q'", d->recipe, var);
+    sret = sqlite3_exec(bbdata_setup.db, query, NULL, 0, NULL);
+    sqlite3_free(query);
+    if (sret != SQLITE_OK)
+        return FALSE;
+    return TRUE;
+}
+
+gchar *bb_data_lookup_attr(gconstpointer data, const gchar *var, const gchar *attr)
+{
+    struct bb_data *d = (struct bb_data *)data;
+    char **results;
+    char *query;
+    int nrow, ncol;
+    gchar *ret = NULL;
+
+    query = sqlite3_mprintf("select attr from '%q' where var = '%q' and attr not null and val = '%q'", d->recipe, var, attr);
+    sqlite3_get_table(bbdata_setup.db, query, &results, &nrow, &ncol, NULL);
+    sqlite3_free(query);
+    if (nrow > 0)
+        if (results && results[1])
+            ret = g_strdup(results[1]);
+    sqlite3_free_table(results);
+    return ret;
+}
+
+gboolean bb_data_insert_attr(gpointer data, const gchar *var, const gchar *attr, const gchar *val)
+{
+    struct bb_data *d = (struct bb_data *)data;
+    char *query;
+    int sret;
+
+    query = sqlite3_mprintf("delete from '%q' where var = '%q' and attr not null and val = '%q'", d->recipe, var, attr);
+    sret = sqlite3_exec(bbdata_setup.db, query, NULL, 0, NULL);
+    sqlite3_free(query);
+
+    query = sqlite3_mprintf("insert into '%q' values(NULL, '%q', '%q', '%q')", d->recipe, var, attr, val);
+    sret = sqlite3_exec(bbdata_setup.db, query, NULL, 0, NULL);
+    sqlite3_free(query);
+    if (sret != SQLITE_OK)
+        return FALSE;
+    return TRUE;
+}
+
+gboolean bb_data_remove_attr(gpointer data, const gchar *var, const gchar *attr)
+{
+    struct bb_data *d = (struct bb_data *)data;
+    char *query;
+    int sret;
+
+    query = sqlite3_mprintf("delete from '%q' where var = '%q' and val = '%q' and attr not null", d->recipe, var, attr);
+    sret = sqlite3_exec(bbdata_setup.db, query, NULL, 0, NULL);
+    sqlite3_free(query);
+    if (sret != SQLITE_OK)
+        return FALSE;
+    return TRUE;
 }

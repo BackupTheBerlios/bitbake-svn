@@ -101,7 +101,7 @@ fi
 # This variable is used to indicate whether we're compiling
 # a part of our library itself, or external binaries.
 BBDATA_DLL_EXPORTS="-DBBDATA_DLL_EXPORTS"
-AC_SUBST([BBDATADLL_EXPORTS])
+AC_SUBST([BBDATA_DLL_EXPORTS])
 
 
 # output

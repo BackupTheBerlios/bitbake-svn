@@ -47,17 +47,19 @@ START_TEST (test_data_create_destroy)
 }
 END_TEST
 
-#if 0
 START_TEST (test_data_var_insert)
 {
     gpointer data;
     gchar *var, *val;
+    gboolean ret;
 
-    data = bb_data_new("test");
-    var = g_strdup("CC");
-    val = g_strdup("gcc");
+    data = bb_data_new("test_data_var_insert");
+    var = "CC";
+    val = "gcc";
 
-    bb_data_insert(data, var, val);
+    ret = bb_data_insert(data, var, val);
+    if (!ret)
+        fail("Failed to insert");
 }
 END_TEST
 
@@ -65,14 +67,19 @@ START_TEST (test_data_var_lookup)
 {
     gpointer data;
     gchar *var, *val;
+    gboolean ret;
 
-    data = bb_data_new("test");
+    data = bb_data_new("test_data_var_lookup");
 
-    var = g_strdup("CC");
-    val = g_strdup("gcc");
-    bb_data_insert(data, var, val);
+    var = "CC";
+    val = "gcc";
+    ret = bb_data_insert(data, var, val);
+    if (!ret)
+        fail("Failed to insert");
 
     val = bb_data_lookup(data, "CC");
+    if (!val)
+        fail("bb_data_lookup(data, \"CC\") returned NULL");
     if (strcmp(val, "gcc") != 0)
         fail("CC does not have the correct value");
 
@@ -84,33 +91,107 @@ START_TEST (test_data_var_remove)
 {
     gpointer data;
     gchar *var, *val;
+    gboolean ret;
 
-    data = bb_data_new("test");
+    data = bb_data_new("test_data_var_remove");
 
-    var = g_strdup("CC");
-    val = g_strdup("gcc");
-    bb_data_insert(data, var, val);
-
-    bb_data_remove(data, var);
+    var = "CC";
+    val = "gcc";
+    ret = bb_data_insert(data, var, val);
+    if (!ret)
+        fail("Failed to insert");
+    ret = bb_data_remove(data, var);
+    if (!ret)
+        fail("Failed to remove");
 
     bb_data_destroy(data, TRUE);
 }
 END_TEST
-#endif
+
+START_TEST (test_data_attr_insert)
+{
+    gpointer data;
+    gchar *var, *val, *attr;
+    gboolean ret;
+
+    data = bb_data_new("test_data_attr_insert");
+    var = "CC";
+    attr = "export";
+    val = "1";
+
+    ret = bb_data_insert_attr(data, var, attr, val);
+    if (!ret)
+        fail("Failed to insert attribute");
+}
+END_TEST
+
+START_TEST (test_data_attr_lookup)
+{
+    gpointer data;
+    gchar *var, *val, *attr;
+    gboolean ret;
+
+    data = bb_data_new("test_data_attr_lookup");
+
+    var = "CC";
+    attr = "export";
+    val = "1";
+    ret = bb_data_insert_attr(data, var, attr, val);
+    if (!ret)
+        fail("Failed to insert attribute");
+
+    val = bb_data_lookup_attr(data, var, attr);
+    if (!val)
+        fail("bb_data_lookup_attr(data, \"CC\", \"export\") returned NULL");
+    if (strcmp(val, "1") != 0)
+        fail("CC export attribute does not have the correct value");
+
+    bb_data_destroy(data, TRUE);
+}
+END_TEST
+
+START_TEST (test_data_attr_remove)
+{
+    gpointer data;
+    gchar *var, *val, *attr;
+    gboolean ret;
+
+    data = bb_data_new("test_data_attr_remove");
+
+    var = "CC";
+    attr = "export";
+    val = "1";
+    ret = bb_data_insert_attr(data, var, attr, val);
+    if (!ret)
+        fail("Failed to insert attribute");
+    ret = bb_data_remove_attr(data, var, attr);
+    if (!ret)
+        fail("Failed to remove attribute");
+
+    bb_data_destroy(data, TRUE);
+}
+END_TEST
+
 Suite *bitbake_data_suite(void)
 {
     Suite *s = suite_create("Bitbake Data");
     TCase *tc_core = tcase_create("Core");
     TCase *tc_var = tcase_create("Variable");
+    TCase *tc_attr = tcase_create("Variable Attributes");
 
     suite_add_tcase (s, tc_core);
     suite_add_tcase (s, tc_var);
+    suite_add_tcase (s, tc_attr);
 
     tcase_add_test(tc_core, test_data_create_destroy);
 
-//    tcase_add_test(tc_var, test_data_var_insert);
-//    tcase_add_test(tc_var, test_data_var_lookup);
-//    tcase_add_test(tc_var, test_data_var_remove);
+    tcase_add_test(tc_var, test_data_var_insert);
+    tcase_add_test(tc_var, test_data_var_lookup);
+    tcase_add_test(tc_var, test_data_var_remove);
+
+    tcase_add_test(tc_attr, test_data_attr_insert);
+    tcase_add_test(tc_attr, test_data_attr_lookup);
+    tcase_add_test(tc_attr, test_data_attr_remove);
     return s;
 }
 

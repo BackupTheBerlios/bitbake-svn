@@ -22,19 +22,27 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef _BB_DATA_PRIVATE_H
-# define _BB_DATA_PRIVATE_H
-# ifdef BBDLL_EXPORTS
+#ifndef _BITBAKE_DATA_PRIVATE_H
+# define _BITBAKE_DATA_PRIVATE_H
+# ifdef BBDATA_DLL_EXPORTS
 
-# include <bitbake/common.h>
+# include <bitbake-data/common.h>
 # include <glib.h>
 
-BITBAKE_HDR_BEGIN
+BBDATA_HDR_BEGIN
 
 
 /** @file data-private.h
  *  @brief Private header for bitbake metadata handling */
 
+/**
+ * Data for a given recipe
+ */
+struct bb_data {
+    gchar *recipe;
+};
+
+#if 0
 /**
  * Bitbake variable chunk types
  */
@@ -131,9 +139,10 @@ struct bb_data {
      */
     GHashTable *data;
 };
+#endif
 
 
-BITBAKE_HDR_BEGIN
+BBDATA_HDR_BEGIN
 
-#endif /* BBDLL_EXPORTS */
-#endif /* _BB_DATA_PRIVATE_H */
+#endif /* BBDATA_DLL_EXPORTS */
+#endif /* _BITBAKE_DATA_PRIVATE_H */
