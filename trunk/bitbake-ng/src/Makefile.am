@@ -1,4 +1,5 @@
-AM_CFLAGS = -I$(top_srcdir)/include
+AM_CPPFLAGS = -I$(top_srcdir)/include \
+	      $(BBDLL_EXPORTS)
 
 noinst_PROGRAMS = main
 noinst_HEADERS = binreloc.h

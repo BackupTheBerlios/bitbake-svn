@@ -43,6 +43,11 @@ AC_SUBST(LIBTOOL_DEPS)
 # other
 AM_BINRELOC
 
+# This variable is used to indicate whether we're compiling
+# a part of our library itself, or external binaries.
+BBDLL_EXPORTS="-DBBDLL_EXPORTS"
+AC_SUBST([BBDLL_EXPORTS])
+
 AC_CONFIG_FILES([Makefile
                  src/Makefile
 		 doc/Makefile])

@@ -1,1 +1,1 @@
-#include <foo.h>
+#include <bitbake.h>

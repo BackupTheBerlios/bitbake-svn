@@ -35,15 +35,15 @@ BITBAKE_HDR_BEGIN
 #endif
 
 /* Define BBAPI for DLL builds */
-#ifdef FOXDLL
-  #ifdef FOXDLL_EXPORTS
+#ifdef BBDLL
+  #ifdef BBDLL_EXPORTS
     #define BBAPI BBEXPORT
   #else
     #define BBAPI BBIMPORT
-  #endif // FOXDLL_EXPORTS
+  #endif /* BBDLL_EXPORTS */
 #else
   #define BBAPI
-#endif // FOXDLL
+#endif /* BBDLL */
 
 /* Throwable classes must always be visible on GCC in all binaries */
 #ifdef WIN32
