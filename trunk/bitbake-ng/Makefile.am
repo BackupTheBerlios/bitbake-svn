@@ -1,6 +1,6 @@
 SUBDIRS = include src tests doc
 
-ACLOCAL_AMFLAGS = -I m4
+ACLOCAL_AMFLAGS = -I m4/internal -I m4/external
 AUTOMAKE_OPTIONS = foreign 1.6
 
 MAINT_CLEAN_FILES_AUX = config.guess config.sub depcomp \

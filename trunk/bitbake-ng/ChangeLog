@@ -1,3 +1,9 @@
+2005-01-13 Chris Larson <kergoth@handhelds.org>
+
+	* Minor rearranging.. now we have m4/internal and m4/external,
+	  to make it possible to run autoreconf in this tree even on
+	  machines without 'check' installed.
+
 2005-01-10 Chris Larson <kergoth@handhelds.org>
 
 	* Update library linking so that the dev symlink is
