@@ -31,7 +31,7 @@
 BBDATA_HDR_BEGIN
 
 
-/** @file data.h
+/** @file bitbake-data.h
  *  @brief Header for bitbake metadata handling */
 
 /**

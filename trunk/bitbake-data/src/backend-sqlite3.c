@@ -47,10 +47,9 @@ static struct {
 } bbdata_setup = {
     .initialized = FALSE,
     .mutex = G_STATIC_MUTEX_INIT,
-    .users = 0,
 };
 
-BBDATA_IMPORT static gboolean bb_data_init(void)
+static gboolean bb_data_init(void)
 {
     gboolean ret = TRUE;
     const gchar *datapath = g_getenv("BBDATAPATH");
@@ -78,7 +77,7 @@ BBDATA_IMPORT static gboolean bb_data_init(void)
     return ret;
 }
 
-BBDATA_IMPORT static void bb_data_shutdown(void)
+static void bb_data_shutdown(void)
 {
     bbdata_setup.initialized = FALSE;
     sqlite3_close(bbdata_setup.db);
@@ -126,7 +125,7 @@ struct bb_data {
     gchar *recipe;
 };
 
-BBDATA_API gpointer bb_data_new(const gchar *recipe)
+gpointer bb_data_new(const gchar *recipe)
 {
     gpointer ret = NULL;
     struct bb_data *data;
@@ -153,15 +152,15 @@ BBDATA_API gpointer bb_data_new(const gchar *recipe)
     return ret;
 }
 
-BBDATA_API GTimeVal bb_data_get_modif_date(gpointer data);
-BBDATA_API gchar *bb_data_lookup(gconstpointer data, const gchar *var);
-BBDATA_API gboolean bb_data_insert(gpointer data, const gchar *var, const gchar *val);
-BBDATA_API gboolean bb_data_remove(gpointer data, const gchar *var);
-BBDATA_API gchar *bb_data_lookup_attr(gconstpointer data, const gchar *var, const gchar *attr);
-BBDATA_API gboolean bb_data_insert_attr(gpointer data, const gchar *var, const gchar *attr, const gchar *val);
-BBDATA_API gboolean bb_data_remove_attr(gpointer data, const gchar *var, const gchar *attr);
+GTimeVal bb_data_get_modif_date(gpointer data);
+gchar *bb_data_lookup(gconstpointer data, const gchar *var);
+gboolean bb_data_insert(gpointer data, const gchar *var, const gchar *val);
+gboolean bb_data_remove(gpointer data, const gchar *var);
+gchar *bb_data_lookup_attr(gconstpointer data, const gchar *var, const gchar *attr);
+gboolean bb_data_insert_attr(gpointer data, const gchar *var, const gchar *attr, const gchar *val);
+gboolean bb_data_remove_attr(gpointer data, const gchar *var, const gchar *attr);
 
-BBDATA_API void bb_data_destroy(gpointer data, gboolean flush)
+void bb_data_destroy(gpointer data, gboolean flush)
 {
     /* FIXME: remove recipe's table in the database if flush is TRUE */
     g_free(data);
