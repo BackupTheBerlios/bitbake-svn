@@ -49,12 +49,25 @@ BBDATA_IMPORT static gboolean bb_data_init(void)
 {
     gboolean ret = TRUE;
     const gchar *datapath = g_getenv("BBDATAPATH");
+    gchar *fpath = NULL;
+    guint sret;
 
     if (datapath)
         bbdata_setup.datapath = g_filename_to_utf8(datapath, -1, NULL, NULL, NULL);
 
     if (!bbdata_setup.datapath)
         bbdata_setup.datapath = g_build_path(LOCALSTATEDIR, "lib", "bitbake-data", NULL);
+
+    fpath = g_build_filename(bbdata_setup.datapath, "data");
+
+    sret = sqlite3_open(fpath, &bbdata_setup.db);
+    if (sret) {
+        g_free(fpath);
+        g_free(bbdata_setup.datapath);
+        return FALSE;
+    }
+
+    g_free(fpath);
 
     bbdata_setup.initialized = TRUE;
     return ret;
@@ -63,6 +76,7 @@ BBDATA_IMPORT static gboolean bb_data_init(void)
 BBDATA_IMPORT static void bb_data_shutdown(void)
 {
     bbdata_setup.initialized = FALSE;
+    sqlite3_close(bbdata_setup.db);
     g_free(bbdata_setup.datapath);
 }
 
@@ -109,13 +123,16 @@ struct bb_data {
 
 BBDATA_API gpointer bb_data_new(const gchar *recipe)
 {
-    gpointer ret = NULL; /* FIXME: return something useful :) */
+    gpointer ret = NULL;
+    struct bb_data *data;
 
     g_static_mutex_lock(&bbdata_setup.mutex);
 
     if (!bbdata_setup.initialized) {
-        if (!bb_data_init())
-            ret = NULL;
+        if (!bb_data_init()) {
+            g_static_mutex_unlock(&bbdata_setup.mutex);
+            return ret;
+        }
     }
 
     if (bbdata_setup.initialized)
@@ -123,11 +140,9 @@ BBDATA_API gpointer bb_data_new(const gchar *recipe)
 
     g_static_mutex_unlock(&bbdata_setup.mutex);
 
-    if (ret == NULL)
-        return ret;
-
-//    rc = sqlite3_open(argv[1], &db);
-
+    ret = g_malloc0(sizeof(struct bb_data));
+    data = (struct bb_data *)ret;
+    data->recipe = g_strdup(recipe);
     return ret;
 }
 
@@ -141,6 +156,8 @@ BBDATA_API gboolean bb_data_remove_attr(gpointer data, const gchar *var, const g
 
 BBDATA_API void bb_data_destroy(gpointer data)
 {
+    g_free(data);
+
     g_static_mutex_lock(&bbdata_setup.mutex);
 
     if (bbdata_setup.initialized) {

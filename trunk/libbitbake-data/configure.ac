@@ -59,6 +59,7 @@ AC_SUBST(LIBTOOL_DEPS)
 
 # dependencies
 PKG_CHECK_MODULES([GLIB2], [glib-2.0])
+PKG_CHECK_MODULES([SQLITE3], [sqlite3])
 
 
 # docbook documentation
