@@ -75,6 +75,17 @@ DX_PS_FEATURE(OFF)
 DX_INIT_DOXYGEN($PACKAGE, [doc/doxygen.cfg], [doc/doxygen])
 
 
+# options
+AC_MSG_CHECKING([whether user requested building tests])
+AC_ARG_ENABLE(tests, 
+	AS_HELP_STRING([--enable-tests],
+		[Enable building of tests (default=no)]),
+	[enable_tests=$enableval],
+	[enable_tests=no])
+AC_MSG_RESULT($enable_tests)
+AM_CONDITIONAL(BB_TESTS, test "$enable_tests" = "yes")
+
+
 # other
 AM_BINRELOC
 
@@ -87,6 +98,7 @@ AC_SUBST([BBDLL_EXPORTS])
 AC_CONFIG_FILES([Makefile
 		 include/Makefile
 		 src/Makefile
+		 tests/Makefile
 		 doc/Makefile
 		 doc/design_spec/Makefile])
 AC_OUTPUT
