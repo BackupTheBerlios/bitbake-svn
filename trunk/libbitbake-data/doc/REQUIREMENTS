@@ -1,5 +1,9 @@
 [ ] Key/value pairs, as close to O(1) as is possible
 [ ] "Attributes".. that is, metadata about our metadata
+[ ] Each store of metadata is bound to a recipe, and we need a way for the
+    recipe handler to deal with the determination of whether the information
+    in the metadata store is current.  Either it asks the store for a last
+    modification date, or the other way around.
 
 [ ] Persistance?  Is persistance a requirement or an optimization?
     Really, it's an optimization.  If the metadata store isn't persistant,
@@ -20,3 +24,10 @@
     We have to track what bitbake recipe this data belongs to regardless.  Either
     one big sqlite3 db, or a bunch of individual files, the info we have to track
     remains the same.  The choice of implementation just comes down to efficiency.
+
+[ ] Do we really need more than one backend module at runtime, or would compiletime
+    suffice?  Are the needs for metadata handling between recipe handlers the same?
+    And if not, how does the recipe handler go about choosing a metadata module?  Or
+    should that be in the hands of the user?  I'm voting for a single compiletime
+    module, so it's easy to replace later, but without having to deal with module
+    selection at runtime.
