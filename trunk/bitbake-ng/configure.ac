@@ -53,6 +53,10 @@ AC_PROG_LIBTOOL
 AC_SUBST(LIBTOOL_DEPS)
 
 
+# dependencies
+PKG_CHECK_MODULES([GLIB2], [glib-2.0])
+
+
 # other
 AM_BINRELOC
 
