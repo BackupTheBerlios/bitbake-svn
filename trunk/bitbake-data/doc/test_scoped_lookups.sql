@@ -1,13 +1,13 @@
 BEGIN TRANSACTION;
-CREATE TABLE files(key integer primary key, file text not null);
-CREATE TABLE scope(key integer primary key, priority integer, scope integer, file integer);
-CREATE TABLE vars(key integer primary key, var text, val text, file integer);
+CREATE TABLE recipes(id integer primary key, recipe text not null);
+CREATE TABLE scope(id integer primary key, priority integer, scope_recipe_id integer, recipe_id integer);
+CREATE TABLE vars(id integer primary key, var text, val text, recipe_id integer);
 
-INSERT INTO "files" VALUES(NULL, 'bitbake.conf');
-INSERT INTO "files" VALUES(NULL, 'base.bbclass');
-INSERT INTO "files" VALUES(NULL, 'autotools.bbclass');
-INSERT INTO "files" VALUES(NULL, 'a.bb');
-INSERT INTO "files" VALUES(NULL, 'b.bb');
+INSERT INTO "recipes" VALUES(NULL, 'bitbake.conf');
+INSERT INTO "recipes" VALUES(NULL, 'base.bbclass');
+INSERT INTO "recipes" VALUES(NULL, 'autotools.bbclass');
+INSERT INTO "recipes" VALUES(NULL, 'a.bb');
+INSERT INTO "recipes" VALUES(NULL, 'b.bb');
 
 INSERT INTO "scope" VALUES(NULL, 3, 4, 4);
 INSERT INTO "scope" VALUES(NULL, 2, 2, 4);
@@ -27,7 +27,7 @@ INSERT INTO "vars" VALUES(NULL, 'CC', 'b.bb_cc', 5);
 COMMIT;
 
 SELECT val FROM vars
-JOIN scope ON vars.file = scope.scope
-WHERE var = 'CC' AND scope.file = 5
+JOIN scope ON vars.recipe_id = scope.scope_recipe_id
+WHERE var = 'CC' AND scope.recipe_id = 5
 ORDER BY scope.priority DESC
 limit 1;
