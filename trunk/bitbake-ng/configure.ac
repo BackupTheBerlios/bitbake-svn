@@ -1,8 +1,8 @@
 m4_include([config/version.m4])
 AC_INIT(bitbake-ng, BITBAKE_PKGVER, kergoth@handhelds.org)
-AC_PREREQ(2.59)
+AC_PREREQ(2.57)
 
-AC_CONFIG_SRCDIR([src/main.c])
+AC_CONFIG_SRCDIR([include/bitbake.h])
 AC_CONFIG_AUX_DIR(config)
 AM_CONFIG_HEADER([config.h])
 
@@ -39,9 +39,12 @@ AC_SUBST([relincludedir])
 
 # programs
 BB_DEFAULT_FLAGS
+
 AC_PROG_CC
-BB_CXX_HIDDEN_VISIBILITY_INLINES
 BB_CC_HIDDEN_VISIBILITY
+
+AC_PROG_CXX
+BB_CXX_HIDDEN_VISIBILITY_INLINES
 
 AC_PROG_LIBTOOL
 AC_SUBST(LIBTOOL_DEPS)

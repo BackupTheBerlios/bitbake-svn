@@ -1,7 +1,6 @@
 # BB_CXX_SUPPORTS_HIDDEN_VISIBILITY_INLINES
 # ----------
-# Check the C++ compiler for support for -fvisibility-inlines-hidden
-# If AC_PROG_CXX hasn't already been called, it will be here.
+# Check the C++ compiler for support for -fvisibility-inlines-hidden.
 AC_DEFUN([BB_CXX_SUPPORTS_HIDDEN_VISIBILITY_INLINES],
 [AC_REQUIRE([AC_PROG_CXX])
   bb_save_CXXFLAGS="$CXXFLAGS"
@@ -40,7 +39,7 @@ AC_DEFUN([BB_CXX_HIDDEN_VISIBILITY_INLINES],
 
 # BB_CC_SUPPORTS_HIDDEN_VISIBILITY
 # ----------
-# Check the C compiler for support for -fvisibility=hidden
+# Check the C compiler for support for -fvisibility=hidden.
 AC_DEFUN([BB_CC_SUPPORTS_HIDDEN_VISIBILITY],
 [AC_REQUIRE([AC_PROG_CC])
   bb_save_CFLAGS="$CFLAGS"
@@ -55,7 +54,7 @@ AC_DEFUN([BB_CC_SUPPORTS_HIDDEN_VISIBILITY],
 
 # BB_CC_HIDDEN_VISIBILITY
 # ----------
-# Decide whether or not to use -fvisibility=hidden
+# Decide whether or not to use -fvisibility=hidden.
 AC_DEFUN([BB_CC_HIDDEN_VISIBILITY],
 [AC_REQUIRE([BB_CC_SUPPORTS_HIDDEN_VISIBILITY])
   AC_MSG_CHECKING([whether to use -fvisibility=hidden])
@@ -77,7 +76,9 @@ AC_DEFUN([BB_CC_HIDDEN_VISIBILITY],
 
 # BB_DEFAULT_FLAGS
 # ----------
-# Set our default FLAGS variables
+# Set our default FLAGS variables.
+# Remember to call before the AC_PROG_ variables, otherwise those
+# defaults will be used instead of ours.
 AC_DEFUN([BB_DEFAULT_FLAGS],
 [
   if test x"$CFLAGS" = "x"; then
