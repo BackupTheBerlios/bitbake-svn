@@ -38,9 +38,9 @@ AC_CANONICAL_SYSTEM
 auxdir="\$(top_srcdir)/$ac_aux_dir"
 AC_SUBST(auxdir)
 
-reldatadir="\$(datadir)/bitbake-ng-\$(PACKAGE_LTRELEASE)"
-rellibdir="\$(libdir)/bitbake-ng-\$(PACKAGE_LTRELEASE).\$(PACKAGE_LTCUR)"
-relincludedir="\$(includedir)/bitbake-ng-\$(PACKAGE_LTRELEASE)"
+reldatadir="\$(datadir)/bitbake-\$(LT_RELEASE)"
+rellibdir="\$(libdir)/bitbake-\$(LT_RELEASE)"
+relincludedir="\$(includedir)/bitbake-\$(LT_RELEASE)"
 AC_SUBST([reldatadir])
 AC_SUBST([rellibdir])
 AC_SUBST([relincludedir])

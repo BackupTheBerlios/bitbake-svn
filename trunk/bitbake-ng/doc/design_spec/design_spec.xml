@@ -3,110 +3,122 @@
   ex:ts=4:sw=4:sts=4:et
   -*- tab-width: 4; c-basic-offset: 4; indent-tabs-mode: nil -*-
 -->
-<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
                       "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd">
-<article>
-    <articleinfo>
+<book>
+    <bookinfo>
         <title>BitBake-Ng Design Specification</title>
         <authorgroup>
             <corpauthor>BitBake Team</corpauthor>
         </authorgroup>
         <copyright>
             <year>2004</year>
+            <year>2005</year>
             <holder>Chris Larson</holder>
         </copyright>
         <legalnotice>
             <para>This work is licensed under the Creative Commons Attribution License. To view a copy of this license, visit <ulink url="http://creativecommons.org/licenses/by/2.0/">http://creativecommons.org/licenses/by/2.0/</ulink> or send a letter to Creative Commons, 559 Nathan Abbott Way, Stanford, California 94305, USA.</para>
         </legalnotice>
-    </articleinfo>
-    <section>
+    </bookinfo>
+    <preface>
         <title>Introduction</title>
         <para>This is a short document outlining the design for bitbake-ng, the upcoming rewrite of the BitBake project.  It is grouped by logical section, and within each section we go into detail about the requirements that led to the design decisions for that section, various possible solutions that were reviewed, and the actual implementation which was decided upon.</para>
-    </section>
-    <section>
+    </preface>
+    <chapter>
         <title>General Requirements</title>
         <itemizedlist>
             <listitem><para><emphasis>MUST</emphasis> be thread-safe.</para></listitem>
         </itemizedlist>
-    </section>
-    <section>
-        <title>Metadata Handling</title>
+    </chapter>
+    <chapter>
+        <title>Components</title>
         <section>
-            <title>Requirements</title>
-            <itemizedlist>
-                <listitem><para>The metadata is expected to be in the form of key/value pairs.</para></listitem>
-                <listitem><para>There needs to be a means of specifying metadata about other metadata (key/value pairs that correspond to a specific existing key).</para></listitem>
-                <listitem><para>We must have well defined namespaces/scopes, with defined rules for merging them (inheritence/inclusion).</para></listitem>
-                <listitem><para>We know from the previous implementation that it is very important that we keep memory usage down, and ensure that we do not have multiple copies of the same metadata in RAM at any given time.</para></listitem>
-            </itemizedlist>
+            <title>Metadata</title>
+            <section>
+                <title>Requirements</title>
+                <itemizedlist>
+                    <listitem><para>The metadata is expected to be in the form of key/value pairs.</para></listitem>
+                    <listitem><para>There needs to be a means of specifying metadata about other metadata (key/value pairs that correspond to a specific existing key).</para></listitem>
+                    <listitem><para>We must have well defined namespaces/scopes, with defined rules for merging them (inheritence/inclusion).</para></listitem>
+                    <listitem><para>We know from the previous implementation that it is very important that we keep memory usage down, and ensure that we do not have multiple copies of the same metadata in RAM at any given time.</para></listitem>
+                </itemizedlist>
+            </section>
+            <section>
+                <title>Possible Solutions</title>
+                <itemizedlist>
+                    <listitem><para><emphasis>Insert content here.</emphasis></para></listitem>
+                </itemizedlist>
+            </section>
+            <section>
+                <title>Implementation Decision</title>
+                <para><emphasis>Insert content here.</emphasis></para>
+            </section>
         </section>
         <section>
-            <title>Possible Solutions</title>
-            <itemizedlist>
-                <listitem><para><emphasis>Insert content here.</emphasis></para></listitem>
-            </itemizedlist>
+            <title>Recipes</title>
+            <section>
+                <title>Requirements</title>
+                <itemizedlist>
+                    <listitem><para>The parser should be token-based rather than regular expression based.</para></listitem>
+                    <listitem>
+                        <para>We need to support multiple file formats for our metadata:</para>
+                        <itemizedlist>
+                            <listitem><para>.conf</para></listitem>
+                            <listitem><para>.bb</para></listitem>
+                            <listitem><para>.inc</para></listitem>
+                            <listitem><para>.bbclass</para></listitem>
+                        </itemizedlist>
+                    </listitem>
+                    <listitem><para>The file formats need to be well defined and have a BNF syntax.</para></listitem>
+                    <listitem><para>The file formats need to be easily editable by a user.</para></listitem>
+                    <listitem><para>We should ensure that very little escaping is necessary in the use of our metadata for the common case (avoid using ${} for variable expansion, for example, because that's what the shell uses).</para></listitem>
+                    <listitem><para>The parser must do a good job of detecting and reporting syntax errors.</para></listitem>
+                    <listitem><para>The valid escape sequences (i.e. \n, \r) and anything else that needs escaping must be well defined and documented.</para></listitem>
+                </itemizedlist>
+            </section>
+            <section>
+                <title>Possible Solutions</title>
+                <itemizedlist>
+                    <listitem><para><emphasis>Insert content here.</emphasis></para></listitem>
+                </itemizedlist>
+            </section>
+            <section>
+                <title>Implementation Decision</title>
+                <para><emphasis>Insert content here.</emphasis></para>
+            </section>
         </section>
         <section>
-            <title>Implementation Decision</title>
+            <title>Recipe Box</title>
             <para><emphasis>Insert content here.</emphasis></para>
         </section>
-    </section>
-    <section>
-        <title>Parsing</title>
         <section>
-            <title>Requirements</title>
-            <itemizedlist>
-                <listitem><para>The parser should be token-based rather than regular expression based.</para></listitem>
-                <listitem>
-                    <para>We need to support multiple file formats for our metadata:</para>
-                    <itemizedlist>
-                        <listitem><para>.conf</para></listitem>
-                        <listitem><para>.bb</para></listitem>
-                        <listitem><para>.inc</para></listitem>
-                        <listitem><para>.bbclass</para></listitem>
-                    </itemizedlist>
-                </listitem>
-                <listitem><para>The file formats need to be well defined and have a BNF syntax.</para></listitem>
-                <listitem><para>The file formats need to be easily editable by a user.</para></listitem>
-                <listitem><para>We should ensure that very little escaping is necessary in the use of our metadata for the common case (avoid using ${} for variable expansion, for example, because that's what the shell uses).</para></listitem>
-                <listitem><para>The parser must do a good job of detecting and reporting syntax errors.</para></listitem>
-                <listitem><para>The valid escape sequences (i.e. \n, \r) and anything else that needs escaping must be well defined and documented.</para></listitem>
-            </itemizedlist>
+            <title>Bakers</title>
+            <section>
+                <title>Requirements</title>
+                <itemizedlist>
+                    <listitem><para>We must be able to build .bb files in dependency order (package A depends on package B).</para></listitem>
+                    <listitem><para>We must handle inter-task dependency for a single .bb.</para></listitem>
+                    <listitem><para>We <emphasis>MAY</emphasis> want to allow inter-task dependencies across package boundaries (package A's configure and compile tasks depend on package B's staging task).</para></listitem>
+                    <listitem><para>We must handle PROVIDES, and multiple-provides situations (the user must be able to extert control over what providers they would prefer and/or require).</para></listitem>
+                    <listitem><para>We should support multiple interpreters for the executed code (python, shell, etc).</para></listitem>
+                    <listitem><para>We need to handle package version comparisons when selecting providers, and again, the user needs to be able to extert control over this.</para></listitem>
+                    <listitem><para>It would be useful if there was a way to depend on a condition regarding another package's metadata.  In other words, package A depends on package B being built in a certain way.</para></listitem>
+                </itemizedlist>
+            </section>
+            <section>
+                <title>Possible Solutions</title>
+                <itemizedlist>
+                    <listitem><para><emphasis>Insert content here.</emphasis></para></listitem>
+                </itemizedlist>
+            </section>
+            <section>
+                <title>Implementation Decision</title>
+                <para><emphasis>Insert content here.</emphasis></para>
+            </section>
         </section>
-        <section>
-            <title>Possible Solutions</title>
-            <itemizedlist>
-                <listitem><para><emphasis>Insert content here.</emphasis></para></listitem>
-            </itemizedlist>
-        </section>
-        <section>
-            <title>Implementation Decision</title>
-            <para><emphasis>Insert content here.</emphasis></para>
-        </section>
-    </section>
-    <section>
-        <title>Task/Package/Build Handling</title>
-        <section>
-            <title>Requirements</title>
-            <itemizedlist>
-                <listitem><para>We must be able to build .bb files in dependency order (package A depends on package B).</para></listitem>
-                <listitem><para>We must handle inter-task dependency for a single .bb.</para></listitem>
-                <listitem><para>We <emphasis>MAY</emphasis> want to allow inter-task dependencies across package boundaries (package A's configure and compile tasks depend on package B's staging task).</para></listitem>
-                <listitem><para>We must handle PROVIDES, and multiple-provides situations (the user must be able to extert control over what providers they would prefer and/or require).</para></listitem>
-                <listitem><para>We should support multiple interpreters for the executed code (python, shell, etc).</para></listitem>
-                <listitem><para>We need to handle package version comparisons when selecting providers, and again, the user needs to be able to extert control over this.</para></listitem>
-                <listitem><para>It would be useful if there was a way to depend on a condition regarding another package's metadata.  In other words, package A depends on package B being built in a certain way.</para></listitem>
-            </itemizedlist>
-        </section>
-        <section>
-            <title>Possible Solutions</title>
-            <itemizedlist>
-                <listitem><para><emphasis>Insert content here.</emphasis></para></listitem>
-            </itemizedlist>
-        </section>
-        <section>
-            <title>Implementation Decision</title>
-            <para><emphasis>Insert content here.</emphasis></para>
-        </section>
-    </section>
-</article>
+    </chapter>
+    <chapter>
+        <title>Component Relationships</title>
+        <para><emphasis>Insert content here.</emphasis></para>
+    </chapter>
+</book>
