@@ -3,7 +3,7 @@ m4_include([config/version.m4])
 
 
 # initialization
-AC_INIT(bitbake-ng, BITBAKE_PKGVER, bitbake-dev@lists.berlios.de)
+AC_INIT(bitbake-ng, BITBAKE_VER, bitbake-dev@lists.berlios.de)
 AC_PREREQ(2.57)
 
 AC_CONFIG_SRCDIR([include/bitbake.h])

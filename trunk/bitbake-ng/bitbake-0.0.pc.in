@@ -4,8 +4,7 @@ libdir=@libdir@
 includedir=@includedir@
 
 Name: @PACKAGE@
-Description: @PACKAGE_DESCRIPTION@ 
+Description: @PACKAGE_DESCRIPTION@
 Version: @PACKAGE_VERSION@
 Libs: -L${libdir} -lbitbake-@LT_RELEASE@
 Cflags: -I${includedir}/bitbake-@LT_RELEASE@
-
