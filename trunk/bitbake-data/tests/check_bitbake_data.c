@@ -108,6 +108,7 @@ START_TEST (test_data_var_remove)
 }
 END_TEST
 
+#if 0
 START_TEST (test_data_attr_insert)
 {
     gpointer data;
@@ -171,6 +172,7 @@ START_TEST (test_data_attr_remove)
     bb_data_destroy(data, TRUE);
 }
 END_TEST
+#endif
 
 Suite *bitbake_data_suite(void)
 {
@@ -185,13 +187,15 @@ Suite *bitbake_data_suite(void)
 
     tcase_add_test(tc_core, test_data_create_destroy);
 
-    tcase_add_test(tc_var, test_data_var_insert);
+//    tcase_add_test(tc_var, test_data_var_insert);
     tcase_add_test(tc_var, test_data_var_lookup);
-    tcase_add_test(tc_var, test_data_var_remove);
+//    tcase_add_test(tc_var, test_data_var_remove);
 
+#if 0
     tcase_add_test(tc_attr, test_data_attr_insert);
     tcase_add_test(tc_attr, test_data_attr_lookup);
     tcase_add_test(tc_attr, test_data_attr_remove);
+#endif
     return s;
 }
 

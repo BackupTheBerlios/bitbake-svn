@@ -24,6 +24,8 @@
 	* src/backend-sqlite3.c, include/bitbake-data/private.h, tests/check_bitbake_data.c:
 	  Add the variable and variable attribute lookup, insertion, and
 	  removal routines.
+	* src/backend-sqlite3.c, tests/check_bitbake_data.c: Start rework of
+	  sqlite tables to accomidate scope resolution.
 
 2005-02-02  Chris Larson <kergoth@handhelds.org>
 
