@@ -11,3 +11,5 @@ dnl Current, increment on ABI break
 m4_define([BITBAKE_LT_CUR], [0])
 dnl Revision, increment at release
 m4_define([BITBAKE_LT_REV], [0])
+dnl Age
+m4_define([BITBAKE_LT_AGE], [0])

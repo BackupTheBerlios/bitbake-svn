@@ -3,7 +3,7 @@ m4_include([config/version.m4])
 
 
 # initialization
-AC_INIT(bitbake-ng, BITBAKE_PKGVER, kergoth@handhelds.org)
+AC_INIT(bitbake-ng, BITBAKE_PKGVER, bitbake-dev@lists.berlios.de)
 AC_PREREQ(2.57)
 
 AC_CONFIG_SRCDIR([include/bitbake.h])
@@ -12,6 +12,9 @@ AM_CONFIG_HEADER([config.h])
 
 AM_INIT_AUTOMAKE
 
+
+PACKAGE_DESCRIPTION="A library for the execution of recipes."
+AC_SUBST([PACKAGE_DESCRIPTION])
 
 # library versioning
 PACKAGE_LTRELEASE=BITBAKE_RELVER
@@ -22,6 +25,9 @@ AC_SUBST([PACKAGE_LTCUR])
 
 PACKAGE_LTREV=BITBAKE_LT_REV
 AC_SUBST([PACKAGE_LTREV])
+
+PACKAGE_LTAGE=BITBAKE_LT_AGE
+AC_SUBST([PACKAGE_LTAGE])
 
 PACKAGE_LTVERSION="\$(PACKAGE_LTCUR):\$(PACKAGE_LTREV)"
 AC_SUBST([PACKAGE_LTVERSION])
@@ -109,5 +115,6 @@ AC_CONFIG_FILES([Makefile
 		 src/Makefile
 		 tests/Makefile
 		 doc/Makefile
-		 doc/design_spec/Makefile])
+		 doc/design_spec/Makefile
+		 bitbake-0.0.pc])
 AC_OUTPUT

@@ -1,4 +1,11 @@
+2005-01-09 Chris Larson <kergoth@handhelds.org>
+
+	* Correct library linking to set libtool's versioning.
+	* Add 'test' target to makefiles, which runs the 'check' unit tests.
+	* Add pkgconfig .pc file.
+
 2005-01-08 Chris Larson <kergoth@handhelds.org>
+
 	* Improve documentation generation.  Use a decent set of
 	  autoconf macros to handle selection of the types of
 	  doxygen output (taken from the "doxample" project).
@@ -8,6 +15,6 @@
 
 2004-12-30  Chris Larson <kergoth@handhelds.org>
 
-	* Created initial tree for bitbake-ng.
-	* Added autoconf macros for gcc 4.0 (and patched 3.4.x) symbol visibility.
-	* Added initial BitBake-ng Design Specification document.
+	* Create initial tree for bitbake-ng.
+	* Add autoconf macros for gcc 4.0 (and patched 3.4.x) symbol visibility.
+	* Add initial BitBake-ng Design Specification document.

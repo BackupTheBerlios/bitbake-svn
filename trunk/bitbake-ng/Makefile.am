@@ -13,3 +13,7 @@ MAINT_CLEAN_FILES = $(foreach f,$(MAINT_CLEAN_FILES_TOP),$(top_srcdir)/$(f) $(to
 
 maintainer-clean-local:
 	rm -f $(MAINT_CLEAN_FILES)
+
+.PHONY: test
+test:
+	@$(MAKE) -C tests $@

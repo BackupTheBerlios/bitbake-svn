@@ -37,6 +37,7 @@ static void _bb_data_destroy_element(gpointer data)
 
 static void _bb_data_var_list_free(gpointer data, gpointer user_data)
 {
+    user_data=user_data;
     g_free(data);
 }
 
@@ -89,8 +90,8 @@ gboolean bb_data_insert(gpointer ptr, gchar *var, gchar *val)
     bbvar->attributes = g_hash_table_new_full(g_str_hash, g_str_equal, _bb_data_destroy_element, _bb_data_destroy_element);
     bbvar->key = var;
 
-    /* FIXME: rip apart the string into its chunks, and update our
-     *        referrers list based on our variable reference chunks */
+    /* FIXME: rip apart the string into its chunks, and update our referrers
+     *        list based on our chunks which are variable references */
     main_chunk = g_new0(struct bb_var_chunk, 1);
     main_chunk->data = (void *)val;
     main_chunk->type = BB_VAR_STR;
