@@ -22,9 +22,6 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-/** @file data-private.h
- *  @brief Private header for bitbake metadata handling */
-
 #ifndef _BB_DATA_PRIVATE_H
 # define _BB_DATA_PRIVATE_H
 # ifdef BBDLL_EXPORTS
@@ -34,6 +31,9 @@
 
 BITBAKE_HDR_BEGIN
 
+
+/** @file data-private.h
+ *  @brief Private header for bitbake metadata handling */
 
 /**
  * Bitbake variable chunk types

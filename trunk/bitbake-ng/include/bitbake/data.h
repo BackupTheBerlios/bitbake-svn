@@ -22,9 +22,6 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-/** @file data.h
- *  @brief Header for bitbake metadata handling */
-
 #ifndef _BB_DATA_H
 # define _BB_DATA_H
 
@@ -33,6 +30,9 @@
 
 BITBAKE_HDR_BEGIN
 
+
+/** @file data.h
+ *  @brief Header for bitbake metadata handling */
 
 /**
  *@brief Creates a new bitbake metadata store

@@ -22,9 +22,6 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-/** @file bitbake.h
- *  @brief Bitbake primary header file */
-
 #ifndef _BITBAKE_H
 # define _BITBAKE_H
 
@@ -32,6 +29,9 @@
 #include <bitbake/data.h>
 
 BITBAKE_HDR_BEGIN
+
+/** @file bitbake.h
+ *  @brief Bitbake primary header file */
 
 BITBAKE_HDR_END
 

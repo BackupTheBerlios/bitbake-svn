@@ -22,25 +22,21 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-/** @file common.h
- *  @brief Header for bitbake's commonly used macros */
-
 #ifndef _BB_COMMON_H
 # define _BB_COMMON_H
 
 # ifdef __cplusplus
 #  define BITBAKE_HDR_BEGIN extern "C" {
-# else
-#  define BITBAKE_HDR_BEGIN
-# endif /* __cplusplus */
-
-# ifdef __cplusplus
 #  define BITBAKE_HDR_END }
 # else
+#  define BITBAKE_HDR_BEGIN
 #  define BITBAKE_HDR_END
-# endif
+# endif /* __cplusplus */
 
 BITBAKE_HDR_BEGIN
+
+/** @file common.h
+ *  @brief Header for bitbake's commonly used macros */
 
 /* Shared library support */
 # ifdef WIN32
