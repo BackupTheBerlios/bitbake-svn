@@ -1,0 +1,15 @@
+2005-02-03  Chris Larson <kergoth@handhelds.org>
+
+	* doc/doxygen.cfg, doc/doxygen.m4, doc/Makefile.am, configure.ac,
+	  Makefile.am: Add doxygen doc generation.
+	* include/bitbake-data.h, src/backend-sqlite3.h: Add datastore process
+	  wide initialization and shutdown based on usage count.
+	* src/backend-sqlite3.h: Add calls to sqlite3 to open and close the
+	  recipe database.
+
+2005-02-02  Chris Larson <kergoth@handhelds.org>
+
+	* Many files: Created initial repository.
+	* include/bitbake-data/common.h: Add common header for things like gcc
+	  visibility macros.
+	* doc/REQUIREMENTS: Add musings on requirements.
