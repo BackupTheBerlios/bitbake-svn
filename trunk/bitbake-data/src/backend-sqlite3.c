@@ -28,6 +28,11 @@
 
 #include "config.h"
 
+/* FIXME: If this datastore is persistant, then we need a way to know when
+ * data can be removed from the store.  We may need a function call to remove
+ * the data completely when we do a destroy.  A gboolean argument to bb_data_destroy
+ * which is only used by persistant stores would do.  gboolean flush perhaps. */
+
 /**
  * Static structure to hold process wide information associated with
  * our bitbake data.  In this case, this holds our pointer to our open
@@ -143,6 +148,8 @@ BBDATA_API gpointer bb_data_new(const gchar *recipe)
     ret = g_malloc0(sizeof(struct bb_data));
     data = (struct bb_data *)ret;
     data->recipe = g_strdup(recipe);
+
+    /* FIXME: create table in sqlite db for this recipe */
     return ret;
 }
 
@@ -154,8 +161,9 @@ BBDATA_API gchar *bb_data_lookup_attr(gconstpointer data, const gchar *var, cons
 BBDATA_API gboolean bb_data_insert_attr(gpointer data, const gchar *var, const gchar *attr, const gchar *val);
 BBDATA_API gboolean bb_data_remove_attr(gpointer data, const gchar *var, const gchar *attr);
 
-BBDATA_API void bb_data_destroy(gpointer data)
+BBDATA_API void bb_data_destroy(gpointer data, gboolean flush)
 {
+    /* FIXME: remove recipe's table in the database if flush is TRUE */
     g_free(data);
 
     g_static_mutex_lock(&bbdata_setup.mutex);

@@ -91,67 +91,6 @@ BBDATA_API gboolean bb_data_insert(gpointer data, const gchar *var, const gchar 
 BBDATA_API gboolean bb_data_remove(gpointer data, const gchar *var);
 
 
-#if 0
-/**
- *Obtains a certain conditional value associated with an bitbake variable.
- *
- *An bitbake variable has a default value (that which is
- *accessed by the usual bb_data_insert api), and any
- *number of possible values which are bound to conditions.
- *
- *This function obtains one of those conditional values.
- *
- *@param data       The bitbake metadata store in question.
- *@param var        The variable name.
- *@param conditions The conditions which apply to the value we're
- *                  attempting to get.
- *
- *@return The conditional value as a gchar *.  This was malloc'd for the caller's use.
- *        The caller is therefore responsible for freeing this.
- */
-BBDATA_API gchar *bb_data_lookup_cond(gconstpointer data, gchar *var, gchar *conditions[2]);
-
-
-/**
- *Sets a certain conditional value associated with an bitbake variable.
- *
- *An bitbake variable has a default value (that which is
- *accessed by the usual bb_data_insert api), and any
- *number of possible values which are bound to conditions.
- *
- *This function removes one of those conditional values.
- *
- *@param data       The bitbake metadata store in question.
- *@param var        The variable name.
- *@param val        The value to set this variable to when these conditions are true.
- *@param conditions The conditions which apply to the value we're
- *                  attempting to remove.
- *
- *@return TRUE if succeeded, FALSE if failed.
- */
-BBDATA_API gboolean bb_data_insert_cond(gpointer data, gchar *var, gchar *val, gchar *conditions[2]);
-
-
-/**
- *Deletes a certain conditional value associated with an bitbake variable.
- *
- *An bitbake variable has a default value (that which is
- *accessed by the usual bb_data_insert api), and any
- *number of possible values which are bound to conditions.
- *
- *This function removes one of those conditional values.
- *
- *@param data       The bitbake metadata store in question.
- *@param var        The variable name.
- *@param conditions The conditions which apply to the value we're
- *                  attempting to remove.
- *
- *@return TRUE if succeeded, FALSE if failed.
- */
-BBDATA_API gboolean bb_data_remove_cond(gpointer data, gchar *var, gchar *conditions[2]);
-#endif
-
-
 /**
  *Obtains the value of one of the attributes of an bitbake variable.
  *
@@ -190,10 +129,15 @@ BBDATA_API gboolean bb_data_insert_attr(gpointer data, const gchar *var, const g
 BBDATA_API gboolean bb_data_remove_attr(gpointer data, const gchar *var, const gchar *attr);
 
 /**
- *Destroys a bitbake metadata store and all of its variables
+ *@brief Deletes a given attribute from an bitbake variable
  *
+ *@param data      The bitbake metadata store in question.
+ *@param flush     This parameter only makes sense for persistant datastores.
+ *                 for those, we need a means of indicating when the data can
+ *                 truly be removed, when is no longer needed.  That is the
+ *                 purpose of this parameter.
  */
-BBDATA_API void bb_data_destroy(gpointer data);
+BBDATA_API void bb_data_destroy(gpointer data, gboolean flush);
 
 
 BBDATA_HDR_END
