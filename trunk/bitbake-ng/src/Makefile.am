@@ -1,14 +1,12 @@
 AM_CPPFLAGS = -I$(top_srcdir)/include \
 	      $(BBDLL_EXPORTS)
 
-noinst_PROGRAMS = main
+noinst_LTLIBRARIES = libmain.la
 noinst_HEADERS = binreloc.h
 
-main_SOURCES = main.c binreloc.c main.h
-main_CFLAGS = $(BINRELOC_CFLAGS)
-main_LDADD = $(BINRELOC_LIBS)
-
-relinclude_HEADERS = main.h
+libmain_la_SOURCES = main.c binreloc.c main.h
+libmain_la_CFLAGS = $(BINRELOC_CFLAGS)
+libmain_la_LIBADD = $(BINRELOC_LIBS)
 
 maintainer-clean-local:
 	rm -f $(srcdir)/Makefile.in
