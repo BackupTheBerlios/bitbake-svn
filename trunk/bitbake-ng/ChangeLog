@@ -2,6 +2,7 @@
 	* Improve documentation generation.  Use a decent set of
 	  autoconf macros to handle selection of the types of
 	  doxygen output (taken from the "doxample" project).
+	* Use 'check' (http://check.sourceforge.net/) for unit testing.
 
 2004-12-30  Chris Larson <kergoth@handhelds.org>
 

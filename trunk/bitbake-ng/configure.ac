@@ -55,6 +55,7 @@ AC_PROG_LIBTOOL
 AC_SUBST(LIBTOOL_DEPS)
 
 
+
 # dependencies
 PKG_CHECK_MODULES([GLIB2], [glib-2.0])
 
@@ -85,6 +86,10 @@ AC_ARG_ENABLE(tests,
 AC_MSG_RESULT($enable_tests)
 AM_CONDITIONAL(BB_TESTS, test "$enable_tests" = "yes")
 
+# see if 'check', the unit testing framework, is installed
+if test x"$enable_tests" != "xno"; then
+  AM_PATH_CHECK
+fi
 
 # other
 AM_BINRELOC
