@@ -47,7 +47,7 @@ endif
 $(xmltotypes): $(manual)
 	$(call command,xmlto --extensions -o $(topdir)/$@ $@ $(manual),XMLTO $@ $(manual))
 
-clean:
+clean distclean maintainer-clean:
 	rm -rf $(cleanfiles)
 
 $(foreach i,$(types) $(foreach type,$(htmltypes),$(type)-nochunks),clean-$(i)):

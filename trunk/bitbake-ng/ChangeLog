@@ -1,5 +1,5 @@
 2004-12-30  Chris Larson <kergoth@handhelds.org>
 
 	* Created initial tree for bitbake-ng.
-	* Added autoconf macros for gcc 4.0 (and patched 3.4.x) visibility.
+	* Added autoconf macros for gcc 4.0 (and patched 3.4.x) symbol visibility.
 	* Added initial BitBake-ng Design Specification document.
