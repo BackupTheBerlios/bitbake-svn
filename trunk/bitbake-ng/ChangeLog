@@ -1,3 +1,8 @@
+2005-01-08 Chris Larson <kergoth@handhelds.org>
+	* Improve documentation generation.  Use a decent set of
+	  autoconf macros to handle selection of the types of
+	  doxygen output (taken from the "doxample" project).
+
 2004-12-30  Chris Larson <kergoth@handhelds.org>
 
 	* Created initial tree for bitbake-ng.

@@ -57,6 +57,22 @@ AC_SUBST(LIBTOOL_DEPS)
 PKG_CHECK_MODULES([GLIB2], [glib-2.0])
 
 
+# docbook documentation
+AC_CHECK_PROGS([XMLLINT], [xmllint])
+AC_CHECK_PROGS([XSLTPROC], [xsltproc])
+
+# doxygen documentation
+DX_HTML_FEATURE(ON)
+DX_CHM_FEATURE(OFF)
+DX_CHI_FEATURE(OFF)
+DX_MAN_FEATURE(ON)
+DX_RTF_FEATURE(OFF)
+DX_XML_FEATURE(OFF)
+DX_PDF_FEATURE(ON)
+DX_PS_FEATURE(OFF)
+DX_INIT_DOXYGEN($PACKAGE, [doc/doxygen.cfg], [doc/doxygen])
+
+
 # other
 AM_BINRELOC
 
@@ -67,6 +83,7 @@ AC_SUBST([BBDLL_EXPORTS])
 
 # output
 AC_CONFIG_FILES([Makefile
-                 src/Makefile
-		 doc/Makefile])
+		 src/Makefile
+		 doc/Makefile
+		 doc/design_spec/Makefile])
 AC_OUTPUT
