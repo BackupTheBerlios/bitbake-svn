@@ -1,5 +1,5 @@
 m4_include([config/version.m4])
-AC_INIT(libfoo, LIBFOO_PKGVER, kergoth@handhelds.org)
+AC_INIT(bitbake-ng, LIBFOO_PKGVER, kergoth@handhelds.org)
 AC_PREREQ(2.59)
 
 AC_CONFIG_SRCDIR([src/main.c])
@@ -25,9 +25,9 @@ AC_SUBST([PACKAGE_LTVERSION])
 auxdir="\$(top_srcdir)/$ac_aux_dir"
 AC_SUBST(auxdir)
 
-reldatadir="\$(datadir)/libfoo-\$(PACKAGE_LTRELEASE)"
-rellibdir="\$(libdir)/libfoo-\$(PACKAGE_LTRELEASE).\$(PACKAGE_LTCUR)"
-relincludedir="\$(includedir)/libfoo-\$(PACKAGE_LTRELEASE)"
+reldatadir="\$(datadir)/bitbake-ng-\$(PACKAGE_LTRELEASE)"
+rellibdir="\$(libdir)/bitbake-ng-\$(PACKAGE_LTRELEASE).\$(PACKAGE_LTCUR)"
+relincludedir="\$(includedir)/bitbake-ng-\$(PACKAGE_LTRELEASE)"
 AC_SUBST([reldatadir])
 AC_SUBST([rellibdir])
 AC_SUBST([relincludedir])

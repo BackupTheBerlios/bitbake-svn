@@ -74,21 +74,21 @@ extern "C" {
  * Example:
  * --> main.c
  * #include "prefix.h"
- * #include "libfoo.h"
+ * #include "bitbake-ng.h"
  *
  * int main (int argc, char *argv[]) {
  *	printf ("Full path of this app: %s\n", br_locate (&argc));
- *	libfoo_start ();
+ *	bitbake-ng_start ();
  *	return 0;
  * }
  *
- * --> libfoo.c starts here
+ * --> bitbake-ng.c starts here
  * #include "prefix.h"
  *
- * void libfoo_start () {
- *	--> "" is a symbol that belongs to libfoo (because it's called
- *	--> from libfoo_start()); that's why this works.
- *	printf ("libfoo is located in: %s\n", br_locate (""));
+ * void bitbake-ng_start () {
+ *	--> "" is a symbol that belongs to bitbake-ng (because it's called
+ *	--> from bitbake-ng_start()); that's why this works.
+ *	printf ("bitbake-ng is located in: %s\n", br_locate (""));
  * }
  */
 char *
@@ -394,7 +394,7 @@ br_extract_dir (const char *path)
  *
  * Example:
  * br_extract_prefix ("/usr/bin/gnome-panel");   --> Returns "/usr"
- * br_extract_prefix ("/usr/local/libfoo.so");   --> Returns "/usr/local"
+ * br_extract_prefix ("/usr/local/bitbake-ng.so");   --> Returns "/usr/local"
  */
 char *
 br_extract_prefix (const char *path)
