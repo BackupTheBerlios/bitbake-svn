@@ -1,3 +1,8 @@
+2005-01-10 Chris Larson <kergoth@handhelds.org>
+
+	* Update library linking so that the dev symlink is
+	  libbitbake-[release].so rather than libbitbake.so.
+
 2005-01-09 Chris Larson <kergoth@handhelds.org>
 
 	* Correct library linking to set libtool's versioning.

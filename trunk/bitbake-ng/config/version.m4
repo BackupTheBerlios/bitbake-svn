@@ -1,9 +1,10 @@
 dnl bitbake-ng package version
-m4_define([BITBAKE_PKGVER], [0.1])
+m4_define([BITBAKE_VER], [0.1])
 
 dnl bitbake-ng library "release" version
 dnl "0.0" in bitbake-ng-0.0.so
-m4_define([BITBAKE_RELVER], [0.0])
+dnl Increment on API break.
+m4_define([BITBAKE_LT_REL], [0.0])
 
 dnl bitbake-ng libtool library version
 
