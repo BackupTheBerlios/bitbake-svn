@@ -75,7 +75,7 @@ DX_RTF_FEATURE(OFF)
 DX_XML_FEATURE(OFF)
 DX_PDF_FEATURE(ON)
 DX_PS_FEATURE(OFF)
-DX_INIT_DOXYGEN($PACKAGE, [doc/doxygen.cfg], [doc/doxygen])
+DX_INIT_DOXYGEN($PACKAGE, [doc/doxygen/doxygen.cfg], [doc/doxygen/output])
 
 
 # options
@@ -108,6 +108,7 @@ AC_SUBST([BBDATA_DLL_EXPORTS])
 AC_CONFIG_FILES([Makefile
 		 src/Makefile
 		 doc/Makefile
+		 doc/doxygen/Makefile
 		 tests/Makefile
 		 bitbake-data.pc])
 # AC_CONFIG_FILES([Makefile
