@@ -1,8 +1,5 @@
 /* ex:ts=4:sw=4:sts=4:et
- * -*- tab-width: 4; c-basic-offset: 4; indent-tabs-mode: nil -*- */
-
-/** \file data.h
- *  \brief Header for bitbake metadata handling
+ * -*- tab-width: 4; c-basic-offset: 4; indent-tabs-mode: nil -*-
  *
  * Copyright (C) 2004, 2005 Chris Larson <kergoth@handhelds.org>
  *
@@ -25,19 +22,20 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
+/** @file data.h
+ *  @brief Header for bitbake metadata handling */
+
 #ifndef _BB_DATA_H
 # define _BB_DATA_H
 
 # include <bitbake/common.h>
 # include <glib/gtypes.h>
 
-/**************************************************************************/
-/**@name Base API                                                        */
-/**************************************************************************/
-/*@{*/
+BITBAKE_HDR_BEGIN
+
 
 /**
- *Creates a new bitbake metadata store
+ *@brief Creates a new bitbake metadata store
  *
  *@return An empty bitbake metadata store
  */
@@ -180,6 +178,6 @@ BBAPI gboolean bb_data_remove_attr(gpointer data, gchar *var, gchar *attr);
 BBAPI void bb_data_destroy(gpointer data);
 
 
-/*@}*/
+BITBAKE_HDR_END
 
 #endif /*_BB_DATA_H */

@@ -1,8 +1,5 @@
 /* ex:ts=4:sw=4:sts=4:et
- * -*- tab-width: 4; c-basic-offset: 4; indent-tabs-mode: nil -*- */
-
-/** \file data-private.h
- *  \brief Private header for bitbake metadata handling
+ * -*- tab-width: 4; c-basic-offset: 4; indent-tabs-mode: nil -*-
  *
  * Copyright (C) 2004, 2005 Chris Larson <kergoth@handhelds.org>
  *
@@ -25,11 +22,18 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
+/** @file data-private.h
+ *  @brief Private header for bitbake metadata handling */
+
 #ifndef _BB_DATA_PRIVATE_H
 # define _BB_DATA_PRIVATE_H
+# ifdef BBDLL_EXPORTS
 
 # include <bitbake/common.h>
 # include <glib.h>
+
+BITBAKE_HDR_BEGIN
+
 
 /**
  * Bitbake variable chunk types
@@ -128,4 +132,8 @@ struct bb_data {
     GHashTable *data;
 };
 
+
+BITBAKE_HDR_BEGIN
+
+#endif /* BBDLL_EXPORTS */
 #endif /* _BB_DATA_PRIVATE_H */

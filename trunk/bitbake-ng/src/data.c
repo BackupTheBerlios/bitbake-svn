@@ -1,8 +1,5 @@
 /* ex:ts=4:sw=4:sts=4:et
- * -*- tab-width: 4; c-basic-offset: 4; indent-tabs-mode: nil -*- */
-
-/** @file data.c
- *  @brief Bitbake Metadata Handling Code
+ * -*- tab-width: 4; c-basic-offset: 4; indent-tabs-mode: nil -*-
  *
  * Copyright (C) 2004, 2005 Chris Larson <kergoth@handhelds.org>
  *
@@ -24,6 +21,9 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+
+/** @file data.c
+ *  @brief Bitbake Metadata Handling Code */
 
 # include <bitbake/common.h>
 # include <bitbake/data.h>

@@ -1,8 +1,5 @@
 /* ex:ts=4:sw=4:sts=4:et
- * -*- tab-width: 4; c-basic-offset: 4; indent-tabs-mode: nil -*- */
-
-/** @file metadata_1.c
- *  @brief First group of metadata tests
+ * -*- tab-width: 4; c-basic-offset: 4; indent-tabs-mode: nil -*-
  *
  * Copyright (C) 2004, 2005 Chris Larson <kergoth@handhelds.org>
  *
@@ -24,6 +21,9 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+
+/** @file check_bitbake_data.c
+ *  @brief First group of metadata tests */
 
 #include <stdlib.h>
 #include <string.h>

@@ -1,8 +1,5 @@
 /* ex:ts=4:sw=4:sts=4:et
- * -*- tab-width: 4; c-basic-offset: 4; indent-tabs-mode: nil -*- */
-
-/** \file common.h
- *  \brief Header for bitbake's commonly used macros
+ * -*- tab-width: 4; c-basic-offset: 4; indent-tabs-mode: nil -*-
  *
  * Copyright (C) 2004, 2005 Chris Larson <kergoth@handhelds.org>
  *
@@ -24,6 +21,9 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+
+/** @file common.h
+ *  @brief Header for bitbake's commonly used macros */
 
 #ifndef _BB_COMMON_H
 # define _BB_COMMON_H
