@@ -42,7 +42,9 @@
         </section>
         <section>
             <title>Possible Solutions</title>
-            <para><emphasis>Insert content here.</emphasis></para>
+            <itemizedlist>
+                <listitem><para><emphasis>Insert content here.</emphasis></para></listitem>
+            </itemizedlist>
         </section>
         <section>
             <title>Implementation Decision</title>
@@ -73,7 +75,9 @@
         </section>
         <section>
             <title>Possible Solutions</title>
-            <para><emphasis>Insert content here.</emphasis></para>
+            <itemizedlist>
+                <listitem><para><emphasis>Insert content here.</emphasis></para></listitem>
+            </itemizedlist>
         </section>
         <section>
             <title>Implementation Decision</title>
@@ -84,11 +88,21 @@
         <title>Task/Package/Build Handling</title>
         <section>
             <title>Requirements</title>
-            <para><emphasis>Insert content here.</emphasis></para>
+            <itemizedlist>
+                <listitem><para>We must be able to build .bb files in dependency order (package A depends on package B).</para></listitem>
+                <listitem><para>We must handle inter-task dependency for a single .bb.</para></listitem>
+                <listitem><para>We <emphasis>MAY</emphasis> want to allow inter-task dependencies across package boundaries (package A's configure and compile tasks depend on package B's staging task).</para></listitem>
+                <listitem><para>We must handle PROVIDES, and multiple-provides situations (the user must be able to extert control over what providers they would prefer and/or require).</para></listitem>
+                <listitem><para>We should support multiple interpreters for the executed code (python, shell, etc).</para></listitem>
+                <listitem><para>We need to handle package version comparisons when selecting providers, and again, the user needs to be able to extert control over this.</para></listitem>
+                <listitem><para>It would be useful if there was a way to depend on a condition regarding another package's metadata.  In other words, package A depends on package B being built in a certain way.</para></listitem>
+            </itemizedlist>
         </section>
         <section>
             <title>Possible Solutions</title>
-            <para><emphasis>Insert content here.</emphasis></para>
+            <itemizedlist>
+                <listitem><para><emphasis>Insert content here.</emphasis></para></listitem>
+            </itemizedlist>
         </section>
         <section>
             <title>Implementation Decision</title>
