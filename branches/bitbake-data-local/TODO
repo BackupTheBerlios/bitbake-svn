@@ -1,0 +1,13 @@
+[x] Add the lookup/insert/remove functions for both vars and var attrs.
+[ ] Add handling of scopes (parent/child relationships for variable lookups).
+    bb_data_insert_parent(gpointer data, gpointer parent, int index);
+    bb_data_remove_parent(gpointer data, gpointer parent);
+    bb_data_get_parents(gpointer data);
+    Add new parameter to the lookup functions to specify whether the lookup is
+    local to a specific recipe, or whether it should look to the parent scopes as
+    well.  Note that the bitbake recipe lookup functions will behave just like these,
+    making it painless to either implement your own, or just use these as is.
+[ ] Add the last modif date function.
+[ ] Add a rudamentary bitbake recipe handler to bitbake that uses this library, to
+    ensure that bitbake-data meets its needs.
+[ ] Add clean error handling so that recipe handlers can report the cause.
