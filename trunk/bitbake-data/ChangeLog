@@ -19,6 +19,8 @@
 	* src/Makefile.am: Don't hardcode the library release.  Use
 	  @LT_RELEASE@ where appropriate instead.
 	* README, AUTHORS: New file.
+	* configure.ac, Makefile.am, tests/Makefile.am, tests/check_bitbake_data.c:
+	  Add the first of our unit tests using 'check'.
 
 2005-02-02  Chris Larson <kergoth@handhelds.org>
 

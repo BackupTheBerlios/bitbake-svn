@@ -108,10 +108,10 @@ AC_SUBST([BBDATADLL_EXPORTS])
 AC_CONFIG_FILES([Makefile
 		 src/Makefile
 		 doc/Makefile
+		 tests/Makefile
 		 bitbake-data.pc])
 # AC_CONFIG_FILES([Makefile
 # 		 include/Makefile
-# 		 tests/Makefile
 # 		 doc/design_spec/Makefile
 # 		 bitbake-data-0.0.pc])
 AC_OUTPUT
