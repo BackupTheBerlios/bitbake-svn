@@ -29,22 +29,22 @@
 # define _BB_DATA_PRIVATE_H
 
 # include <bitbake/common.h>
-# include <glib/gtypes.h>
+# include <glib.h>
 
 /**
  * Bitbake variable chunk types
  */
 enum bb_var_chunk_type {
-	/**
-	 * Indicates that the variable chunk in question is a string
-	 */
-	BB_VAR_STR,
+    /**
+     * Indicates that the variable chunk in question is a string
+     */
+    BB_VAR_STR,
 
-	/**
-	 * Indicates that the variable chunk in question is a
-	 * reference to another bitbake variable.
-	 */
-	BB_VAR_REF,
+    /**
+     * Indicates that the variable chunk in question is a
+     * reference to another bitbake variable.
+     */
+    BB_VAR_REF,
 };
 
 
@@ -55,15 +55,15 @@ enum bb_var_chunk_type {
  * limited to, strings and references to other variables.
  */
 struct bb_var_chunk {
-	/**
-	 * Type of chunk (i.e. BB_VAR_REF, BBVAR_STR, etc)
-	 */
-	enum bb_var_chunk_type type;
+    /**
+     * Type of chunk (i.e. BB_VAR_REF, BBVAR_STR, etc)
+     */
+    enum bb_var_chunk_type type;
 
-	/**
-	 * Pointer to this chunk's data
-	 */
-	gpointer *data;
+    /**
+     * Pointer to this chunk's data
+     */
+    gpointer *data;
 };
 
 
@@ -71,56 +71,56 @@ struct bb_var_chunk {
  * BitBake variable
  */
 struct bb_var {
-	/**
-	 * Variable name
-	 */
-	gchar *key;
+    /**
+     * Variable name
+     */
+    gchar *key;
 
-	/**
-	 * Cached value (post-expansion)
-	 */
-	gchar *cached_val;
+    /**
+     * Cached value (post-expansion)
+     */
+    gchar *cached_val;
 
-	/**
-	 * List of variable chunks (of type struct bb_var_chunk)
-	 */
-	GList *chunks;
+    /**
+     * List of variable chunks (of type struct bb_var_chunk)
+     */
+    GList *chunks;
 
-	/**
-	 * Dirty flag -- indicates whether the cached value needs to
-	 * be updated, most likely due to referees changing.
-	 */
-	bool dirty;
+    /**
+     * Dirty flag -- indicates whether the cached value needs to
+     * be updated, most likely due to referees changing.
+     */
+    int dirty;
 
-	/**
-	 * List of variables that refer to this variable
-	 */
-	GList *referrers;
+    /**
+     * List of variables that refer to this variable
+     */
+    GList *referrers;
 
-	/**
-	 * Hash table of bitbake variable "attributes".  Bitbake variable
-	 * attributes are metadata about our metadata.  This allows us to
-	 * set flags about the metadata.  For example, we can specify the
-	 * interpreter for a given block of executable code.
-	 *
-	 * The hash table is attribute name -> gcchar *.
-	 */
-	GHashTable *attributes;
+    /**
+     * Hash table of bitbake variable "attributes".  Bitbake variable
+     * attributes are metadata about our metadata.  This allows us to
+     * set flags about the metadata.  For example, we can specify the
+     * interpreter for a given block of executable code.
+     *
+     * The hash table is attribute name -> gcchar *.
+     */
+    GHashTable *attributes;
 };
 
 /**
  * BitBake Datastore
  */
 struct bb_data {
-	/**
-	 * Links to context / higher scopes
-	 */
-	GList *parents;
+    /**
+     * Links to context / higher scopes
+     */
+    GList *parents;
 
-	/**
-	 * Hash table of variable name -> struct bb_var
-	 */
-	GHashTable *data;
+    /**
+     * Hash table of variable name -> struct bb_var
+     */
+    GHashTable *data;
 };
 
 #endif /* _BB_DATA_PRIVATE_H */
