@@ -11,6 +11,8 @@ AM_CONFIG_HEADER([config.h])
 
 AM_INIT_AUTOMAKE
 
+
+# library versioning
 PACKAGE_LTRELEASE=BITBAKE_RELVER
 AC_SUBST([PACKAGE_LTRELEASE])
 
@@ -83,6 +85,7 @@ AC_SUBST([BBDLL_EXPORTS])
 
 # output
 AC_CONFIG_FILES([Makefile
+		 include/Makefile
 		 src/Makefile
 		 doc/Makefile
 		 doc/design_spec/Makefile])

@@ -1,4 +1,4 @@
-SUBDIRS = src doc
+SUBDIRS = include src doc
 
 ACLOCAL_AMFLAGS = -I m4
 AUTOMAKE_OPTIONS = foreign 1.6

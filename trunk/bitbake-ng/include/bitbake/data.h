@@ -74,6 +74,7 @@ BBAPI gboolean bb_data_set_var(gpointer data, gchar *var, gchar *val);
 BBAPI gboolean bb_data_del_var(gpointer data, gchar *var);
 
 
+#if 0
 /**
  *Obtains a certain conditional value associated with an bitbake variable.
  *
@@ -130,6 +131,7 @@ BBAPI gboolean bb_data_set_cond_var(gpointer data, gchar *var, gchar *val, gchar
  *@return TRUE if succeeded, FALSE if failed.
  */
 BBAPI gboolean bb_data_del_cond_var(gpointer data, gchar *var, gchar *conditions[2]);
+#endif
 
 
 /**
