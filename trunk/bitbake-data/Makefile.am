@@ -12,6 +12,14 @@ MAINT_CLEAN_FILES_TOP = config.h.in aclocal.m4 \
 MAINT_CLEAN_FILES = $(foreach f,$(MAINT_CLEAN_FILES_TOP),$(top_srcdir)/$(f) $(top_srcdir)/$(f)\~) \
 		    $(foreach f,$(MAINT_CLEAN_FILES_AUX),$(auxdir)/$(f) $(auxdir)/$(f)\~)
 
+BUILT_SOURCES = bitbake-data-@LT_RELEASE@.pc
+
+pkgconfigdir = $(libdir)/pkgconfig
+pkgconfig_DATA = bitbake-data-@LT_RELEASE@.pc
+
+bitbake-data-@LT_RELEASE@.pc: bitbake-data.pc
+	cat bitbake-data.pc > bitbake-data-@LT_RELEASE@.pc
+
 maintainer-clean-local:
 	rm -f $(MAINT_CLEAN_FILES)
 

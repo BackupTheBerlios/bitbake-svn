@@ -13,6 +13,11 @@
 	  parameter to TRUE will remove the data for the recipe in question
 	  from the persistant store completely, rather than just freeing our
 	  datastructures.
+	* bitbake-data-0.0.pc.in, bitbake-data.pc.in: Renamed.
+	* configure.ac: Update per .pc.in rename.
+	* Makefile.am: Create a .pc based on LT_RELEASE, and install our .pc.
+	* src/Makefile.am: Don't hardcode the library release.  Use
+	  @LT_RELEASE@ where appropriate instead.
 
 2005-02-02  Chris Larson <kergoth@handhelds.org>
 

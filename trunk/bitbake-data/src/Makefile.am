@@ -1,12 +1,12 @@
 AM_CPPFLAGS = -I$(top_srcdir)/include \
 	      $(BBDATA_DLL_EXPORTS)
 
-lib_LTLIBRARIES = libbitbake-data-0.0.la
-libbitbake_data_0_0_la_SOURCES = backend-sqlite3.c
-libbitbake_data_0_0_la_CFLAGS = $(GLIB2_CFLAGS) $(SQLITE3_CFLAGS) \
+lib_LTLIBRARIES = libbitbake-data-@LT_RELEASE@.la
+libbitbake_data_@LT_RELEASE@_la_SOURCES = backend-sqlite3.c
+libbitbake_data_@LT_RELEASE@_la_CFLAGS = $(GLIB2_CFLAGS) $(SQLITE3_CFLAGS) \
 				-DLOCALSTATEDIR="\"@localstatedir@\""
-libbitbake_data_0_0_la_LIBADD = $(GLIB2_LIBS) $(SQLITE3_LIBS)
-libbitbake_data_0_0_la_LDFLAGS = -version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE) \
+libbitbake_data_@LT_RELEASE@_la_LIBADD = $(GLIB2_LIBS) $(SQLITE3_LIBS)
+libbitbake_data_@LT_RELEASE@_la_LDFLAGS = -version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE) \
 				 -export-dynamic
 
 maintainer-clean-local:
