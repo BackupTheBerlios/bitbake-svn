@@ -6,6 +6,13 @@
 	  wide initialization and shutdown based on usage count.
 	* src/backend-sqlite3.h: Add calls to sqlite3 to open and close the
 	  recipe database.
+	* src/backend-sqlite3.h, include/bitbake-data.h: Adjust the
+	  bb_data_destroy function.  Now accepts a new gboolean
+	  parameter to indicate that the data can be truly removed -- only
+	  affects behavior of stores which are persistant.  Setting said
+	  parameter to TRUE will remove the data for the recipe in question
+	  from the persistant store completely, rather than just freeing our
+	  datastructures.
 
 2005-02-02  Chris Larson <kergoth@handhelds.org>
 
