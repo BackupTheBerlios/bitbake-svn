@@ -51,7 +51,7 @@ BBAPI gpointer bb_data_new(void);
  *
  *@return The variable's value.
  */
-BBAPI gchar *bb_data_get_var(gconstpointer data, gchar *var);
+BBAPI gchar *bb_data_lookup(gconstpointer data, gchar *var);
 
 
 /**
@@ -63,7 +63,7 @@ BBAPI gchar *bb_data_get_var(gconstpointer data, gchar *var);
  *
  *@return TRUE if succeeded, FALSE if failed.
  */
-BBAPI gboolean bb_data_set_var(gpointer data, gchar *var, gchar *val);
+BBAPI gboolean bb_data_insert(gpointer data, gchar *var, gchar *val);
 
 
 /**
@@ -74,7 +74,7 @@ BBAPI gboolean bb_data_set_var(gpointer data, gchar *var, gchar *val);
  *
  *@return TRUE if succeeded, FALSE if failed.
  */
-BBAPI gboolean bb_data_del_var(gpointer data, gchar *var);
+BBAPI gboolean bb_data_remove(gpointer data, gchar *var);
 
 
 #if 0
@@ -82,7 +82,7 @@ BBAPI gboolean bb_data_del_var(gpointer data, gchar *var);
  *Obtains a certain conditional value associated with an bitbake variable.
  *
  *An bitbake variable has a default value (that which is
- *accessed by the usual bb_data_set_var api), and any
+ *accessed by the usual bb_data_insert api), and any
  *number of possible values which are bound to conditions.
  *
  *This function obtains one of those conditional values.
@@ -94,14 +94,14 @@ BBAPI gboolean bb_data_del_var(gpointer data, gchar *var);
  *
  *@return The conditional value.
  */
-BBAPI gchar *bb_data_get_cond_var(gconstpointer data, gchar *var, gchar *conditions[2]);
+BBAPI gchar *bb_data_lookup_cond(gconstpointer data, gchar *var, gchar *conditions[2]);
 
 
 /**
  *Sets a certain conditional value associated with an bitbake variable.
  *
  *An bitbake variable has a default value (that which is
- *accessed by the usual bb_data_set_var api), and any
+ *accessed by the usual bb_data_insert api), and any
  *number of possible values which are bound to conditions.
  *
  *This function removes one of those conditional values.
@@ -114,14 +114,14 @@ BBAPI gchar *bb_data_get_cond_var(gconstpointer data, gchar *var, gchar *conditi
  *
  *@return TRUE if succeeded, FALSE if failed.
  */
-BBAPI gboolean bb_data_set_cond_var(gpointer data, gchar *var, gchar *val, gchar *conditions[2]);
+BBAPI gboolean bb_data_insert_cond(gpointer data, gchar *var, gchar *val, gchar *conditions[2]);
 
 
 /**
  *Deletes a certain conditional value associated with an bitbake variable.
  *
  *An bitbake variable has a default value (that which is
- *accessed by the usual bb_data_set_var api), and any
+ *accessed by the usual bb_data_insert api), and any
  *number of possible values which are bound to conditions.
  *
  *This function removes one of those conditional values.
@@ -133,7 +133,7 @@ BBAPI gboolean bb_data_set_cond_var(gpointer data, gchar *var, gchar *val, gchar
  *
  *@return TRUE if succeeded, FALSE if failed.
  */
-BBAPI gboolean bb_data_del_cond_var(gpointer data, gchar *var, gchar *conditions[2]);
+BBAPI gboolean bb_data_remove_cond(gpointer data, gchar *var, gchar *conditions[2]);
 #endif
 
 
@@ -146,7 +146,7 @@ BBAPI gboolean bb_data_del_cond_var(gpointer data, gchar *var, gchar *conditions
  *
  *@return The attribute in question.
  */
-BBAPI gchar *bb_data_get_var_attr(gconstpointer data, gchar *var, gchar *attr);
+BBAPI gchar *bb_data_lookup_attr(gconstpointer data, gchar *var, gchar *attr);
 
 
 /**
@@ -159,7 +159,7 @@ BBAPI gchar *bb_data_get_var_attr(gconstpointer data, gchar *var, gchar *attr);
  *
  *@return TRUE if succeeded, FALSE if failed.
  */
-BBAPI gboolean bb_data_set_var_attr(gpointer data, gchar *var, gchar *attr, gchar *val);
+BBAPI gboolean bb_data_insert_attr(gpointer data, gchar *var, gchar *attr, gchar *val);
 
 
 /**
@@ -171,7 +171,7 @@ BBAPI gboolean bb_data_set_var_attr(gpointer data, gchar *var, gchar *attr, gcha
  *
  *@return TRUE if succeeded, FALSE if failed.
  */
-BBAPI gboolean bb_data_del_var_attr(gpointer data, gchar *var, gchar *attr);
+BBAPI gboolean bb_data_remove_attr(gpointer data, gchar *var, gchar *attr);
 
 /**
  *Destroys a bitbake metadata store and all of its variables

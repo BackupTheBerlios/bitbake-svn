@@ -26,6 +26,7 @@
  */
 
 #include <stdlib.h>
+#include <string.h>
 #include <glib.h>
 #include <check.h>
 #include <bitbake.h>
@@ -46,6 +47,55 @@ START_TEST (test_data_create_destroy)
 }
 END_TEST
 
+START_TEST (test_data_var_insert)
+{
+    gpointer data;
+    gchar *var, *val;
+
+    data = bb_data_new();
+    var = g_strdup("CC");
+    val = g_strdup("gcc");
+
+    bb_data_insert(data, var, val);
+}
+END_TEST
+
+START_TEST (test_data_var_lookup)
+{
+    gpointer data;
+    gchar *var, *val;
+
+    data = bb_data_new();
+
+    var = g_strdup("CC");
+    val = g_strdup("gcc");
+    bb_data_insert(data, var, val);
+
+    val = bb_data_lookup(data, "CC");
+    if (strcmp(val, "gcc") != 0)
+        fail("CC does not have the correct value");
+
+    bb_data_destroy(data);
+}
+END_TEST
+
+START_TEST (test_data_var_remove)
+{
+    gpointer data;
+    gchar *var, *val;
+
+    data = bb_data_new();
+
+    var = g_strdup("CC");
+    val = g_strdup("gcc");
+    bb_data_insert(data, var, val);
+
+    bb_data_remove(data, var);
+
+    bb_data_destroy(data);
+}
+END_TEST
+
 Suite *bitbake_data_suite(void)
 {
   Suite *s = suite_create("Bitbake Data");
@@ -53,6 +103,9 @@ Suite *bitbake_data_suite(void)
 
   suite_add_tcase (s, tc_core);
   tcase_add_test(tc_core, test_data_create_destroy);
+  tcase_add_test(tc_core, test_data_var_insert);
+  tcase_add_test(tc_core, test_data_var_lookup);
+  tcase_add_test(tc_core, test_data_var_remove);
 
   return s;
 }

@@ -30,25 +30,66 @@
 # include <bitbake/data-private.h>
 # include <glib.h>
 
+static void _bb_data_destroy_element(gpointer data)
+{
+    g_free(data);
+}
+
 gpointer bb_data_new(void)
 {
     struct bb_data *data;
+
     data = g_new0(struct bb_data, 1);
-    data->data = g_hash_table_new(g_str_hash, g_str_equal);
+    data->data = g_hash_table_new_full(g_str_hash, g_str_equal, _bb_data_destroy_element, _bb_data_destroy_element);
+
     return data;
 }
 
-gchar *bb_data_lookup(gconstpointer data, gchar *key);
-gchar *bb_data_get_var(gconstpointer data, gchar *var);
-gboolean bb_data_set_var(gpointer data, gchar *var, gchar *val);
-gboolean bb_data_del_var(gpointer data, gchar *var);
-gchar *bb_data_get_var_attr(gconstpointer data, gchar *var, gchar *attr);
-gboolean bb_data_set_var_attr(gpointer data, gchar *var, gchar *attr, gchar *val);
-gboolean bb_data_del_var_attr(gpointer data, gchar *var, gchar *attr);
+gchar *bb_data_lookup(gconstpointer ptr, gchar *var)
+{
+    const struct bb_data *data = ptr;
+
+    g_return_val_if_fail(G_LIKELY(data != NULL), FALSE);
+    g_return_val_if_fail(G_LIKELY(data->data != NULL), FALSE);
+    g_return_val_if_fail(G_LIKELY(var != NULL), FALSE);
+
+    return g_hash_table_lookup(data->data, var);
+}
+
+gboolean bb_data_insert(gpointer ptr, gchar *var, gchar *val)
+{
+    struct bb_data *data = ptr;
+
+    g_return_val_if_fail(G_LIKELY(data != NULL), FALSE);
+    g_return_val_if_fail(G_LIKELY(data->data != NULL), FALSE);
+    g_return_val_if_fail(G_LIKELY(var != NULL), FALSE);
+
+    g_hash_table_insert(data->data, var, val);
+
+    return TRUE;
+}
+
+gboolean bb_data_remove(gpointer ptr, gchar *var)
+{
+    struct bb_data *data = ptr;
+    g_return_val_if_fail(G_LIKELY(data != NULL), FALSE);
+    g_return_val_if_fail(G_LIKELY(data->data != NULL), FALSE);
+    g_return_val_if_fail(G_LIKELY(var != NULL), FALSE);
+
+    g_hash_table_remove(data->data, var);
+    return TRUE;
+}
+
+gchar *bb_data_lookup_attr(gconstpointer ptr, gchar *var, gchar *attr);
+gboolean bb_data_insert_attr(gpointer ptr, gchar *var, gchar *attr, gchar *val);
+gboolean bb_data_remove_attr(gpointer ptr, gchar *var, gchar *attr);
 
 void bb_data_destroy(gpointer ptr)
 {
     struct bb_data *data = ptr;
+
+    g_return_if_fail(G_LIKELY(data != NULL));
+
     g_hash_table_destroy(data->data);
     g_free(ptr);
 }
