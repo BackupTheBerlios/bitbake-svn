@@ -768,14 +768,7 @@ MIRRORS[func] = "0"
 MIRRORS () {
 ${DEBIAN_MIRROR}/main	http://snapshot.debian.net/archive/pool
 ${DEBIAN_MIRROR}	ftp://ftp.de.debian.org/debian/pool
-${DEBIAN_MIRROR}	ftp://ftp.es.debian.org/debian/pool
-${DEBIAN_MIRROR}	ftp://ftp.se.debian.org/debian/pool
-${DEBIAN_MIRROR}	ftp://ftp.tr.debian.org/debian/pool
 ${GNU_MIRROR}	ftp://mirrors.kernel.org/gnu
-${GNU_MIRROR}	ftp://ftp.matrix.com.br/pub/gnu
-${GNU_MIRROR}	ftp://ftp.cs.ubc.ca/mirror2/gnu
-${GNU_MIRROR}	ftp://sunsite.ust.hk/pub/gnu
-${GNU_MIRROR}	ftp://ftp.ayamura.org/pub/gnu
 ftp://ftp.kernel.org/pub	http://www.kernel.org/pub
 ftp://ftp.kernel.org/pub	ftp://ftp.de.kernel.org/pub
 }
