@@ -32,8 +32,10 @@
 # IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
+import types
 
 __version__ = "0.0"
+
 
 class TestItem:
     """
@@ -74,7 +76,19 @@ class TestResult:
         return self._test_name
 
     def insert_result(self, item):
-        self._results.append(item)
+        """
+        Insert item into the list of results. We will not
+        enter item if item is None.
+        If item is of type list we will add every element in the
+        list to the list of test results
+        """
+        if item == None:
+            return
+
+        if type(item) == types.ListType:
+            self._results.extend(item)
+        else:
+            self._results.append(item)
 
     def __iter__(self):
         return self._results.__iter__()
