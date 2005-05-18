@@ -46,7 +46,7 @@ except:
     sys.exit(0)
 
 __version__   = 0.2
-__all_tests__ = ["patch_checker",  "source_checker"]
+__all_tests__ = ["patch_checker",  "source_checker", "doc_checker"]
 
 def handle_options( args ):
     """
@@ -74,39 +74,6 @@ def _load_config(file):
         return bb.parse.handle(os.path.join('conf', file), bb.data.init() )
     except IOError, e:
         return None
-
-def _build_array(string):
-    """
-    Build an array out of the string [abc.def]
-    """
-    ar = []
-    tmp = string.split('.')
-
-    for item in tmp:
-        ar.append( item.strip().strip('[').strip(']').strip() )
-
-    return ar
-
-def _parse_test_options(cfg):
-    config = []
-    data = bb.data.getVar('TEST_CONFIGS', cfg)
-    data = data.split(' ')
-
-    for tuple in data:
-        # Lame ass splitting
-        g = tuple.split(',')
-        # Split the tuple by hand
-        a = g[0].strip().strip('(').strip()
-        b = g[1].strip()
-        c = g[2].strip()
-
-        # [a.b]
-        d = _build_array(g[3].strip(')').strip())
-
-        # now append
-        config.append( (a,b,c,d) )
-
-    return config
 
 def _get_instances(tests):
     test_inst = {}
@@ -225,7 +192,7 @@ def start_testing():
     test_config = _load_config('testrun.conf')
     if test_config == None:
         bb.error("Could not parse the bittest configuration file")
-    test_options = _parse_test_options(test_config)
+    test_options = parse_test_options(test_config)
 
     # start running the test
     results = run_tests(data, test_config, test_options, tests)
