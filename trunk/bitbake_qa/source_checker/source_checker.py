@@ -57,7 +57,7 @@ class TestCase:
             return TestItem(file,True,"NO SRC_URI")
 
         try:
-            bb.fetch.init(data, src_uri.split())
+            bb.fetch.init(src_uri.split(), data)
         except bb.fetch.NoMethodError:
             return TestCase.generate_error(file,"""No Method Exception %s
 Type: %s
