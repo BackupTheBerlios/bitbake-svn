@@ -3,7 +3,7 @@ EXTRA_DIST = $(DX_CONFIG)
 
 include doxygen.am
 
-all: doxygen-doc
+# all: doxygen-doc
 
 maintainer-clean-local:
 	rm -f $(srcdir)/Makefile.in
