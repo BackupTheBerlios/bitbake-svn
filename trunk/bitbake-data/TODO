@@ -1,13 +1,18 @@
-[x] Add the lookup/insert/remove functions for both vars and var attrs.
-[ ] Add handling of scopes (parent/child relationships for variable lookups).
-    bb_data_insert_parent(gpointer data, gpointer parent, int index);
-    bb_data_remove_parent(gpointer data, gpointer parent);
-    bb_data_get_parents(gpointer data);
-    Add new parameter to the lookup functions to specify whether the lookup is
-    local to a specific recipe, or whether it should look to the parent scopes as
-    well.  Note that the bitbake recipe lookup functions will behave just like these,
-    making it painless to either implement your own, or just use these as is.
-[ ] Add the last modif date function.
-[ ] Add a rudamentary bitbake recipe handler to bitbake that uses this library, to
-    ensure that bitbake-data meets its needs.
-[ ] Add clean error handling so that recipe handlers can report the cause.
+TODO List
+---------
+NOTE: This is a very simple library with a specific purpose in mind, but we want to
+make sure it's done right, since performance or scalability problems could impact the
+entirety of bitbake and bitbake-ng. --CML
+
+[ ] Fix up the API to accomidate proper error handling, in order to respond to the user
+    and let them know what's going on.  A common problem would be not having write access
+    to the default BBDATAPATH.  Perhaps a more sane default for a normal user would be a
+    file in /var/tmp.
+[ ] Test repeatedly the basic variable set/get/delete operations.
+[ ] Document whether or not the set functions copy the strings of the key/value or use
+    them as is, in the doxygen markup.
+[ ] Code/test/sanity check variable attribute operations.
+[ ] Code/test the last modif date function.
+[ ] Profile the code to ensure it will meet our needs.
+[ ] If necessary, optimize the bottlenecks.
+[ ] Start using it.
