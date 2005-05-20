@@ -61,7 +61,7 @@ COMMIT;
 
 -- Gets the variable name and max priority for that variable, for each var
 
--- SELECT vars.var,MAX(scope.priority) FROM vars
+-- SELECT vars.var, MAX(scope.priority) FROM vars
 -- JOIN scope ON vars.recipe_id = scope.scope_recipe_id
 -- WHERE scope.recipe_id = 4
 -- GROUP BY vars.var;
@@ -71,7 +71,7 @@ COMMIT;
 -- Includes all the values for a given var, not just the highest priority one, leaving
 -- that piece in the hands of the C code.
 
--- SELECT vars.var,vars.val,scope.priority FROM vars
+-- SELECT vars.var, vars.val, scope.priority FROM vars
 -- JOIN scope ON vars.recipe_id = scope.scope_recipe_id
 -- WHERE scope.recipe_id = 4;
 
@@ -80,13 +80,13 @@ COMMIT;
 -- recipe and its scopes (not unlike running bbread on a .bb file)
 
 -- SELECT vars.var, vars.val, scope.priority, maxes.max FROM vars, scope, recipes
--- JOIN (SELECT vars.var var,MAX(scope.priority) max
+-- JOIN (SELECT vars.var var, MAX(scope.priority) max
 --       FROM vars, scope, recipes
---       WHERE vars.recipe_id=scope.scope_recipe_id AND
---       scope.recipe_id=recipes.id AND
---       recipes.recipe='b.bb'
---       GROUP BY vars.var) maxes ON vars.var=maxes.var
--- WHERE recipes.recipe='b.bb' AND
--- vars.recipe_id=scope.scope_recipe_id AND
--- scope.recipe_id=recipes.id AND
--- scope.priority=maxes.max;
+--       WHERE vars.recipe_id = scope.scope_recipe_id AND
+--       scope.recipe_id = recipes.id AND
+--       recipes.recipe = 'b.bb'
+--       GROUP BY vars.var) maxes ON vars.var = maxes.var
+-- WHERE recipes.recipe = 'b.bb' AND
+-- vars.recipe_id = scope.scope_recipe_id AND
+-- scope.recipe_id = recipes.id AND
+-- scope.priority = maxes.max;
