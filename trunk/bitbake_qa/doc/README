@@ -21,5 +21,9 @@ source_checker - It will check if the sources can still be fetched
 
 patch_checker  - It will check if the patches still applies
 
+doc_checker    - It will check if all variables have a documentation
+
+content_checker - It will check for common misusage in variables
+
 tinderbox_resources - It will contain resources to run a tinderbox server
 		      and client.
