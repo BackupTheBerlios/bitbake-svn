@@ -42,8 +42,8 @@ _black_list = []
 
 class TestCase:
     """
-    Check if variables carry a documentation. For each concrete bbfile (which includes bbclasses)
-    we will check if all keys are named
+    Check if variables carry a documentation. For each concrete bbfile
+    (which includes bbclasses) we will check if all keys are named.
     """
 
     def __init__(self):
@@ -58,6 +58,7 @@ class TestCase:
         """
 
         results = []
+
         #
         # The big plot. We will go through every key of file_data
         # and check if there is a doc Flag
