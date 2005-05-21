@@ -15,4 +15,9 @@ entirety of bitbake and bitbake-ng. --CML
 [ ] Code/test the last modif date function.
 [ ] Profile the code to ensure it will meet our needs.
 [ ] If necessary, optimize the bottlenecks.
+[ ] Add functions to supply optimization hints to the datastore.  This is almost certain
+    to be necessary, as writes to sqlite are quickest when done in a single transaction.
+    So, you'd have a function stating that you'll be using this heavily for a while, as
+    a hint that perhaps it should be keeping it in RAM until you're done, or postpone
+    COMMIT until you're done.
 [ ] Start using it.
