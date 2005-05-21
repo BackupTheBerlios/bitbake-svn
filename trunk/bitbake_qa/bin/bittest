@@ -41,12 +41,16 @@ from bittest import *
 
 try:
     import bb
+    import bb.data
 except:
     print "Use PYTHONPATH to point to bitbake/lib"
     sys.exit(0)
 
 __version__   = 0.2
-__all_tests__ = ["patch_checker",  "source_checker", "doc_checker"]
+__all_tests__ = ["patch_checker",
+                 "source_checker",
+                 "doc_checker",
+                 "content_checker"]
 
 def handle_options( args ):
     """
