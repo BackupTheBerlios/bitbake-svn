@@ -1,0 +1,461 @@
+   file "packages/acpid/acpid-1.0.2/init"
+execute "true"
+
+   file "packages/acpid/acpid-1.0.3/init"
+execute "true"
+
+   file "packages/apmd/apmd-3.2.2/init"
+execute "true"
+
+   file "packages/aspell/aspell-0.50.5/mk-dirs_h.py"
+execute "true"
+
+   file "packages/busybox/files/busybox-cron"
+execute "true"
+
+   file "packages/busybox/files/busybox-httpd"
+execute "true"
+
+   file "packages/busybox/files/busybox-udhcpd"
+execute "true"
+
+   file "packages/busybox/files/mount.busybox"
+execute "true"
+
+   file "packages/busybox/files/umount.busybox"
+execute "true"
+
+   file "packages/cyrus-imapd/files/cyrus"
+execute "true"
+
+   file "packages/dhcp/files/init-relay"
+execute "true"
+
+   file "packages/dhcp/files/init-server"
+execute "true"
+
+   file "packages/dnsmasq/files/dnsmasq.conf"
+execute "true"
+
+   file "packages/dnsmasq/files/nylon/dnsmasq.conf"
+execute "true"
+
+   file "packages/dropbear/dropbear/init"
+execute "true"
+
+   file "packages/glib-1.2/glib-1.2-1.2.10/depcomp"
+execute "true"
+
+   file "packages/gnome/gconf-dbus/69gconfd-dbus"
+execute "true"
+
+   file "packages/gnu-config/gnu-config/gnu-configize.in"
+execute "true"
+
+   file "packages/gpsd/files/gpsd"
+execute "true"
+
+   file "packages/hostap/hostap-daemon-0.3.7/init"
+execute "true"
+
+   file "packages/howl/files/mdnsresponder.init"
+execute "true"
+
+   file "packages/iaimaster/files/iaimaster.desktop"
+execute "true"
+
+   file "packages/iaimaster/files/iaimaster.png"
+execute "true"
+
+   file "packages/initscripts/initscripts-1.0/akita/devices"
+execute "true"
+
+   file "packages/initscripts/initscripts-1.0/banner"
+execute "true"
+
+   file "packages/initscripts/initscripts-1.0/bootmisc.sh"
+execute "true"
+
+   file "packages/initscripts/initscripts-1.0/c7x0/devices"
+execute "true"
+
+   file "packages/initscripts/initscripts-1.0/c7x0/keymap-2.6.map"
+execute "true"
+
+   file "packages/initscripts/initscripts-1.0/checkfs.sh"
+execute "true"
+
+   file "packages/initscripts/initscripts-1.0/checkroot.sh"
+execute "true"
+
+   file "packages/initscripts/initscripts-1.0/collie/devices"
+execute "true"
+
+   file "packages/initscripts/initscripts-1.0/devices"
+execute "true"
+
+   file "packages/initscripts/initscripts-1.0/devpts.sh"
+execute "true"
+
+   file "packages/initscripts/initscripts-1.0/finish"
+execute "true"
+
+   file "packages/initscripts/initscripts-1.0/h3600/devices"
+execute "true"
+
+   file "packages/initscripts/initscripts-1.0/h3900/devices"
+execute "true"
+
+   file "packages/initscripts/initscripts-1.0/halt"
+execute "true"
+
+   file "packages/initscripts/initscripts-1.0/hostname.sh"
+execute "true"
+
+   file "packages/initscripts/initscripts-1.0/jornada56x/devices"
+execute "true"
+
+   file "packages/initscripts/initscripts-1.0/jornada7xx/devices"
+execute "true"
+
+   file "packages/initscripts/initscripts-1.0/keymap"
+execute "true"
+
+   file "packages/initscripts/initscripts-1.0/mountall.sh"
+execute "true"
+
+   file "packages/initscripts/initscripts-1.0/mountnfs.sh"
+execute "true"
+
+   file "packages/initscripts/initscripts-1.0/openmn/extractfs"
+execute "true"
+
+   file "packages/initscripts/initscripts-1.0/openmn/packages"
+execute "true"
+
+   file "packages/initscripts/initscripts-1.0/openmn/umountfs"
+execute "true"
+
+   file "packages/initscripts/initscripts-1.0/openzaurus/checkversion"
+execute "true"
+
+   file "packages/initscripts/initscripts-1.0/poodle/devices"
+execute "true"
+
+   file "packages/initscripts/initscripts-1.0/populate-volatile.sh"
+execute "true"
+
+   file "packages/initscripts/initscripts-1.0/ramdisk"
+execute "true"
+
+   file "packages/initscripts/initscripts-1.0/reboot"
+execute "true"
+
+   file "packages/initscripts/initscripts-1.0/rmnologin"
+execute "true"
+
+   file "packages/initscripts/initscripts-1.0/sendsigs"
+execute "true"
+
+   file "packages/initscripts/initscripts-1.0/single"
+execute "true"
+
+   file "packages/initscripts/initscripts-1.0/spitz/devices"
+execute "true"
+
+   file "packages/initscripts/initscripts-1.0/tosa/devices"
+execute "true"
+
+   file "packages/initscripts/initscripts-1.0/uml/devices"
+execute "true"
+
+   file "packages/initscripts/initscripts-1.0/umountfs"
+execute "true"
+
+   file "packages/initscripts/initscripts-1.0/umountnfs.sh"
+execute "true"
+
+   file "packages/initscripts/initscripts-1.0/urandom"
+execute "true"
+
+   file "packages/irda-utils/files/init"
+execute "true"
+
+   file "packages/linux-hotplug/files/mmc.agent"
+execute "true"
+
+   file "packages/linux-hotplug/files/sleeve.agent"
+execute "true"
+
+   file "packages/linux-hotplug/files/sleeve.rc"
+execute "true"
+
+   file "packages/linux-hotplug/files/usbd.agent"
+execute "true"
+
+   file "packages/linux-hotplug/linux-hotplug-20040329/update-usb.usermap"
+execute "true"
+
+   file "packages/linux-hotplug/linux-hotplug-20040920/update-usb.usermap"
+execute "true"
+
+   file "packages/linux/linux-omap-2.6-2.6.9-omap1/omap5912osk/defconfig"
+execute "true"
+
+   file "packages/lirc/files/lircd.init"
+execute "true"
+
+   file "packages/lirc/files/lircmd.init"
+execute "true"
+
+   file "packages/maemo/gconf-osso/gconf-daemon-dbus-oe.sh"
+execute "true"
+
+   file "packages/maradns/files/init"
+execute "true"
+
+   file "packages/matchbox-panel-hacks/matchbox-panel-hacks-0.3-1/xrandr-panelapp.sh"
+execute "true"
+
+   file "packages/mini-init"
+execute "true"
+
+   file "packages/miniinit/files/rcS"
+execute "true"
+
+   file "packages/modutils/files/mnci/modutils.sh"
+execute "true"
+
+   file "packages/modutils/files/modutils.sh"
+execute "true"
+
+   file "packages/mythfront/mythfront-config/epia/serial.sh"
+execute "true"
+
+   file "packages/mythfront/mythfront-config/tftp.sh"
+execute "true"
+
+   file "packages/net-snmp/files/init"
+execute "true"
+
+   file "packages/netkit-base/netkit-base-0.17/init"
+execute "true"
+
+   file "packages/nonworking/apache/apache-2.0.47/init"
+execute "true"
+
+   file "packages/nonworking/apache/apache/files/init"
+execute "true"
+
+   file "packages/nslu2-binary-only/unslung-rootfs-2.3r63/linuxrc"
+execute "true"
+
+   file "packages/nslu2-binary-only/unslung-rootfs-2.3r63/unsling"
+execute "true"
+
+   file "packages/nslu2-binary-only/unslung-rootfs/linuxrc"
+execute "true"
+
+   file "packages/nslu2-binary-only/unslung-rootfs/rc.bootbin"
+execute "true"
+
+   file "packages/nslu2-binary-only/unslung-rootfs/rc.unslung-start"
+execute "true"
+
+   file "packages/nslu2-binary-only/unslung-rootfs/rc.unslung-stop"
+execute "true"
+
+   file "packages/nslu2-binary-only/unslung-rootfs/resling"
+execute "true"
+
+   file "packages/nslu2-binary-only/unslung-rootfs/slingover"
+execute "true"
+
+   file "packages/nslu2-binary-only/unslung-rootfs/unsling"
+execute "true"
+
+   file "packages/nslu2-binary-only/unslung-rootfs/upgrade.cgi"
+execute "true"
+
+   file "packages/ntp/files/ntp"
+execute "true"
+
+   file "packages/ntp/files/ntpd"
+execute "true"
+
+   file "packages/ntp/files/ntpdate"
+execute "true"
+
+   file "packages/openslug-init/openslug-init-0.10/boot/disk"
+execute "true"
+
+   file "packages/openslug-init/openslug-init-0.10/boot/flash"
+execute "true"
+
+   file "packages/openslug-init/openslug-init-0.10/boot/network"
+execute "true"
+
+   file "packages/openslug-init/openslug-init-0.10/boot/nfs"
+execute "true"
+
+   file "packages/openslug-init/openslug-init-0.10/boot/ram"
+execute "true"
+
+   file "packages/openslug-init/openslug-init-0.10/boot/udhcpc.script"
+execute "true"
+
+   file "packages/openslug-init/openslug-init-0.10/functions"
+execute "true"
+
+   file "packages/openslug-init/openslug-init-0.10/initscripts/leds_startup"
+execute "true"
+
+   file "packages/openslug-init/openslug-init-0.10/initscripts/rmrecovery"
+execute "true"
+
+   file "packages/openslug-init/openslug-init-0.10/linuxrc"
+execute "true"
+
+   file "packages/openslug-init/openslug-init-0.10/update-kernel"
+execute "true"
+
+   file "packages/openvpn/files/openvpn"
+execute "true"
+
+   file "packages/opie-alarm/opie-alarm/01opiealarm"
+execute "true"
+
+   file "packages/opie-icon-reload/opie-icon-reload/icon-reload.sh"
+execute "true"
+
+   file "packages/opie-taskbar/opie-taskbar/c7x0/opie"
+execute "true"
+
+   file "packages/opie-taskbar/opie-taskbar/mnci/opie"
+execute "true"
+
+   file "packages/opie-taskbar/opie-taskbar/opie"
+execute "true"
+
+   file "packages/opie-taskbar/opie-taskbar/opie-reorgfiles"
+execute "true"
+
+   file "packages/pad/pad/pad.c"
+execute "true"
+
+   file "packages/portmap/files/portmap.init"
+execute "true"
+
+   file "packages/postfix/files/postfix"
+execute "true"
+
+   file "packages/ppp-dsl/ppp_on_boot.dsl"
+execute "true"
+
+   file "packages/ppp/files/init"
+execute "true"
+
+   file "packages/ppp/files/ip-down"
+execute "true"
+
+   file "packages/ppp/files/ip-up"
+execute "true"
+
+   file "packages/prboom/files/prboom.sh"
+execute "true"
+
+   file "packages/qpf-fonts/files/update-qtfontdir"
+execute "true"
+
+   file "packages/qte-fonts-common/qte-fonts-common/update-qtfontdir"
+execute "true"
+
+   file "packages/qte/qte-4.0.0-snapshot/update-qtfontdir"
+execute "true"
+
+   file "packages/settings-daemon/files/70settings-daemon"
+execute "true"
+
+   file "packages/sharp-binary-only/sharp-camera-support-2.4.18-rmk7-pxa3-embedix/sharpzdc"
+execute "true"
+
+   file "packages/sharp-binary-only/sharp-sdmmc-support-2.4.18-rmk7-pxa3-embedix/sd"
+execute "true"
+
+   file "packages/sharp-binary-only/sharp-sdmmc-support-2.4.18-rmk7-pxa3-embedix/sdcontrol"
+execute "true"
+
+   file "packages/sharp-binary-only/sharp-sdmmc-support-2.4.18-rmk7-pxa3-embedix/sdmgr"
+execute "true"
+
+   file "packages/simpad-utilities/genboot/simpad-make-flashimg"
+execute "true"
+
+   file "packages/sysvinit/sysvinit/bootlogd.init"
+execute "true"
+
+   file "packages/sysvinit/sysvinit/openmn/rcS"
+execute "true"
+
+   file "packages/sysvinit/sysvinit/rc"
+execute "true"
+
+   file "packages/sysvinit/sysvinit/rcS"
+execute "true"
+
+   file "packages/txdrug/txdrug-0.1/opt/QtPalmtop/etc/txdrug/drugs.db"
+execute "true"
+
+   file "packages/udev/files/init"
+execute "true"
+
+   file "packages/unionfs/unionroot-utils/mount.unionroot"
+execute "true"
+
+   file "packages/unionfs/unionroot-utils/umount.unionroot"
+execute "true"
+
+   file "packages/unionfs/unionroot/init.unionroot"
+execute "true"
+
+   file "packages/unionfs/unionroot/init.unionroot.old"
+execute "true"
+
+   file "packages/update-modules/update-modules-1.0/openmn/update-modules"
+execute "true"
+
+   file "packages/update-modules/update-modules-1.0/update-modules"
+execute "true"
+
+   file "packages/vsftpd/files/init"
+execute "true"
+
+   file "packages/vsftpd/files/vsftpd.conf"
+execute "true"
+
+   file "packages/wireless-tools/wireless-tools/wireless-tools.if-pre-up"
+execute "true"
+
+   file "packages/wlan-ng/files/post-down"
+execute "true"
+
+   file "packages/wlan-ng/files/pre-up"
+execute "true"
+
+   file "packages/wlan-ng/files/resume"
+execute "true"
+
+   file "packages/wlan-ng/files/usbctl"
+execute "true"
+
+   file "packages/wpa-supplicant/files/init.sh"
+execute "true"
+
+   file "packages/wrt/wrt-init/mount"
+execute "true"
+
+   file "packages/wrt/wrt-init/wrtboot"
+execute "true"
+
+   file "packages/zaurus-updater/spitz/updater.sh"
+execute "true"
