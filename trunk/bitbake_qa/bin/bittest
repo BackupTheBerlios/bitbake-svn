@@ -53,6 +53,14 @@ __all_tests__ = ["patch_checker",
                  "doc_checker",
                  "content_checker"]
 
+__all_reports__ = {
+    "TestReportText" : TestReportText
+}
+
+__all_stores__  = {
+    "TestStoreArray" : TestStoreArray
+}
+
 def handle_options( args ):
     """
     Handle the options and return the handled options and the rest (not parsed)
@@ -65,10 +73,15 @@ on the cmd line
 
     parser.add_option( "-o", "--output", help = "print the output to the file",
                        action = "store", dest = "output", default  = None )
-    parser.add_option( "-f", "--format", help = "print the output in the specified format",
-                       action = "store", dest = "format", default = None )
+    parser.add_option( "-r", "--report", help = "print the report in the specified format",
+                       action = "store", dest = "report", default = "TestReportText" )
 
     options, args = parser.parse_args( args )
+
+    if not options.report in __all_reports__:
+        print "The specified report format is not available. Falling back to TestReportText"
+        options.report = "TestReportText"
+
     return options, args[1:]
 
 def _load_config(file):
@@ -89,9 +102,9 @@ def _get_instances(tests):
 
     return test_inst
 
-def generate_results(test_results):
+def generate_results(test_results, options):
     for result in test_results:
-        test_output = TestReportText(result, test_results[result])
+        test_output = __all_reports__[options.report](result, test_results[result])
         test_output.print_result()
 
 def run_tests(data,test_config,test_options, tests, bbfiles = None):
@@ -201,7 +214,7 @@ def start_testing():
 
     # start running the test
     results = run_tests(data, test_config, test_options, tests)
-    generate_results(results)
+    generate_results(results, options)
 
 
 
