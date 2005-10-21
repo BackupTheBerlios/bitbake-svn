@@ -33,17 +33,27 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 import os, glob
-from bb import make
 
 __version__ = "0.0"
 
+def __find_files( path ):
+    """
+    BitBake does not offer a find_files implementation
+    so we copy and paste it here :(
+    """
+    findcmd = 'find ' + path + ' -name *.bb | grep -v SCCS/'
+    try:
+        finddata = os.popen(findcmd)
+    except OSError:
+        return []
+    return finddata.readlines()
 
 def find_files(files):
     lst = []
 
     for file in files:
         if os.path.isdir(file):
-            d_files = bb.make.find_bbfiles(f)
+            d_files = __find_files(f)
             if d_files:
                 lst += d_files
         else:

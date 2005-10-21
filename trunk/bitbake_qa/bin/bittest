@@ -42,6 +42,7 @@ from bittest import *
 try:
     import bb
     import bb.data
+    import bb.parse
 except:
     print "Use PYTHONPATH to point to bitbake/lib"
     sys.exit(0)
