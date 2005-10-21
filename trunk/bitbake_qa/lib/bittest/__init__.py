@@ -1,11 +1,11 @@
 from testresult import TestItem, TestResult
-from testoutput_text import TestOutputText
+from testreport_text import TestReportText
 from config import parse_test_options
 
 __all__ = [
 	"TestResult",
 	"TestItem",
-	"TestOutputText",
+	"TestReportText",
 
 # fileparser.py
 	"fileparser",

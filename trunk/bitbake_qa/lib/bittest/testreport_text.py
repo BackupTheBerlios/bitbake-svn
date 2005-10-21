@@ -36,7 +36,7 @@ __version__ = "0.0"
 
 import os, sys
 
-class TestOutputText:
+class TestReportText:
     """
     Output the Test Result as Text
     """
@@ -49,4 +49,4 @@ class TestOutputText:
         print "Test results for %s:"      % self.test_config
         print "\tNumber of ran tests: %d" % len(self.test_result)
         for test in self.test_result:
-            print "Tested file: %s Test Result: %s Test Comment:%s" % (test.tested_file(),test.test_result(),test.test_comment())
+            print "Tested file: %s\nTest Result: %s\nTest Comment:%s\n\n" % (test.tested_file(),test.test_result(),test.test_comment())

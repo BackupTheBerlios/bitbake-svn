@@ -91,7 +91,7 @@ def _get_instances(tests):
 
 def generate_results(test_results):
     for result in test_results:
-        test_output = TestOutputText(result, test_results[result])
+        test_output = TestReportText(result, test_results[result])
         test_output.print_result()
 
 def run_tests(data,test_config,test_options, tests, bbfiles = None):
