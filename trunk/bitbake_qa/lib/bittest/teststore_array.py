@@ -34,7 +34,9 @@
 
 __version__ = "0.0"
 
-class TestStoreArray:
+class TestStoreArray(list):
     """
     TestStore Array based implementation
     """
+    def __init__(self, file):
+        pass

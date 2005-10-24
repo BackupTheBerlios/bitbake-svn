@@ -54,7 +54,8 @@ __all_tests__ = ["patch_checker",
                  "content_checker"]
 
 __all_reports__ = {
-    "TestReportText" : TestReportText
+    "TestReportText" : TestReportText,
+    "TestReportHTML" : TestReportHTML
 }
 
 __all_stores__  = {
@@ -75,12 +76,18 @@ on the cmd line
                        action = "store", dest = "output", default  = None )
     parser.add_option( "-r", "--report", help = "print the report in the specified format",
                        action = "store", dest = "report", default = "TestReportText" )
+    parser.add_option( "-s", "--store",  help = "test result storage and transportation",
+                       action = "store", dest = "store", default = "TestStoreArray" )
 
     options, args = parser.parse_args( args )
 
     if not options.report in __all_reports__:
         print "The specified report format is not available. Falling back to TestReportText"
         options.report = "TestReportText"
+
+    if not options.store  in __all_stores__:
+        print "The specified store format is not available. Falling back to TestStoreArray"
+        options.store = "TestStoreArray"
 
     return options, args[1:]
 
@@ -154,6 +161,7 @@ def run_tests(data,test_config,test_options, tests, bbfiles = None):
                     continue
                 except Exception, e:
                     bb.note("Error on parsing: %s:%s" % (bbfile, e))
+                    continue
 
                 # run the testcases now
                 for test in test_instances:
