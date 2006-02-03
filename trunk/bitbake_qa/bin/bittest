@@ -53,7 +53,7 @@ __version__   = 0.2
 __all_tests__ = ["patch_checker",
                  "source_checker",
                  "doc_checker",
-                 "content_checker"]
+                 "content_checker" ]
 
 __all_reports__ = {
     "TestReportText" : TestReportText,

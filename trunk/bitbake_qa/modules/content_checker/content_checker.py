@@ -34,11 +34,56 @@
 
 from bittest import TestItem
 from bb      import data
+import types
+
+#
+# The tests are copied from the oelint.bbclass to this location
+#
+
 
 # quite simple without regexps
 bad_signs = {
-    'SRC_URI' : '?' # SRC_URI should not contain URLs like http://foo.foo?file=foo.tar.gz
-    }
+    'SRC_URI' : '?', # SRC_URI should not contain URLs like http://foo.foo?file=foo.tar.gz
+    'RDEPENDS': 'kernel-module-' # According to reenoo this is always wrong
+}
+
+# the checks
+
+# Test for the HOMEPAGE
+def homepage1(fn, value):
+    if value == "unknown":
+        return TestItem(fn, False, "HOMEPAGE is not set")
+    else:
+        return None
+
+def homepage2(fn, value):
+    if not value.startswith("http://"):
+        return TestItem(fn, False, "HOMEPAGE doesn't start with http://")
+    else:
+        return None
+
+# Test for the MAINTAINER
+def maintainer1(fn, value):
+    if value == "OpenEmbedded Team <oe@handhelds.org>":
+        return TestItem(fn, False, "explicit MAINTAINER is missing, using default")
+    else:
+        return None
+
+def maintainer2(fn, value):
+    if value.find("@") == -1:
+        return TestItem(fn, False, "You forgot to put an e-mail address into MAINTAINER")
+    else:
+        return None
+
+# these are checks we execute on each variable
+variable_checks = {
+    'DESCRIPTION' : None,
+    'HOMEPAGE'    : [homepage1,homepage2],
+    'LICENSE'     : None,
+    'MAINTAINER'  : [maintainer1,maintainer2],
+    'SECTION'     : None,
+    'PRIORITY'    : None
+}
 
 class TestCase:
     """
@@ -55,11 +100,39 @@ class TestCase:
         """
         results = []
 
+        # apply the heuristics
         for sign in bad_signs.keys():
-            value = data.getVar(sign, file_data, True)
+            try:
+                value = data.getVar(sign, file_data, True)
+            except:
+                try:
+                    value = data.getVar(sign, file_data, False)
+                except:
+                    pass
+
             if not value == None:
                 if bad_signs[sign] in value:
                     results.append( TestItem(file_name,False,"BAD sign found for %s." % sign))
+
+        # apply the variable content check
+        for variable in variable_checks.keys():
+            value = data.getVar(variable, file_data, True)
+
+            # is this require variable present
+            if value == None:
+                result.append( TestItem(file_name,False, "Required variable '%(variable)s' not found." % vars()) )
+            else:
+                checks = variable_checks[variable]
+                # now check if we need to check a list of checks
+                if type(checks) == types.ListType:
+                    for check in checks:
+                        res = check(file_name, value)
+                        if res:
+                            results.append( res )
+                elif checks:
+                    res = checks(file_name, value)
+                    if res:
+                        results.append( res )
 
         return results
 
