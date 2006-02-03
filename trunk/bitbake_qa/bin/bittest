@@ -35,7 +35,9 @@
 
 import sys, os, optparse
 
+# append the lib subdir and modules subdir to the system python path
 sys.path.append(os.path.join(os.path.dirname(os.path.dirname(sys.argv[0])), 'lib'))
+sys.path.append(os.path.join(os.path.dirname(os.path.dirname(sys.argv[0])), 'modules'))
 
 from bittest import *
 
