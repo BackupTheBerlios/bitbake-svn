@@ -48,39 +48,71 @@ bad_signs = {
 }
 
 # the checks
+def toInt(b):
+    if b:
+        return 0
+    else:
+        return 1
 
 # Test for the HOMEPAGE
-def homepage1(fn, value):
-    if value == "unknown":
-        return TestItem(fn, False, "HOMEPAGE is not set")
-    else:
-        return None
+def homepage1():
+    return lambda fn,value : [TestItem(fn,False,"HOMEPAGE is not set %s" % value), None] [toInt(value == 'unknown')]
 
-def homepage2(fn, value):
-    if not value.startswith("http://"):
-        return TestItem(fn, False, "HOMEPAGE doesn't start with http://")
-    else:
-        return None
+def homepage2():
+    return lambda fn,value : [TestItem(fn,False,"HOMEPAGE doesn't start with http://"), None][toInt(not value.startswith("http://"))]
 
 # Test for the MAINTAINER
-def maintainer1(fn, value):
-    if value == "OpenEmbedded Team <oe@handhelds.org>":
-        return TestItem(fn, False, "explicit MAINTAINER is missing, using default")
-    else:
-        return None
+def maintainer1():
+    return lambda fn,value : [TestItem(fn,False, "explicit MAINTAINER is missing, using default"), None][toInt(value == "OpenEmbedded Team <oe@handhelds.org>")]
 
-def maintainer2(fn, value):
-    if value.find("@") == -1:
-        return TestItem(fn, False, "You forgot to put an e-mail address into MAINTAINER")
-    else:
-        return None
+def maintainer2():
+    return lambda fn, value : [TestItem(fn,False,"You forgot to put an e-mail address into MAINTAINER"),None] [toInt(value.find("@") == -1)]
+
+
+# Check the licenses of the Files
+valid_licenses = {
+    "GPL-2"     : "GPLv2",
+    "GPL LGPL FDL" : True,
+    "GPL PSF"   : True,
+    "GPL/QPL"   : True,
+    "GPL"       : True,
+    "GPLv2"     : True,
+    "GPLV2"     : "GPLv2",
+    "IBM"       : True,
+    "LGPL GPL"  : True,
+    "LGPL"      : True,
+    "MIT"       : True,
+    "OSL"       : True,
+    "Perl"      : True,
+    "Public Domain" : True,
+    "QPL"       : "GPL/QPL",
+    "Vendor"    : True,
+    "unknown"   : False,
+}
+
+def license2():
+    return lambda fn, value : [TestItem(fn,False,"LICENSE '%s' is not recommed, better use '%s'" % (value,valid_licenses[value])),None][toInt(valid_licenses[value] != True)]
+def license1():
+    return lambda fn, value : [TestItem(fn,False,"LICENSE is not set %s" % value),None][toInt(value == "unknown")]
+
+# Check the priorities here...
+valid_priorities = {
+    "standard"      : True,
+    "required"      : True,
+    "optional"      : True,
+    "extra"         : True,
+}
+
+def priority1():
+    return lambda fn, value : [TestItem(fn,False,"PRIORITY '%s' is not recommed" % value), None][toInt(valid_priorities[value]==False)]
+
 
 # these are checks we execute on each variable
 variable_checks = {
-    'DESCRIPTION' : None,
-    'HOMEPAGE'    : [homepage1,homepage2],
-    'LICENSE'     : None,
-    'MAINTAINER'  : [maintainer1,maintainer2],
+    'DESCRIPTION' : None,  # we only want the presence check
+    'HOMEPAGE'    : [homepage1(),homepage2()],
+    'LICENSE'     : [license1(),license2()],
+    'MAINTAINER'  : [maintainer1(),maintainer2()],
     'SECTION'     : None,
     'PRIORITY'    : None
 }
@@ -127,8 +159,11 @@ class TestCase:
                 if type(checks) == types.ListType:
                     for check in checks:
                         res = check(file_name, value)
+                        # if one test failed we will stop here
                         if res:
                             results.append( res )
+                            print "Stopping the check for variable %s" % variable
+                            break
                 elif checks:
                     res = checks(file_name, value)
                     if res:
