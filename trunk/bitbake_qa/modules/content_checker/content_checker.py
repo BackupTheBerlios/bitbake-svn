@@ -91,6 +91,9 @@ valid_licenses = {
 }
 
 def license2():
+    return lambda fn, value : [TestItem(fn,False,"LICENSE '%s' is not known" % value),None][toInt(not valid_licenses.has_key(value))]
+
+def license3():
     return lambda fn, value : [TestItem(fn,False,"LICENSE '%s' is not recommed, better use '%s'" % (value,valid_licenses[value])),None][toInt(valid_licenses[value] != True)]
 def license1():
     return lambda fn, value : [TestItem(fn,False,"LICENSE is not set %s" % value),None][toInt(value == "unknown")]
@@ -111,7 +114,7 @@ def priority1():
 variable_checks = {
     'DESCRIPTION' : None,  # we only want the presence check
     'HOMEPAGE'    : [homepage1(),homepage2()],
-    'LICENSE'     : [license1(),license2()],
+    'LICENSE'     : [license1(),license2(),license3()],
     'MAINTAINER'  : [maintainer1(),maintainer2()],
     'SECTION'     : None,
     'PRIORITY'    : None
