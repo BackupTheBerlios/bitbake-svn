@@ -47,26 +47,19 @@ bad_signs = {
     'RDEPENDS': 'kernel-module-' # According to reenoo this is always wrong
 }
 
-# the checks
-def toInt(b):
-    if b:
-        return 0
-    else:
-        return 1
-
 # Test for the HOMEPAGE
 def homepage1():
-    return lambda fn,value : [TestItem(fn,False,"HOMEPAGE is not set %s" % value), None] [toInt(value == 'unknown')]
+    return lambda fn,value : [None,TestItem(fn,False,"HOMEPAGE is not set %s" % value)] [value == 'unknown']
 
 def homepage2():
-    return lambda fn,value : [TestItem(fn,False,"HOMEPAGE doesn't start with http://"), None][toInt(not value.startswith("http://"))]
+    return lambda fn,value : [None,TestItem(fn,False,"HOMEPAGE doesn't start with http://")][not value.startswith("http://")]
 
 # Test for the MAINTAINER
 def maintainer1():
-    return lambda fn,value : [TestItem(fn,False, "explicit MAINTAINER is missing, using default"), None][toInt(value == "OpenEmbedded Team <oe@handhelds.org>")]
+    return lambda fn,value : [None,TestItem(fn,False, "explicit MAINTAINER is missing, using default"), None][value == "OpenEmbedded Team <oe@handhelds.org>"]
 
 def maintainer2():
-    return lambda fn, value : [TestItem(fn,False,"You forgot to put an e-mail address into MAINTAINER"),None] [toInt(value.find("@") == -1)]
+    return lambda fn, value : [None,TestItem(fn,False,"You forgot to put an e-mail address into MAINTAINER"),None] [value.find("@") == -1]
 
 
 # Check the licenses of the Files
@@ -91,12 +84,12 @@ valid_licenses = {
 }
 
 def license2():
-    return lambda fn, value : [TestItem(fn,False,"LICENSE '%s' is not known" % value),None][toInt(not valid_licenses.has_key(value))]
+    return lambda fn, value : [None,TestItem(fn,False,"LICENSE '%s' is not known" % value),None][not valid_licenses.has_key(value)]
 
 def license3():
-    return lambda fn, value : [TestItem(fn,False,"LICENSE '%s' is not recommed, better use '%s'" % (value,valid_licenses[value])),None][toInt(valid_licenses[value] != True)]
+    return lambda fn, value : [None,TestItem(fn,False,"LICENSE '%s' is not recommed, better use '%s'" % (value,valid_licenses[value])),None][valid_licenses[value] != True]
 def license1():
-    return lambda fn, value : [TestItem(fn,False,"LICENSE is not set %s" % value),None][toInt(value == "unknown")]
+    return lambda fn, value : [None,TestItem(fn,False,"LICENSE is not set %s" % value)][value == "unknown"]
 
 # Check the priorities here...
 valid_priorities = {
@@ -106,8 +99,72 @@ valid_priorities = {
     "extra"         : True,
 }
 
+
 def priority1():
-    return lambda fn, value : [TestItem(fn,False,"PRIORITY '%s' is not recommed" % value), None][toInt(valid_priorities[value]==False)]
+    return lambda fn, value : [None,TestItem(fn,False,"PRIORITY '%s' is not known" % value)][not valid_priorities.has_key(value)]
+
+def priority2():
+    return lambda fn, value : [None,TestItem(fn,False,"PRIORITY '%s' is not recommed" % value)][valid_priorities[value]==False]
+
+
+# Test the SECTION now
+valid_sections = {
+    # Current Section         Correct section
+    "apps"			: True,
+    "audio"			: True,
+    "base"			: True,
+    "console/games"		: True,
+    "console/net"		: "console/network",
+    "console/network"	: True,
+    "console/utils"		: True,
+    "devel"			: True,
+    "developing"		: "devel",
+    "devel/python"		: True,
+    "fonts"			: True,
+    "games"			: True,
+    "games/libs"		: True,
+    "gnome/base"		: True,
+    "gnome/libs"		: True,
+    "gpe"			: True,
+    "gpe/libs"		: True,
+    "gui"			: False,
+    "libc"			: "libs",
+    "libs"			: True,
+    "libs/net"		: True,
+    "multimedia"		: True,
+    "net"			: "network",
+    "NET"			: "network",
+    "network"		: True,
+    "opie/applets"		: True,
+    "opie/applications"	: True,
+    "opie/base"		: True,
+    "opie/codecs"		: True,
+    "opie/decorations"	: True,
+    "opie/fontfactories"	: True,
+    "opie/fonts"		: True,
+    "opie/games"		: True,
+    "opie/help"		: True,
+    "opie/inputmethods"	: True,
+    "opie/libs"		: True,
+    "opie/multimedia"	: True,
+    "opie/pim"		: True,
+    "opie/setting"		: "opie/settings",
+    "opie/settings"		: True,
+    "opie/Shell"		: False,
+    "opie/styles"		: True,
+    "opie/today"		: True,
+    "scientific"		: True,
+    "utils"			: True,
+    "x11"			: True,
+    "x11/libs"		: True,
+    "x11/wm"		: True,
+}
+
+def section1():
+    return lambda fn,value : [None,TestItem(fn,False,"SECTION '%s' is not known" % value)][not valid_sections.has_key(value)]
+def section2():
+    return lambda fn,value : [None,TestItem(fn,False,"SECTION '%s' is not reccomed use '%s' instead" % (value,valid_sections[value]))][valid_sections[value]!=True]
+
 
 
 # these are checks we execute on each variable
@@ -116,8 +173,8 @@ variable_checks = {
     'HOMEPAGE'    : [homepage1(),homepage2()],
     'LICENSE'     : [license1(),license2(),license3()],
     'MAINTAINER'  : [maintainer1(),maintainer2()],
-    'SECTION'     : None,
-    'PRIORITY'    : None
+    'SECTION'     : [section1(),section2()],
+    'PRIORITY'    : [priority1(), priority2()],
 }
 
 class TestCase:
