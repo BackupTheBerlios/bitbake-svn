@@ -41,12 +41,13 @@ class TestReportText:
     Output the Test Result as Text
     """
 
-    def __init__(self,test_config,test_result):
+    def __init__(self,test_config,test_result,file):
         self.test_config = test_config
         self.test_result = test_result
+        self.test_file   = file
 
     def print_result(self):
-        print "Test results for %s:"      % self.test_config
-        print "\tNumber of ran tests: %d" % len(self.test_result)
+        print >> self.test_file, "Test results for %s:"      % self.test_config
+        print >> self.test_file, "\tNumber of ran tests: %d" % len(self.test_result)
         for test in self.test_result:
-            print "Tested file: %s\nTest Result: %s\nTest Comment:%s\n\n" % (test.tested_file(),test.test_result(),test.test_comment())
+            print >> self.test_file, "Tested file: %s\nTest Result: %s\nTest Comment:%s\n\n" % (test.tested_file(),test.test_result(),test.test_comment())
