@@ -53,11 +53,6 @@ class TestCase:
         try:
             bb.build.exec_func('do_unpack', data)
             bb.build.exec_func('do_patch',  data)
-
-            try:
-                bb.build.exec_func('do_clean', data)
-            except:
-                pass
         except bb.build.FuncFailed:
             error = """Function failed
 Distro: %s
@@ -77,6 +72,6 @@ ARCH: %s
 FPU: %s
 """ % (bb.event.getName(e),bb.data.getVar('DISTRO',data),bb.data.getVar('MACHINE',data),bb.data.getVar('TARGET_OS',data, True),bb.data.getVar('TARGET_ARCH',data, True),bb.data.getVar('TARGET_FPU',data))
 
-
+        bb.build.exec_func('do_clean', data)
 
         return TestItem(file,error == None, error)
