@@ -80,6 +80,8 @@ valid_licenses = {
     "Public Domain" : True,
     "QPL"       : "GPL/QPL",
     "Vendor"    : True,
+    "BSD"       : True,
+    "tickypip-levels" : True,
     "unknown"   : False,
 }
 
