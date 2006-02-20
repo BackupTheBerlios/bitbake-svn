@@ -67,7 +67,8 @@ valid_licenses = {
     "GPL-2"     : "GPLv2",
     "GPL LGPL FDL" : True,
     "GPL PSF"   : True,
-    "GPL/QPL"   : True,
+    "GPL/QPL"   : "GPL QPL",
+    "GPL QPL"   : True
     "GPL"       : True,
     "GPLv2"     : True,
     "GPLV2"     : "GPLv2",
@@ -78,7 +79,7 @@ valid_licenses = {
     "OSL"       : True,
     "Perl"      : True,
     "Public Domain" : True,
-    "QPL"       : "GPL/QPL",
+    "QPL"       : True,
     "Vendor"    : True,
     "BSD"       : True,
     "tickypip-levels" : True,
