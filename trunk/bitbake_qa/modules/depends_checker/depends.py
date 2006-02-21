@@ -2,7 +2,7 @@
 # -*- tab-width: 4; c-basic-offset: 4; indent-tabs-mode: nil -*-
 #
 #
-# Copyright (C)       2005 Holger Hans Peter Freyther
+# Copyright (C)       2006 Holger Hans Peter Freyther
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -34,6 +34,7 @@
 
 from bittest import TestItem
 from bb      import data
+from bb      import utils
 
 class TestCase:
     """
@@ -49,19 +50,35 @@ class TestCase:
         non native packages
         """
         if data.inherits_class("native", file_data):
-            copy = data.createCopy(file_data)
+            def check_rdepends(key):
+                """
+                Check the RDEPENDS for the key
+                """
 
-            # add the package name to overrides and update the data
-            pn = data.getVar('PN', copy, True)
-            ov = data.getVar('OVERRIDES', copy, True)
-            data.setVar('OVERRIDES', '%s:%s' % (pn,ov), copy )
-            data.update_data(copy)
+                copy = data.createCopy(file_data)
+                if "_${PN}" in key:
+                    pn = data.getVar('PN', copy, True)
+                    ov = data.getVar('OVERRIDES', copy, True)
+                    data.setVar('OVERRIDES', '%s:%s' % (pn,ov), copy )
+                    data.update_data(copy)
+                    key = "RDEPENDS"
+                
+                rdepends = data.getVar(key, copy, True).strip()
+                rdepends = utils.explode_deps(rdepends)
 
-            rdepends = data.getVar('RDEPENDS', copy, True).strip()
-            rdepends = rdepends.split(' ')
-            for rdepend in rdepends:
-                if len(rdepend.strip()) != 0 and not "-native" in rdepend:
-                    return TestItem(file_name,False,"Native package is RDEPENDing on non native package '%s'" % rdepend)
+                for rdepend in rdepends:
+                    if len(rdepend.strip()) != 0 and not "-native" in rdepend:
+                        return TestItem(file_name,False,"Native package is %s'ing on non native package '%s'" % (key,rdepend))
+
+            # check every key with RDEPENDS
+            # this finds more RDEPENDS :)
+            cases = []
+            for key in data.keys(file_data):
+                if key.startswith('RDEPENDS'):
+                    res = check_rdepends(key)
+                    if res:
+                        cases.append( res )
+            return cases
 
     def test_name(self):
         """
