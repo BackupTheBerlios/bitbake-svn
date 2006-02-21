@@ -46,42 +46,49 @@ class TestCase:
 
     def test(self,file_name, file_data):
         """
-        Check if the RDEPENDS of a native package includes
-        non native packages
+        Check if the RDEPENDS or RRECOMMENDS of a native 
+        package includes non native packages
         """
         if data.inherits_class("native", file_data):
-            def check_rdepends(key):
+            def check_rdepends(key, base_var):
                 """
-                Check the RDEPENDS for the key
+                Check the RDEPENDS/RRECOMMENDS for the key
                 """
 
                 copy = data.createCopy(file_data)
+                cases = []
                 if "_${PN}" in key:
                     pn = data.getVar('PN', copy, True)
                     ov = data.getVar('OVERRIDES', copy, True)
                     data.setVar('OVERRIDES', '%s:%s' % (pn,ov), copy )
                     data.update_data(copy)
-                    key = "RDEPENDS"
+                    key = base_var
                 
-                rdepends = data.getVar(key, copy, True).strip()
-                rdepends = utils.explode_deps(rdepends)
+                deps = data.getVar(key, copy, True).strip()
+                deps = utils.explode_deps(deps)
 
-                for rdepend in rdepends:
-                    if len(rdepend.strip()) != 0 and not "-native" in rdepend:
-                        return TestItem(file_name,False,"Native package is %s'ing on non native package '%s'" % (key,rdepend))
+                for dep in deps:
+                    if len(dep.strip()) != 0 and not "-native" in dep:
+                        cases.append( TestItem(file_name,False,"Native package is %s'ing on non native package '%s'" % (key,dep)) )
+                return cases
 
             # check every key with RDEPENDS
             # this finds more RDEPENDS :)
             cases = []
             for key in data.keys(file_data):
+                res = None
                 if key.startswith('RDEPENDS'):
-                    res = check_rdepends(key)
-                    if res:
-                        cases.append( res )
+                    res = check_rdepends(key, 'RDEPENDS')
+                elif key.startswith('RRECOMMENDS'):
+                    res = check_rdepends(key, 'RRECOMMENDS')
+
+                # add the result
+                if res:
+                    cases += res
             return cases
 
     def test_name(self):
         """
         Retutnr a name for the test
         """
-        return "RDEPEND checker for native packages"
+        return "RDEPEND and RRECOMMENDS checker for native packages"
