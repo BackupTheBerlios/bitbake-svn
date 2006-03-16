@@ -1,0 +1,12 @@
+The purpose of this directory is to test the
+python bitbake implementation. The unittest
+test module is used for this purpose.
+
+What do we test:
+    - The fetchers (git,svn,cvs,svk,file,http) and the fetch
+      module itself
+    - The python parser
+    - The data module(s)
+    - The selection of different PROVIDERS
+    - BBCollection handling
+    - Whatever was once broken
