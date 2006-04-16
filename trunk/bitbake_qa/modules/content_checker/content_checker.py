@@ -68,7 +68,7 @@ valid_licenses = {
     "GPL LGPL FDL" : True,
     "GPL PSF"   : True,
     "GPL/QPL"   : "GPL QPL",
-    "GPL QPL"   : True
+    "GPL QPL"   : True,
     "GPL"       : True,
     "GPLv2"     : True,
     "GPLV2"     : "GPLv2",
