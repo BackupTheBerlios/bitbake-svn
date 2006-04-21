@@ -29,9 +29,6 @@ class BBParserTestCase(unittest.TestCase):
 
         We do that with relative and absolute pathnames
         """
-        import bb
-	from bb.parser 
-
         # test before we begin. We do not want any files
         self.assertFalse(os.path.exists(os.path.join(_test_dir,'mkdir')))
 

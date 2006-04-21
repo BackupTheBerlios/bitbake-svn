@@ -15,13 +15,13 @@ class BBModuleTestCase(unittest.TestCase):
     Test Case for BB Library Module
     """
 
-    def __init__(self,methodName='runTest'):
+    def setUp(self):
         """
         Clean the test directory
         """
+
         import os
         os.system('rm -r %s > /dev/null 2>&1' % os.path.join(_test_dir,'mkdir'))
-        unittest.TestCase.__init__(self,methodName)
 
     def testMkdir(self):
         """
