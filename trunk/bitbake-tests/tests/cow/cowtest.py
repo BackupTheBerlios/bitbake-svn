@@ -6,6 +6,9 @@ Copyright 2006 Holger Freyther <freyther@handhelds.org>
 USE this code for whatever purpose you want to use it
 """
 
+import sys, os
+sys.path.append(os.path.join("..","..","..","bitbake","lib"))
+
 
 import unittest
 
@@ -19,7 +22,7 @@ class COWTestCase(unittest.TestCase):
         Test and set
         """
         from bb.COW import COWBase
-        a = COWBase
+        a = COWBase.copy()
 
         self.assertEquals(False, a.haskey('a'))
 
@@ -34,7 +37,6 @@ class COWTestCase(unittest.TestCase):
         for x in a.iterkeys():
             print x
 
-
     def testCopyCopy(self):
         """
         Test the copy of copies
@@ -42,10 +44,9 @@ class COWTestCase(unittest.TestCase):
 
         from bb.COW import COWBase
 
-
         # create two COW dict 'instances'
-        b = COWBase
-        c = COWBase
+        b = COWBase.copy()
+        c = COWBase.copy()
 
         # assign some keys to one instance, some keys to another
         b['a'] = 10
@@ -55,7 +56,7 @@ class COWTestCase(unittest.TestCase):
         # test separation of the two instances
         self.assertEquals(False, c.haskey('c'))
         self.assertEquals(30, c['a'])
-        self.assertEquals(10, a['a'])
+        self.assertEquals(10, b['a'])
 
         # test copy
         b_2 = b.copy()
@@ -67,7 +68,7 @@ class COWTestCase(unittest.TestCase):
         b_2['d'] = 40
         self.assertEquals(False, c_2.haskey('d'))
         self.assertEquals(True, b_2.haskey('d'))
-        self.assertEquals(40, b_2.haskey('d'))
+        self.assertEquals(40, b_2['d'])
         self.assertEquals(False, b.haskey('d'))
         self.assertEquals(False, c.haskey('d'))
 
@@ -95,13 +96,13 @@ class COWTestCase(unittest.TestCase):
         self.assertEquals('viel', b_3['e'])
         self.assertEquals(4711, c_3['e'])
         self.assertEquals(False, c_2.haskey('e'))
-        self.assertEquals(False, b_3.haskey('e'))
+        self.assertEquals(True, b_3.haskey('e'))
         self.assertEquals(False, b_3_2.haskey('e'))
         self.assertEquals(False, b_2.haskey('e'))
 
     def testCow(self):
         from bb.COW import COWBase
-        c = COWBase
+        c = COWBase.copy()
         c['123'] = 1027
         c['other'] = 4711
         c['d'] = { 'abc' : 10, 'bcd' : 20 }
@@ -119,6 +120,8 @@ class COWTestCase(unittest.TestCase):
         copy['123'] = 1028
         copy['other'] = 4712
         copy['d']['abc'] = 20
+
+	# FIXME: This won't work - you can only use immutable types on the class.
 
         self.assertEquals(1027, c['123'])
         self.assertEquals(4711, c['other'])
