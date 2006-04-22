@@ -13,9 +13,10 @@ def suite():
     suite1 = unittest.makeSuite(bblibtest.BBModuleTestCase)
     suite2 = unittest.makeSuite(cowtest.COWTestCase)
     suite3 = unittest.makeSuite(datatest.DataSmartTestCase)
-    suite4 = unittest.makeSuite(parsetest.BBParserTestCase)
+    suite4 = unittest.makeSuite(parsetest.BBParserTestPython)
+    suite5 = unittest.makeSuite(parsetest.BBParserTestC)
 
-    return unittest.TestSuite((suite1,suite2,suite3,suite4))
+    return unittest.TestSuite((suite1,suite2,suite3,suite4,suite5))
 
 
 if __name__ == '__main__':

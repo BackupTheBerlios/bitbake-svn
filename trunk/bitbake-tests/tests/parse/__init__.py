@@ -2,6 +2,6 @@
 # (C) Copyright 2006 Holger Hans Peter Freyther
 #
 
-from parsetest import BBParserTestCase
+from parsetest import BBParserTestPython
 
-__all__ = [ 'BBParserTestCase' ]
+__all__ = [ 'BBParserTestPython' ]
