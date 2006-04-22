@@ -81,23 +81,23 @@ class COWTestCase(unittest.TestCase):
 
         # test copy of the copy
         c_3 = c_2.copy()
-        d_3 = d_2.copy()
-        d_3_2 = d_2.copy()
+        b_3 = b_2.copy()
+        b_3_2 = b_2.copy()
 
         c_3['e'] = 4711
         self.assertEquals(4711, c_3['e'])
         self.assertEquals(False, c_2.haskey('e'))
-        self.assertEquals(False, d_3.haskey('e'))
-        self.assertEquals(False, d_3_2.haskey('e'))
-        self.assertEquals(False, d_2.haskey('e'))
+        self.assertEquals(False, b_3.haskey('e'))
+        self.assertEquals(False, b_3_2.haskey('e'))
+        self.assertEquals(False, b_2.haskey('e'))
 
-        d_3['e'] = 'viel'
-        self.assertEquals('viel', d_3['e'])
+        b_3['e'] = 'viel'
+        self.assertEquals('viel', b_3['e'])
         self.assertEquals(4711, c_3['e'])
         self.assertEquals(False, c_2.haskey('e'))
-        self.assertEquals(False, d_3.haskey('e'))
-        self.assertEquals(False, d_3_2.haskey('e'))
-        self.assertEquals(False, d_2.haskey('e'))
+        self.assertEquals(False, b_3.haskey('e'))
+        self.assertEquals(False, b_3_2.haskey('e'))
+        self.assertEquals(False, b_2.haskey('e'))
 
     def testCow(self):
         from bb.COW import COWBase
