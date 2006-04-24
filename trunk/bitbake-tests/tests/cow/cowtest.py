@@ -21,32 +21,28 @@ class COWTestCase(unittest.TestCase):
         """
         Test and set
         """
-        from bb.COW import COWBase
-        a = COWBase.copy()
+        from bb.COW import COWDictBase
+        a = COWDictBase.copy()
 
-        self.assertEquals(False, a.haskey('a'))
+        self.assertEquals(False, a.has_key('a'))
 
         a['a'] = 'a'
         a['b'] = 'b'
-        self.assertEquals(True, a.haskey('a'))
-        self.assertEquals(True, a.haskey('b'))
+        self.assertEquals(True, a.has_key('a'))
+        self.assertEquals(True, a.has_key('b'))
         self.assertEquals('a', a['a'] )
         self.assertEquals('b', a['b'] )
-
-        # check the number of hit keys
-        for x in a.iterkeys():
-            print x
 
     def testCopyCopy(self):
         """
         Test the copy of copies
         """
 
-        from bb.COW import COWBase
+        from bb.COW import COWDictBase
 
         # create two COW dict 'instances'
-        b = COWBase.copy()
-        c = COWBase.copy()
+        b = COWDictBase.copy()
+        c = COWDictBase.copy()
 
         # assign some keys to one instance, some keys to another
         b['a'] = 10
@@ -54,7 +50,7 @@ class COWTestCase(unittest.TestCase):
         c['a'] = 30
 
         # test separation of the two instances
-        self.assertEquals(False, c.haskey('c'))
+        self.assertEquals(False, c.has_key('c'))
         self.assertEquals(30, c['a'])
         self.assertEquals(10, b['a'])
 
@@ -62,23 +58,23 @@ class COWTestCase(unittest.TestCase):
         b_2 = b.copy()
         c_2 = c.copy()
 
-        self.assertEquals(False, c_2.haskey('c'))
+        self.assertEquals(False, c_2.has_key('c'))
         self.assertEquals(10, b_2['a'])
 
         b_2['d'] = 40
-        self.assertEquals(False, c_2.haskey('d'))
-        self.assertEquals(True, b_2.haskey('d'))
+        self.assertEquals(False, c_2.has_key('d'))
+        self.assertEquals(True, b_2.has_key('d'))
         self.assertEquals(40, b_2['d'])
-        self.assertEquals(False, b.haskey('d'))
-        self.assertEquals(False, c.haskey('d'))
+        self.assertEquals(False, b.has_key('d'))
+        self.assertEquals(False, c.has_key('d'))
 
         c_2['d'] = 30
-        self.assertEquals(True, c_2.haskey('d'))
-        self.assertEquals(True, b_2.haskey('d'))
+        self.assertEquals(True, c_2.has_key('d'))
+        self.assertEquals(True, b_2.has_key('d'))
         self.assertEquals(30, c_2['d'])
         self.assertEquals(40, b_2['d'])
-        self.assertEquals(False, b.haskey('d'))
-        self.assertEquals(False, c.haskey('d'))
+        self.assertEquals(False, b.has_key('d'))
+        self.assertEquals(False, c.has_key('d'))
 
         # test copy of the copy
         c_3 = c_2.copy()
@@ -87,22 +83,22 @@ class COWTestCase(unittest.TestCase):
 
         c_3['e'] = 4711
         self.assertEquals(4711, c_3['e'])
-        self.assertEquals(False, c_2.haskey('e'))
-        self.assertEquals(False, b_3.haskey('e'))
-        self.assertEquals(False, b_3_2.haskey('e'))
-        self.assertEquals(False, b_2.haskey('e'))
+        self.assertEquals(False, c_2.has_key('e'))
+        self.assertEquals(False, b_3.has_key('e'))
+        self.assertEquals(False, b_3_2.has_key('e'))
+        self.assertEquals(False, b_2.has_key('e'))
 
         b_3['e'] = 'viel'
         self.assertEquals('viel', b_3['e'])
         self.assertEquals(4711, c_3['e'])
-        self.assertEquals(False, c_2.haskey('e'))
-        self.assertEquals(True, b_3.haskey('e'))
-        self.assertEquals(False, b_3_2.haskey('e'))
-        self.assertEquals(False, b_2.haskey('e'))
+        self.assertEquals(False, c_2.has_key('e'))
+        self.assertEquals(True, b_3.has_key('e'))
+        self.assertEquals(False, b_3_2.has_key('e'))
+        self.assertEquals(False, b_2.has_key('e'))
 
     def testCow(self):
-        from bb.COW import COWBase
-        c = COWBase.copy()
+        from bb.COW import COWDictBase
+        c = COWDictBase.copy()
         c['123'] = 1027
         c['other'] = 4711
         c['d'] = { 'abc' : 10, 'bcd' : 20 }
