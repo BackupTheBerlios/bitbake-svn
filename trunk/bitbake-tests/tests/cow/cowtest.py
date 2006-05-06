@@ -6,8 +6,7 @@ Copyright 2006 Holger Freyther <freyther@handhelds.org>
 USE this code for whatever purpose you want to use it
 """
 
-import sys, os
-sys.path.append(os.path.join("..","..","..","bitbake","lib"))
+import os
 
 
 import unittest
@@ -117,7 +116,6 @@ class COWTestCase(unittest.TestCase):
         copy['other'] = 4712
         copy['d']['abc'] = 20
 
-	# FIXME: This won't work - you can only use immutable types on the class.
 
         self.assertEquals(1027, c['123'])
         self.assertEquals(4711, c['other'])
