@@ -9,7 +9,7 @@ USE this code for whatever purpose you want to use it
 import unittest, os
 
 (path, name) = os.path.split(__file__)
-path = os.path.join(path, 'bug_937')
+path = os.path.join(os.path.abspath(path), 'bug_937')
 
 
 class RegressionTests(unittest.TestCase):
@@ -49,10 +49,14 @@ class RegressionTests(unittest.TestCase):
 
         os.chdir(path)
         cooker = bitbake.BBCooker()
-        cooker.cook( bitbake.BBConfiguration( Opt() ), ["fix-mind"] )
+        try:
+            cooker.cook( bitbake.BBConfiguration( Opt() ), ["fix-mind"] )
+        except SystemExit:
+            print "exited"
 
         self.assertEquals("soft", os.environ['BB_TARGET_FPU'])
-        self.assertTrue(os.environ['BB_BASE_BBCLAS_RAN'])
+        self.assertEquals("true", os.environ['BB_BASE_BBCLAS_RAN'])
+
 
 
 if __name__ == '__main__':

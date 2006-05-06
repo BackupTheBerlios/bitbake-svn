@@ -8,7 +8,9 @@ python base_eventhandler() {
 	name = getName(e)
 	if name.startswith("BuildStarted"):
 		bb.data.setVar( 'BB_VERSION', bb.__version__, e.data )
-        bb.data.setVar( 'SEEN_TARGET_FPU', bb.data.getVar('TARGET_FPU', e.data), e.data )
+		bb.data.setVar( 'SEEN_TARGET_FPU', bb.data.getVar('TARGET_FPU', e.data), e.data )
+		os.environ['BB_TARGET_FPU'] = bb.data.getVar('TARGET_FPU', e.data) or "empty"
+		os.environ['BB_BASE_BBCLAS_RAN'] = "true"
 
 	return NotHandled
 }
