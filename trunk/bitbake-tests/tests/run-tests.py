@@ -12,15 +12,27 @@ def suite():
     from modules import moduletest
     from bugs  import regtests
 
-    suite1 = unittest.makeSuite(bblibtest.BBModuleTestCase)
-    suite2 = unittest.makeSuite(cowtest.COWTestCase)
-    suite3 = unittest.makeSuite(datatest.DataSmartTestCase)
-    suite4 = unittest.makeSuite(parsetest.BBParserTestPython)
-    suite5 = unittest.makeSuite(parsetest.BBParserTestC)
-    suite6 = unittest.makeSuite(moduletest.ModuleLoadingTestCase)
-    suite7 = unittest.makeSuite(regtests.RegressionTests)
+    suites = []
+    suites.append(unittest.makeSuite(bblibtest.BBModuleTestCase))
+    suites.append(unittest.makeSuite(datatest.DataSmartTestCase))
+    suites.append(unittest.makeSuite(parsetest.BBParserTestPython))
+    suites.append(unittest.makeSuite(moduletest.ModuleLoadingTestCase))
+    suites.append(unittest.makeSuite(regtests.RegressionTests))
 
-    return unittest.TestSuite((suite1,suite2,suite3,suite4,suite5,suite6,suite7))
+    try:
+        from bb import COW
+        suites.append(unittest.makeSuite(cowtest.COWTestCase))
+    except:
+        print "COW is not available"
+
+    try:
+        import bb.parser.parse_c
+        suites.append(unittest.makeSuite(parsetest.BBParserTestC))
+    except:
+        print "BitBake C Parser is not available"
+
+
+    return unittest.TestSuite(suites)
 
 
 if __name__ == '__main__':
