@@ -98,8 +98,32 @@ class DataSmartTestCase(unittest.TestCase):
     def testEmitVar(self):
         pass
 
-    def testUpdateData(self):
+    def testUpdateData1(self):
+        from bb import data
+        from bb import data_smart
         pass
+
+    def testUpdateDataLastBug(self):
+        from bb import data
+        from bb import data_smart
+
+        slugos = data_smart.DataSmart()
+        data.setVar('PN', 'busybox', slugos)
+        data.setVar('INITSCRIPT_PARAMS_${PN}_slugos', 'start 20 .', slugos)
+
+        data.expandKeys(slugos)
+        self.assertTrue('INITSCRIPT_PARAMS_busybox_slugos' in data.keys(slugos))
+
+        data.setVar('OVERRIDES', 'slugos', slugos) 
+        data.update_data(slugos)
+
+        self.assertTrue('INITSCRIPT_PARAMS_busybox' in data.keys(slugos))
+        data.setVar('OVERRIDES', 'busybox:slugos', slugos)
+        data.update_data(slugos)
+ 
+        self.assertTrue('INITSCRIPT_PARAMS' in data.keys(slugos))
+        self.assertEquals('start 20 .', data.getVar('INITSCRIPT_PARAMS', slugos))
+
 
 if __name__ == '__main__':
     unittest.main()
