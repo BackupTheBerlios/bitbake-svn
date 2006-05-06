@@ -47,13 +47,14 @@ class RegressionTests(unittest.TestCase):
         # set BBPATH
         os.environ['BBPATH'] = os.path.join(path_937)
         bitbake = imp.load_source( "bitbake", os.environ['BITBAKE'] )
+        print "BitBake Version: %s" % bitbake.__version__
 
         os.chdir(path_937)
         cooker = bitbake.BBCooker()
         try:
             cooker.cook( bitbake.BBConfiguration( Opt() ), ["fix-mind"] )
         except SystemExit:
-            print "exited"
+            pass
 
         self.assertEquals("soft", os.environ['BB_TARGET_FPU'])
         self.assertEquals("true", os.environ['BB_BASE_BBCLAS_RAN'])
@@ -92,7 +93,7 @@ class RegressionTests(unittest.TestCase):
         try:
             cooker.cook( bitbake.BBConfiguration( Opt() ), [] )
         except SystemExit:
-            print "exited"
+            pass
 
         (last_ver,last_file,pref_ver,pref_file) = cooker.findBestProvider('test')
 
