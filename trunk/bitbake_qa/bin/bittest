@@ -3,7 +3,7 @@
 # -*- tab-width: 4; c-basic-offset: 4; indent-tabs-mode: nil -*-
 #
 #
-# Copyright (C)       2005 Holger Hans Peter Freyther
+# Copyright (C)       2005, 2006 Holger Hans Peter Freyther
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -58,11 +58,8 @@ __all_tests__ = ["patch_checker",
 
 __all_reports__ = {
     "TestReportText" : TestReportText,
-    "TestReportHTML" : TestReportHTML
-}
-
-__all_stores__  = {
-    "TestStoreArray" : TestStoreArray
+    "TestReportHTML" : TestReportHTML,
+    "TestReportTinder" : TestReportTinder
 }
 
 def handle_options( args ):
@@ -79,18 +76,12 @@ on the cmd line
                        action = "store", dest = "output", default  = sys.stdout )
     parser.add_option( "-r", "--report", help = "print the report in the specified format",
                        action = "store", dest = "report", default = "TestReportText" )
-    parser.add_option( "-s", "--store",  help = "test result storage and transportation",
-                       action = "store", dest = "store", default = "TestStoreArray" )
 
     options, args = parser.parse_args( args )
 
     if not options.report in __all_reports__:
         print "The specified report format is not available. Falling back to TestReportText"
         options.report = "TestReportText"
-
-    if not options.store  in __all_stores__:
-        print "The specified store format is not available. Falling back to TestStoreArray"
-        options.store = "TestStoreArray"
 
     if not type(options.output) == type(sys.stdout):
         """ Create a file """
@@ -118,8 +109,8 @@ def _get_instances(tests):
 
 def generate_results(test_results, options):
     for result in test_results:
-        test_output = __all_reports__[options.report](result, test_results[result],options.output)
-        test_output.print_result()
+        result.test_reporter().init(test_results[result])
+        result.test_reporter().print_result()
 
 def run_tests(data,test_config,test_options, tests, bbfiles = None):
     if bbfiles == None:
@@ -136,8 +127,9 @@ def run_tests(data,test_config,test_options, tests, bbfiles = None):
     test_results   = {}
     test_instances = _get_instances(tests)
 
+    # Create the TestResult container and initialize the Report
     for test in test_instances:
-        test_results[test] = TestResult(test_instances[test].test_name())
+        test_results[test] = TestResult(test_instances[test].test_name(), __all_reports__[options.report](test_data, test, options.output) )
 
     for bbfile in bbfiles:
 

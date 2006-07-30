@@ -2,7 +2,7 @@
 # -*- tab-width: 4; c-basic-offset: 4; indent-tabs-mode: nil -*-
 #
 #
-# Copyright (C)       2005 Holger Hans Peter Freyther
+# Copyright (C)       2005, 2006 Holger Hans Peter Freyther
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -91,8 +91,10 @@ class TestReportHTML:
     Output the Test Result as a single HTML Page
     """
 
-    def __init__(self, test_config, test_result):
-        self.test_config = test_config
+    def __init__(self, config, test_name, file):
+        self.test_config = test_name
+
+    def init(self, test_result):
         self.test_result = test_result
         self.failed      = []
         self.passed      = []

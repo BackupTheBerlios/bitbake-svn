@@ -2,7 +2,7 @@
 # -*- tab-width: 4; c-basic-offset: 4; indent-tabs-mode: nil -*-
 #
 #
-# Copyright (C)       2005 Holger Hans Peter Freyther
+# Copyright (C)       2005, 2006 Holger Hans Peter Freyther
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -65,15 +65,19 @@ class TestResult:
     This class holds the testresults
     """
 
-    def __init__(self, name):
+    def __init__(self, name, report):
         """
         name is the test name
         """
         self._test_name = name
         self._results   = []
+        self._report    = report
 
     def test_name(self):
         return self._test_name
+
+    def test_reporter(self):
+        return self._report
 
     def insert_result(self, item):
         """

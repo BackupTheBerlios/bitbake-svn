@@ -27,7 +27,7 @@ def base_read_file(filename):
 	try:
 		f = file( filename, "r" )
 	except IOError, reason:
-		raise bb.build.FuncFailed("can't read from file '%s' (%s)", (filename,reason))
+		return "" # WARNING: can't raise an error now because of the new RDEPENDS handling. This is a bit ugly. :M:
 	else:
 		return f.read().strip()
 	return None
@@ -124,6 +124,7 @@ oe_libinstall() {
 	silent=""
 	require_static=""
 	require_shared=""
+	staging_install=""
 	while [ "$#" -gt 0 ]; do
 		case "$1" in
 		-C)
@@ -155,6 +156,10 @@ oe_libinstall() {
 	if [ -z "$destpath" ]; then
 		oefatal "oe_libinstall: no destination path specified"
 	fi
+	if echo "$destpath/" | egrep '^${STAGING_LIBDIR}/' >/dev/null
+	then
+		staging_install=1
+	fi
 
 	__runcmd () {
 		if [ -z "$silent" ]; then
@@ -166,9 +171,8 @@ oe_libinstall() {
 	if [ -z "$dir" ]; then
 		dir=`pwd`
 	fi
-	if [ -d "$dir/.libs" ]; then
-		dir=$dir/.libs
-	fi
+	dotlai=$libname.lai
+	dir=$dir`(cd $dir; find -name "$dotlai") | sed "s/^\.//;s/\/$dotlai\$//;q"`
 	olddir=`pwd`
 	__runcmd cd $dir
 
@@ -186,9 +190,16 @@ oe_libinstall() {
 	if [ -f "$dota" -o -n "$require_static" ]; then
 		__runcmd install -m 0644 $dota $destpath/
 	fi
-	dotlai=$libname.lai
-	if [ -f "$dotlai" -o -n "$libtool" ]; then
-		__runcmd install -m 0644 $dotlai $destpath/$libname.la
+	if [ -f "$dotlai" -a -n "$libtool" ]; then
+		if test -n "$staging_install"
+		then
+			# stop libtool using the final directory name for libraries
+			# in staging:
+			__runcmd rm -f $destpath/$libname.la
+			__runcmd sed -e 's/^installed=yes$/installed=no/' -e '/^dependency_libs=/s,${WORKDIR}[[:alnum:]/\._+-]*/\([[:alnum:]\._+-]*\),${STAGING_LIBDIR}/\1,g' $dotlai >$destpath/$libname.la
+		else
+			__runcmd install -m 0644 $dotlai $destpath/$libname.la
+		fi
 	fi
 
 	for name in $library_names; do
@@ -199,7 +210,7 @@ oe_libinstall() {
 					oefatal "oe_libinstall: $dir/$f not found."
 				fi
 			elif [ -L "$f" ]; then
-				__runcmd cp --no-dereference "$f" $destpath/
+				__runcmd cp -P "$f" $destpath/
 			elif [ ! -L "$f" ]; then
 				libfile="$f"
 				__runcmd install -m 0755 $libfile $destpath/
@@ -324,7 +335,7 @@ python base_do_fetch() {
 		return 1
 
 	try:
-		bb.fetch.init(localdata,src_uri.split())
+		bb.fetch.init(src_uri.split(),d)
 	except bb.fetch.NoMethodError:
 		(type, value, traceback) = sys.exc_info()
 		raise bb.build.FuncFailed("No method: %s" % value)
@@ -360,7 +371,11 @@ def oe_unpack_file(file, data, url = None):
 	elif file.endswith('.bz2'):
 		cmd = 'bzip2 -dc %s > %s' % (file, efile)
 	elif file.endswith('.zip'):
-		cmd = 'unzip -q %s' % file
+		cmd = 'unzip -q'
+		(type, host, path, user, pswd, parm) = bb.decodeurl(url)
+		if 'dos' in parm:
+			cmd = '%s -a' % cmd
+		cmd = '%s %s' % (cmd, file)
 	elif os.path.isdir(file):
 		filesdir = os.path.realpath(bb.data.getVar("FILESDIR", data, 1))
 		destdir = "."
@@ -371,7 +386,7 @@ def oe_unpack_file(file, data, url = None):
 				destdir = "."
 			elif not os.access("%s/%s" % (os.getcwd(), destdir), os.F_OK):
 				os.makedirs("%s/%s" % (os.getcwd(), destdir))
-		cmd = 'cp -a %s %s/%s/' % (file, os.getcwd(), destdir)
+		cmd = 'cp -pPR %s %s/%s/' % (file, os.getcwd(), destdir)
 	else:
 		(type, host, path, user, pswd, parm) = bb.decodeurl(url)
 		if not 'patch' in parm:
@@ -383,8 +398,15 @@ def oe_unpack_file(file, data, url = None):
 				destdir = "."
 			bb.mkdirhier("%s/%s" % (os.getcwd(), destdir))
 			cmd = 'cp %s %s/%s/' % (file, os.getcwd(), destdir)
+
 	if not cmd:
 		return True
+
+	dest = os.path.join(os.getcwd(), os.path.basename(file))
+	if os.path.exists(dest):
+		if os.path.samefile(file, dest):
+			return True
+
 	cmd = "PATH=\"%s\" %s" % (bb.data.getVar('PATH', data, 1), cmd)
 	bb.note("Unpacking %s to %s/" % (file, os.getcwd()))
 	ret = os.system(cmd)
@@ -438,7 +460,7 @@ python base_do_patch() {
 		if not "patch" in parm:
 			continue
 
-		bb.fetch.init([url])
+		bb.fetch.init([url],d)
 		url = bb.encodeurl((type, host, path, user, pswd, []))
 		local = os.path.join('/', bb.fetch.localpath(url, d))
 
@@ -459,6 +481,34 @@ python base_do_patch() {
 			pname = parm["pname"]
 		else:
 			pname = os.path.basename(unpacked)
+
+		if "mindate" in parm:
+			mindate = parm["mindate"]
+		else:
+			mindate = 0
+
+		if "maxdate" in parm:
+			maxdate = parm["maxdate"]
+		else:
+			maxdate = "20711226"
+
+		pn = bb.data.getVar('PN', d, 1)
+		srcdate = bb.data.getVar('SRCDATE_%s' % pn, d, 1)
+
+		if not srcdate:
+			srcdate = bb.data.getVar('SRCDATE', d, 1)
+
+		if srcdate == "now": 
+			srcdate = bb.data.getVar('DATE', d, 1)
+
+		if (maxdate < srcdate) or (mindate > srcdate):
+			if (maxdate < srcdate):
+				bb.note("Patch '%s' is outdated" % pname)
+
+			if (mindate > srcdate):
+				bb.note("Patch '%s' is predated" % pname)
+
+			continue
 
 		bb.note("Applying patch '%s'" % pname)
 		bb.data.setVar("do_patchcmd", bb.data.getVar("PATCHCMD", d, 1) % (pnum, pname, unpacked), d)
@@ -496,9 +546,17 @@ python base_eventhandler() {
 	note(msg)
 
 	if name.startswith("BuildStarted"):
-		statusvars = ['TARGET_ARCH', 'TARGET_OS', 'MACHINE', 'DISTRO',
-			      'TARGET_FPU']
-		statuslines = ["%-13s = \"%s\"" % (i, bb.data.getVar(i, e.data, 1) or '') for i in statusvars]
+		bb.data.setVar( 'BB_VERSION', bb.__version__, e.data )
+		path_to_bbfiles = bb.data.getVar( 'BBFILES', e.data, 1 )
+		path_to_packages = path_to_bbfiles[:path_to_bbfiles.rindex( "packages" )]
+		monotone_revision = "<unknown>"
+		try:
+			monotone_revision = file( "%s/_MTN/revision" % path_to_packages ).read().strip()
+		except IOError:
+			pass
+		bb.data.setVar( 'OE_REVISION', monotone_revision, e.data )
+		statusvars = ['BB_VERSION', 'OE_REVISION', 'TARGET_ARCH', 'TARGET_OS', 'MACHINE', 'DISTRO', 'DISTRO_VERSION','TARGET_FPU']
+		statuslines = ["%-14s = \"%s\"" % (i, bb.data.getVar(i, e.data, 1) or '') for i in statusvars]
 		statusmsg = "\nOE Build Configuration:\n%s\n" % '\n'.join(statuslines)
 		print statusmsg
 
@@ -556,37 +614,16 @@ do_populate_staging[dirs] = "${STAGING_DIR}/${TARGET_SYS}/bin ${STAGING_DIR}/${T
 
 addtask populate_staging after do_compile
 
-#python do_populate_staging () {
-#	if not bb.data.getVar('manifest', d):
-#		bb.build.exec_func('do_emit_manifest', d)
-#	if bb.data.getVar('do_stage', d):
-#		bb.build.exec_func('do_stage', d)
-#	else:
-#		bb.build.exec_func('manifest_do_populate_staging', d)
-#}
-
 python do_populate_staging () {
-	if bb.data.getVar('manifest_do_populate_staging', d):
-		bb.build.exec_func('manifest_do_populate_staging', d)
-	else:
-		bb.build.exec_func('do_stage', d)
+	bb.build.exec_func('do_stage', d)
 }
 
-#addtask install
 addtask install after do_compile
 do_install[dirs] = "${S} ${B}"
 
 base_do_install() {
 	:
 }
-
-#addtask populate_pkgs after do_compile
-#python do_populate_pkgs () {
-#	if not bb.data.getVar('manifest', d):
-#		bb.build.exec_func('do_emit_manifest', d)
-#	bb.build.exec_func('manifest_do_populate_pkgs', d)
-#	bb.build.exec_func('package_do_shlibs', d)
-#}
 
 base_do_package() {
 	:
@@ -601,38 +638,6 @@ do_build[func] = "1"
 
 SHLIBS = ""
 RDEPENDS_prepend = " ${SHLIBS}"
-
-python read_manifest () {
-	import sys
-	mfn = bb.data.getVar("MANIFEST", d, 1)
-	if os.access(mfn, os.R_OK):
-		# we have a manifest, so emit do_stage and do_populate_pkgs,
-		# and stuff some additional bits of data into the metadata store
-		mfile = file(mfn, "r")
-		manifest = bb.manifest.parse(mfile, d)
-		if not manifest:
-			return
-
-		bb.data.setVar('manifest', manifest, d)
-}
-
-python parse_manifest () {
-		manifest = bb.data.getVar("manifest", d)
-		if not manifest:
-			return
-		for func in ("do_populate_staging", "do_populate_pkgs"):
-			value = bb.manifest.emit(func, manifest, d)
-			if value:
-				bb.data.setVar("manifest_" + func, value, d)
-				bb.data.delVarFlag("manifest_" + func, "python", d)
-				bb.data.delVarFlag("manifest_" + func, "fakeroot", d)
-				bb.data.setVarFlag("manifest_" + func, "func", 1, d)
-		packages = []
-		for l in manifest:
-			if "pkg" in l and l["pkg"] is not None:
-				packages.append(l["pkg"])
-		bb.data.setVar("PACKAGES", " ".join(packages), d)
-}
 
 def explode_deps(s):
 	r = []
@@ -700,25 +705,23 @@ python __anonymous () {
 		this_host = bb.data.getVar('HOST_SYS', d, 1)
 		if not re.match(need_host, this_host):
 			raise bb.parse.SkipPackage("incompatible with host %s" % this_host)
-	
+
+	need_machine = bb.data.getVar('COMPATIBLE_MACHINE', d, 1)
+	if need_machine:
+		import re
+		this_machine = bb.data.getVar('MACHINE', d, 1)
+		if this_machine and not re.match(need_machine, this_machine):
+			raise bb.parse.SkipPackage("incompatible with machine %s" % this_machine)
+
 	pn = bb.data.getVar('PN', d, 1)
 
-	cvsdate = bb.data.getVar('CVSDATE_%s' % pn, d, 1)
-	if cvsdate != None:
-		bb.data.setVar('CVSDATE', cvsdate, d)
+	srcdate = bb.data.getVar('SRCDATE_%s' % pn, d, 1)
+	if srcdate != None:
+		bb.data.setVar('SRCDATE', srcdate, d)
 
 	use_nls = bb.data.getVar('USE_NLS_%s' % pn, d, 1)
 	if use_nls != None:
 		bb.data.setVar('USE_NLS', use_nls, d)
-
-	try:
-		bb.build.exec_func('read_manifest', d)
-		bb.build.exec_func('parse_manifest', d)
-	except exceptions.KeyboardInterrupt:
-		raise
-	except Exception, e:
-		bb.error("anonymous function: %s" % e)
-		pass
 }
 
 python () {
@@ -742,26 +745,6 @@ python () {
 				return
 }
 
-
-addtask emit_manifest
-python do_emit_manifest () {
-#	FIXME: emit a manifest here
-#	1) adjust PATH to hit the wrapper scripts
-	wrappers = bb.which(bb.data.getVar("BBPATH", d, 1), 'build/install', 0)
-	path = (bb.data.getVar('PATH', d, 1) or '').split(':')
-	path.insert(0, os.path.dirname(wrappers))
-	bb.data.setVar('PATH', ':'.join(path), d)
-#	2) exec_func("do_install", d)
-	bb.build.exec_func('do_install', d)
-#	3) read in data collected by the wrappers
-	bb.build.exec_func('read_manifest', d)
-#	4) mangle the manifest we just generated, get paths back into
-#	   our variable form
-#	5) write it back out
-#	6) re-parse it to ensure the generated functions are proper
-	bb.build.exec_func('parse_manifest', d)
-}
-
 EXPORT_FUNCTIONS do_clean do_mrproper do_fetch do_unpack do_configure do_compile do_install do_package do_patch do_populate_pkgs do_stage
 
 MIRRORS[func] = "0"
@@ -770,6 +753,16 @@ ${DEBIAN_MIRROR}/main	http://snapshot.debian.net/archive/pool
 ${DEBIAN_MIRROR}	ftp://ftp.de.debian.org/debian/pool
 ${GNU_MIRROR}	ftp://mirrors.kernel.org/gnu
 ftp://ftp.kernel.org/pub	http://www.kernel.org/pub
-ftp://ftp.kernel.org/pub	ftp://ftp.de.kernel.org/pub
+ftp://ftp.kernel.org/pub	ftp://ftp.us.kernel.org/pub
+ftp://ftp.gnupg.org/gcrypt/     ftp://ftp.franken.de/pub/crypt/mirror/ftp.gnupg.org/gcrypt/
+ftp://ftp.gnupg.org/gcrypt/     ftp://ftp.surfnet.nl/pub/security/gnupg/
+ftp://dante.ctan.org/tex-archive ftp://ftp.fu-berlin.de/tex/CTAN
+ftp://ftp.gnutls.org/pub/gnutls ftp://ftp.gnutls.org/pub/gnutls/
+ftp://ftp.gnutls.org/pub/gnutls http://josefsson.org/gnutls/releases/
+
+
+
+ftp://.*/.*/	http://www.oesources.org/source/current/
+http://.*/.*/	http://www.oesources.org/source/current/
 }
 

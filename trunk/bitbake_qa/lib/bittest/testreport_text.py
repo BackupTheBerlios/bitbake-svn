@@ -2,7 +2,7 @@
 # -*- tab-width: 4; c-basic-offset: 4; indent-tabs-mode: nil -*-
 #
 #
-# Copyright (C)       2005 Holger Hans Peter Freyther
+# Copyright (C)       2005, 2006 Holger Hans Peter Freyther
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -41,10 +41,12 @@ class TestReportText:
     Output the Test Result as Text
     """
 
-    def __init__(self,test_config,test_result,file):
-        self.test_config = test_config
-        self.test_result = test_result
+    def __init__(self,config,test_name, file):
         self.test_file   = file
+        self.test_config = test_name
+
+    def init(self,test_result):
+        self.test_result = test_result
 
     def print_result(self):
         print >> self.test_file, "Test results for %s:"      % self.test_config
