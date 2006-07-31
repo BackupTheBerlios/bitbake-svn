@@ -84,7 +84,7 @@ def tinder_form_data(bound, dict, log):
 
     return "\r\n".join(output)
 
-def tinder_format_http_post(d,status,log):
+def tinder_format_http_post(d,status,log, test_name):
     """
     Format the Tinderbox HTTP post with the data needed
     for the tinderbox to be happy.
@@ -96,7 +96,7 @@ def tinder_format_http_post(d,status,log):
     # the variables we will need to send on this form post
     variables =  {
         "tree"         : data.getVar('TINDER_TREE',    d, True),
-        "machine_name" : data.getVar('TINDER_MACHINE', d, True),
+        "machine_name" : "%s-%s" % (data.getVar('TINDER_MACHINE', d, True), test_name),
         "os"           : os.uname()[0],
         "os_version"   : os.uname()[2],
         "compiler"     : "gcc",
@@ -126,7 +126,7 @@ def tinder_format_http_post(d,status,log):
     return ("multipart/form-data; boundary=%s" % boundary),body
 
 
-def tinder_build_start(d):
+def tinder_build_start(d, test_name):
     """
     Inform the tinderbox that a build is starting. We do this
     by posting our name and tree to the build_start.pl script
@@ -135,7 +135,7 @@ def tinder_build_start(d):
     from bb import data
 
     # get the body and type
-    content_type, body = tinder_format_http_post(d,None,None)
+    content_type, body = tinder_format_http_post(d,None,None, test_name)
     server = data.getVar('TINDER_HOST', d, True )
     url    = data.getVar('TINDER_URL',  d, True )
 
@@ -161,7 +161,7 @@ def tinder_build_start(d):
     f = file(data.getVar('TMPDIR', d, True)+"/tinder-machine.id", 'w')
     f.write(report)
 
-def tinder_send_http(d, status, _log):
+def tinder_send_http(d, status, _log, test_name):
     """
     Send this log as build status
     """
@@ -177,7 +177,7 @@ def tinder_send_http(d, status, _log):
     # now post it - in chunks of 10.000 charachters
     new_log = _log
     while len(new_log) > 0:
-        content_type, body = tinder_format_http_post(d,status,new_log[0:18000])
+        content_type, body = tinder_format_http_post(d,status,new_log[0:18000], test_name)
         errcode, errmsg, headers, h_file = tinder_http_post(server,selector,content_type, body)
         #print errcode, errmsg, headers
         #print h.file.read()
@@ -293,13 +293,33 @@ class TestReportTinder:
         self.test_file   = file
 
         # inform our box
-        tinder_tinder_start(config, test_name)
+        tinder_build_start(config)
+        log  = tinder_tinder_start(config, test_name)
+        tinder_send_http(config, 1, log, test_name)
 
     def init(self, test_result):
         self.test_result = test_result
 
     def print_result(self):
-        print >> self.test_file, "Test results for %s:"      % self.test_config
-        print >> self.test_file, "\tNumber of ran tests: %d" % len(self.test_result)
+        """
+        Now format the test results
+            -Settle for 100 or 200 as status (sucess, failure)
+            -Create one big log message
+        """
+        status = 100
+
+        log  = "---> Printing the test results now\n"
+        print >> self.test_file, "Test results for %s:\n"      % self.test_config
+        print >> self.test_file, "\tNumber of ran tests: %d\n" % len(self.test_result)
+        log += "<--- Done preparing\n"
+
         for test in self.test_result:
-            print >> self.test_file, "Tested file: %s\nTest Result: %s\nTest Comment:%s\n\n" % (test.tested_file(),test.test_result(),test.test_comment())
+            log += "---> Test for %s\n" % test.tested_file()
+            log += "Test comment: %s\n" % test.test_comment()
+            log += "<--- Test finished (%s)\n" % test.test_result()
+
+            if not test.test_result():
+                status = 200
+
+        # now send the log
+        tinder_send_http(self._config, status, log, self.test_config)
