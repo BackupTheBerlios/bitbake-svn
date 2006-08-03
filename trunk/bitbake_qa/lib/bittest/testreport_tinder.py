@@ -73,7 +73,9 @@ def tinder_form_data(bound, dict, log):
         output.append( "--" + bound )
         output.append( 'Content-Disposition: form-data; name="%s"' % name )
         output.append( "" )
+        print "Adding %s %s" % (name, dict[name])
         output.append( dict[name] )
+
     if log:
         output.append( "--" + bound )
         output.append( 'Content-Disposition: form-data; name="log"; filename="log.txt"' )
@@ -158,6 +160,7 @@ def tinder_build_start(d, test_name):
 
     # now we will need to save the machine number
     # we will override any previous numbers
+    bb.mkdirhier(data.getVar('TMPDIR', d, True))
     f = file(data.getVar('TMPDIR', d, True)+"/tinder-machine.id", 'w')
     f.write(report)
 
@@ -195,7 +198,7 @@ def tinder_print_info(d):
     import os
     # get the local vars
 
-    time    = tinder_time_string()
+    time    = ""
     ops     = os.uname()[0]
     version = os.uname()[2]
     url     = data.getVar( 'TINDER_URL' , d, True )
@@ -244,8 +247,8 @@ def tinder_print_env():
     from bb import data
     import os
 
-    time_start = tinder_time_string()
-    time_end   = tinder_time_string()
+    time_start = ""
+    time_end   = ""
 
     # build the environment
     env = ""
@@ -264,10 +267,10 @@ def tinder_tinder_start(d, test_name):
     PRINT the configuration of this build
     """
 
-    time_start = tinder_time_string()
     config = tinder_print_info(d)
     #env    = tinder_print_env()
-    time_end   = tinder_time_string()
+    time_start = ""
+    time_end   = ""
 
     output = []
     output.append( "---> TINDERBOX PRINTING CONFIGURATION %(time_start)s" )
@@ -293,8 +296,8 @@ class TestReportTinder:
         self.test_file   = file
 
         # inform our box
-        tinder_build_start(config)
-        log  = tinder_tinder_start(config, test_name)
+        tinder_build_start(config, test_name)
+        log  = tinder_tinder_start(config,test_name)
         tinder_send_http(config, 1, log, test_name)
 
     def init(self, test_result):

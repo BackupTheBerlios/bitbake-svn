@@ -109,13 +109,12 @@ def _get_instances(tests):
 
 def generate_results(test_results, options):
     for result in test_results:
-        result.test_reporter().init(test_results[result])
-        result.test_reporter().print_result()
+        res = test_results[result]
+        res.test_reporter().init(res)
+        res.test_reporter().print_result()
 
-def run_tests(data,test_config,test_options, tests, bbfiles = None):
-    if bbfiles == None:
-        bbfiles = fileparser.find_files(bb.data.getVar('BBFILES', test_config).split(' '))
-
+def run_tests(data,test_config,test_options, tests,  options):
+    bbfiles = fileparser.find_files(bb.data.getVar('BBFILES', test_config).split(' '))
     bb.note("Collected %d BitBake files" % len(bbfiles) )
 
     tmp_dir = os.path.join(os.getcwd(),'tmp')
@@ -129,7 +128,7 @@ def run_tests(data,test_config,test_options, tests, bbfiles = None):
 
     # Create the TestResult container and initialize the Report
     for test in test_instances:
-        test_results[test] = TestResult(test_instances[test].test_name(), __all_reports__[options.report](test_data, test, options.output) )
+        test_results[test] = TestResult(test_instances[test].test_name(), __all_reports__[options.report](test_config, test, options.output) )
 
     for bbfile in bbfiles:
 
@@ -220,7 +219,7 @@ def start_testing():
     test_options = parse_test_options(test_config)
 
     # start running the test
-    results = run_tests(data, test_config, test_options, tests)
+    results = run_tests(data, test_config, test_options, tests, options)
     generate_results(results, options)
 
 
