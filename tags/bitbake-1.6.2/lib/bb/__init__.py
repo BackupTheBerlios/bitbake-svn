@@ -23,7 +23,7 @@ this program; if not, write to the Free Software Foundation, Inc., 59 Temple
 Place, Suite 330, Boston, MA 02111-1307 USA.
 """
 
-__version__ = "1.7.3"
+__version__ = "1.6.2"
 
 __all__ = [
 
@@ -63,8 +63,6 @@ __all__ = [
     "manifest",
     "methodpool",
     "cache",
-    "runqueue",
-    "taskdata",
     "providers",
  ]
 
