@@ -1,5 +1,7 @@
 # ex:ts=4:sw=4:sts=4:et
 # -*- tab-width: 4; c-basic-offset: 4; indent-tabs-mode: nil -*-
+import ast
+import bb.parse
 
 cdef extern from "stdio.h":
     ctypedef int FILE
@@ -16,14 +18,14 @@ cdef extern from "lexerc.h":
         char* name
         FILE* file
         int config
-        void* data
+        void* tree
 
     int lineError
     int errorParse
 
     cdef extern int parse(FILE*, char*, object, int)
 
-def parsefile(object file, object data, object config):
+def parsefile(object file, object config):
     #print "parsefile: 1", file, data
 
     # Open the file
@@ -35,10 +37,12 @@ def parsefile(object file, object data, object config):
         raise IOError("No such file %s." % file)
 
     #print "parsefile: 3 parse"
-    parse(f, file, data, config)
+    root = ast.Root(file)
+    parse(f, file, root, config)
 
     # Close the file
     fclose(f)
+    return root
 
 
 cdef public void e_assign(lex_t* container, char* key, char* what):
@@ -47,22 +51,22 @@ cdef public void e_assign(lex_t* container, char* key, char* what):
         print "FUTURE Warning empty string: use \"\""
         what = ""
 
-    d = <object>container.data
-    d.setVar(key, what)
+    tree = <object>container.tree
+    tree.add_statement( ast.Assignment( key, what ) )
 
 cdef public void e_export(lex_t* c, char* what):
     #print "e_export", what
     #exp:
     # bb.data.setVarFlag(key, "export", 1, data)
-    d = <object>c.data
-    d.setVarFlag(what, "export", 1)
+    tree = <object>c.tree
+    tree.add_statement( ast.Export( what ) )
 
 cdef public void e_immediate(lex_t* c, char* key, char* what):
     #print "e_immediate", key, what
     #colon:
     # val = bb.data.expand(groupd["value"], data)
-    d = <object>c.data
-    d.setVar(key, d.expand(what,d))
+    tree = <object>c.tree
+    tree.add_statement( ast.ImmediateAssignment( key, what ) )
 
 cdef public void e_cond(lex_t* c, char* key, char* what):
     #print "e_cond", key, what
@@ -74,36 +78,36 @@ cdef public void e_cond(lex_t* c, char* key, char* what):
         print "FUTURE warning: Use \"\" for", key
         what = ""
 
-    d = <object>c.data
-    d.setVar(key, (d.getVar(key,False) or what))
+    tree = <object>c.tree
+    tree.add_statement( ast.Conditional( key, what ) )
 
 cdef public void e_prepend(lex_t* c, char* key, char* what):
     #print "e_prepend", key, what
     #prepend:
     # val = "%s %s" % (groupd["value"], (bb.data.getVar(key, data) or ""))
-    d = <object>c.data
-    d.setVar(key, what + " " + (d.getVar(key,0) or ""))
+    tree = <object>c.tree
+    tree.add_statement( ast.Prepend( key, what ) )
 
 cdef public void e_append(lex_t* c, char* key, char* what):
     #print "e_append", key, what
     #append:
     # val = "%s %s" % ((bb.data.getVar(key, data) or ""), groupd["value"])
-    d = <object>c.data
-    d.setVar(key, (d.getVar(key,0) or "") + " " + what)
+    tree = <object>c.tree
+    tree.add_statement( ast.Append( key, what ) )
 
 cdef public void e_precat(lex_t* c, char* key, char* what):
     #print "e_precat", key, what
     #predot:
     # val = "%s%s" % (groupd["value"], (bb.data.getVar(key, data) or ""))
-    d = <object>c.data
-    d.setVar(key, what + (d.getVar(key,0) or ""))
+    tree = <object>c.tree
+    tree.add_statement( ast.Precat( key, what ) )
 
 cdef public void e_postcat(lex_t* c, char* key, char* what):
     #print "e_postcat", key, what
     #postdot:
     # val = "%s%s" % ((bb.data.getVar(key, data) or ""), groupd["value"])
-    d = <object>c.data
-    d.setVar(key, (d.getVar(key,0) or "") + what)
+    tree = <object>c.tree
+    tree.add_statement( ast.Postcast( key, what ) )
 
 cdef public int e_addtask(lex_t* c, char* name, char* before, char* after) except -1:
     #print "e_addtask", name
@@ -125,20 +129,11 @@ cdef public int e_addtask(lex_t* c, char* name, char* before, char* after) excep
     # return
 
     if c.config == 1:
-        from bb.parse import ParseError
-        raise ParseError("No tasks allowed in config files")
+        raise bb.parse.ParseError("No tasks allowed in config files")
         return -1
 
-    d = <object>c.data
-    do = "do_%s" % name
-    d.setVarFlag(do, "task", 1)
-
-    if before != NULL and strlen(before) > 0:
-        #print "Before", before
-        d.setVarFlag(do, "postdeps", ("%s" % before).split())
-    if after  != NULL and strlen(after) > 0:
-        #print "After", after
-        d.setVarFlag(do, "deps", ("%s" % after).split())
+    tree = <object>c.tree
+    tree.add_statement( ast.AddTask( name, before, after ) )
 
     return 0
 
@@ -146,80 +141,65 @@ cdef public int e_addhandler(lex_t* c, char* h) except -1:
     #print "e_addhandler", h
     # data.setVarFlag(h, "handler", 1, d)
     if c.config == 1:
-        from bb.parse import ParseError
-        raise ParseError("No handlers allowed in config files")
+        raise bb.parse.ParseError("No handlers allowed in config files")
         return -1
 
-    d = <object>c.data
-    d.setVarFlag(h, "handler", 1)
+    tree = <object>c.tree
+    tree.add_statement( ast.AddHandler( h ) )
     return 0
 
 cdef public int e_export_func(lex_t* c, char* function) except -1:
     #print "e_export_func", function
     if c.config == 1:
-        from bb.parse import ParseError
-        raise ParseError("No functions allowed in config files")
+        raise bb.parse.ParseError("No functions allowed in config files")
         return -1
 
+    tree = <object>c.tree
+    tree.add_statement( ast.ExportFunction( function ) )
     return 0
 
 cdef public int e_inherit(lex_t* c, char* file) except -1:
     #print "e_inherit", file
 
     if c.config == 1:
-        from bb.parse import ParseError
-        raise ParseError("No inherits allowed in config files")
+        raise bb.parse.ParseError("No inherits allowed in config files")
         return -1
+
+    tree = <object>c.tree
+    tree.add_statement( ast.Inherit( file ) )
+    
 
     return 0
 
 cdef public void e_include(lex_t* c, char* file):
-    from bb.parse import handle
-    d = <object>c.data
-
-    try:
-        handle(d.expand(file,d), d, True)
-    except IOError:
-        print "Could not include file", file
+    tree = <object>c.tree
+    tree.add_statement( ast.Include( file ) )
 
 
 cdef public int e_require(lex_t* c, char* file) except -1:
     #print "e_require", file
-    from bb.parse import handle
-    d = <object>c.data
-
-    try:
-        handle(d.expand(file,d), d, True)
-    except IOError:
-        print "ParseError", file
-        from bb.parse import ParseError
-        raise ParseError("Could not include required file %s" % file)
-        return -1
-
+    tree = <object>c.tree
+    tree.add_statement( ast.Require( file ) )
     return 0
 
 cdef public int e_proc(lex_t* c, char* key, char* what) except -1:
     #print "e_proc", key, what
     if c.config == 1:
-        from bb.parse import ParseError
-        raise ParseError("No inherits allowed in config files")
+        raise bb.parse.ParseError("No inherits allowed in config files")
         return -1
 
+    tree = <object>c.tree
+    tree.add_statement( ast.Proc( key, what ) )
     return 0
 
 cdef public int e_proc_python(lex_t* c, char* key, char* what) except -1:
     #print "e_proc_python"
     if c.config == 1:
-        from bb.parse import ParseError
-        raise ParseError("No pythin allowed in config files")
+        raise bb.parse.ParseError("No pythin allowed in config files")
         return -1
 
-    if key != NULL:
-        pass
-        #print "Key", key
-    if what != NULL:
-        pass
-        #print "What", what
+    tree = <object>c.tree
+    tree.add_statement( ast.ProcPython( key, what ) )
 
     return 0
 
@@ -227,9 +207,11 @@ cdef public int e_proc_fakeroot(lex_t* c, char* key, char* what) except -1:
     #print "e_fakeroot", key, what
 
     if c.config == 1:
-        from bb.parse import ParseError
-        raise ParseError("No fakeroot allowed in config files")
+        raise bb.parse.ParseError("No fakeroot allowed in config files")
         return -1
+
+    tree = <object>c.tree
+    tree.add_statement( ast.ProcFakeroot( key, what ) )
 
     return 0
 
@@ -237,9 +219,11 @@ cdef public int e_def(lex_t* c, char* a, char* b, char* d) except -1:
     #print "e_def", a, b, d
 
     if c.config == 1:
-        from bb.parse import ParseError
-        raise ParseError("No defs allowed in config files")
+        raise bb.parse.ParseError("No defs allowed in config files")
         return -1
+
+    tree = <object>c.tree
+    tree.add_statement( ast.Def( a, b, d ) )
 
     return 0
 
@@ -247,7 +231,6 @@ cdef public int e_parse_error(lex_t* c) except -1:
     print "e_parse_error", c.name, "line:", lineError, "parse:", errorParse
 
 
-    from bb.parse import ParseError
-    raise ParseError("There was an parse error, sorry unable to give more information at the current time. File: %s Line: %d" % (c.name,lineError) )
+    raise bb.parse.ParseError("There was an parse error, sorry unable to give more information at the current time. File: %s Line: %d" % (c.name,lineError) )
     return -1
 

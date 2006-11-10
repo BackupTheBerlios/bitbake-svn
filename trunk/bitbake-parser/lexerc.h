@@ -12,7 +12,7 @@ typedef struct {
     void *scanner;
     FILE *file;
     char *name;
-    PyObject *data;
+    PyObject *tree;
     int config;
 } lex_t;
 

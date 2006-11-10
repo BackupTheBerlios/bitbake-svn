@@ -33,7 +33,7 @@ struct lex_t {
     void* scanner;
     FILE* file;
     char *name;
-    PyObject *data;
+    PyObject *tree;
     int config;
 
     void* (*parse)(void*, int, bitbake_token_t, lex_t*);
