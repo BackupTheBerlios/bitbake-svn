@@ -28,7 +28,7 @@ bitbakescanner.o: bitbakescanner.cc
 	$(CXX) $(CXXFLAGS) -c bitbakescanner.cc -fPIC
 
 bitbakec.so: bitbakec.o bitbakeparser.o bitbakescanner.o
-	$(CXX) -dynamiclib -fPIC bitbakeparser.o bitbakescanner.o bitbakec.o -o bitbakec.dylib $(LDFLAGS) -lpython
+	$(CXX) -dynamiclib -fPIC bitbakeparser.o bitbakescanner.o bitbakec.o -o bitbakec.so $(LDFLAGS)
 
 clean:
 	rm -f *.out
