@@ -1,0 +1,20 @@
+A new approach to parsing BitBake files.
+
+
+This parser will be licensed under the post card licensed until it
+is usable.
+
+
+The approach:
+    We parse all files independly and only once and we keep these files
+    as AbstractSyntaxTree around (only if we consume too much memory
+    we will throw them away.
+    This means we will keep .bbclass, .conf and .inc in memory always,
+    we will try to not parse these files over and over again.
+
+    When parsing a BB File/Master File/Root we will build the AST for
+    the included and required files we will place references of these
+    ASTs in the Root Tree.
+
+    Once we are done building and linking the Tree we will evaluate it
+    to a bb.data instance.
