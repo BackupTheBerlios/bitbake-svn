@@ -1,6 +1,8 @@
 import bitbakec
 import os
 
+asts = []
+
 for root, dirs, files in os.walk('/space/hacking/embedded/oe/org.openembedded.dev/'):
     for file in files:
         (r2, ext) = os.path.splitext(file)
@@ -9,6 +11,8 @@ for root, dirs, files in os.walk('/space/hacking/embedded/oe/org.openembedded.de
         
         path = os.path.join(root, file)
         #print "Parsing %s" % path
-        bitbakec.parsefile(path,False)
+        asts.append( bitbakec.parsefile(path,False) )
 
 
+import time
+time.sleep( 60000 )
