@@ -105,7 +105,7 @@ enum {
 //#define YY_DECL static size_t yylex ()
 
 #define ERROR(e) \
-  do { lineError = yylineno; errorParse = e; yyterminate (); } while (0)
+  do { printf("Unexpected ...\n");lineError = yylineno; errorParse = e; yyterminate (); } while (0)
 
 static const char* fixup_escapes (const char* sz);
 
@@ -204,7 +204,8 @@ PROC            \({C_SP}*\)
                                   yyextra->accept (T_INHERIT); }
 {K_ADDTASK}                     { BEGIN S_TASK;
                                   yyextra->accept (T_ADDTASK); }
-{K_ADDHANDLER}                  { yyextra->accept (T_ADDHANDLER); }
+{K_ADDHANDLER}                  { BEGIN INITIAL;
+                                  yyextra->accept (T_ADDHANDLER); }
 {K_EXPORT_FUNC}                 { BEGIN S_FUNC;
                                   yyextra->accept (T_EXPORT_FUNC); }
 <S_TASK>{K_BEFORE}              { yyextra->accept (T_BEFORE); }
@@ -227,6 +228,7 @@ PROC            \({C_SP}*\)
 <S_DEF_BODY>{C_SP}+[^\n]*\n     { yyextra->accept (T_DEF_BODY, yytext); }
 <S_DEF_BODY>\n                  { yyextra->accept (T_DEF_BODY, yytext); }
 <S_DEF_BODY>.                   { BEGIN INITIAL; unput (yytext[0]); }
+<S_DEF_BODY>\n\n                { BEGIN INITIAL; unput (yytext[0]); }
 
 {COMMENT}                       { }
 
@@ -279,7 +281,7 @@ int lex_t::line ()const
 
 extern "C" {
 
-    void parse (FILE* file, char* name, PyObject* data, int config)
+    void parse (FILE* file, char* name, PyObject* tree, int config)
     {
         /* printf("parse bbparseAlloc\n"); */
         void* parser = bbparseAlloc (malloc);
@@ -293,7 +295,7 @@ extern "C" {
         lex.scanner = scanner;
         lex.file = file;
         lex.name = name;
-        lex.data = data;
+        lex.tree = tree;
         lex.config = config;
         lex.parse = bbparse;
         /*printf("parse yyset_extra\n"); */
