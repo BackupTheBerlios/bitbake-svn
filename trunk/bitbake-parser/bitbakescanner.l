@@ -228,7 +228,6 @@ PROC            \({C_SP}*\)
 <S_DEF_BODY>{C_SP}+[^\n]*\n     { yyextra->accept (T_DEF_BODY, yytext); }
 <S_DEF_BODY>\n                  { yyextra->accept (T_DEF_BODY, yytext); }
 <S_DEF_BODY>.                   { BEGIN INITIAL; unput (yytext[0]); }
-<S_DEF_BODY>\n\n                { BEGIN INITIAL; unput (yytext[0]); }
 
 {COMMENT}                       { }
 
