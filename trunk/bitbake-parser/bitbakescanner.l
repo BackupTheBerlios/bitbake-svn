@@ -85,9 +85,6 @@ extern void bbparseTrace(FILE *TraceFILE, char *zTracePrompt);
 
 extern "C" {
 
-int lineError;
-int errorParse;
-
 enum {
   errorNone = 0,
   errorUnexpectedInput,
@@ -105,7 +102,7 @@ enum {
 //#define YY_DECL static size_t yylex ()
 
 #define ERROR(e) \
-  do { printf("Unexpected ...\n");lineError = yylineno; errorParse = e; yyterminate (); } while (0)
+  do { printf("Unexpected ...\n"); yyextra->error = e; yyextra->lineno = e; yyterminate (); } while (0)
 
 static const char* fixup_escapes (const char* sz);
 
@@ -266,21 +263,18 @@ void lex_t::accept (int token, const char* sz)
 
 void lex_t::input (char *buf, int *result, int max_size)
 {
-    /* printf("lex_t::input %p %d\n", buf, max_size); */
     *result = fread(buf, 1, max_size, file);
-    /* printf("lex_t::input result %d\n", *result); */
 }
 
 int lex_t::line ()const
 {
-    /* printf("lex_t::line\n"); */
     return yyget_lineno (scanner);
 }
 
 
 extern "C" {
 
-    void parse (FILE* file, char* name, PyObject* tree, int config)
+    int parse (FILE* file, char* name, PyObject* tree, int config)
     {
         /* printf("parse bbparseAlloc\n"); */
         void* parser = bbparseAlloc (malloc);
@@ -297,6 +291,8 @@ extern "C" {
         lex.tree = tree;
         lex.config = config;
         lex.parse = bbparse;
+        lex.error  = 0;
+        lex.lineno = 0;
         /*printf("parse yyset_extra\n"); */
         yyset_extra (&lex, scanner);
 
@@ -310,11 +306,15 @@ extern "C" {
         bbparseTrace (NULL, NULL);
         /* printf("parse bbparseTrace\n"); */
 
-        if (result != T_EOF)
+        if (result != T_EOF) {
            printf ("premature end of file\n");
+            return 0;
+        }
 
         yylex_destroy (scanner);
         bbparseFree (parser, free);
+
+        return lex.error == errorNone;
     }
 
 }

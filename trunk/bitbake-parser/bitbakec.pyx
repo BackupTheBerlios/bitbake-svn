@@ -15,13 +15,12 @@ cdef extern from "lexerc.h":
     ctypedef struct lex_t:
         void* parser
         void* scanner
-        char* name
         FILE* file
-        int config
+        char* name
         void* tree
-
-    int lineError
-    int errorParse
+        int config
+        int error
+        int lineno
 
     cdef extern int parse(FILE*, char*, object, int)
 
@@ -34,15 +33,21 @@ def parsefile(object file, object config):
     f = fopen(file, "r")
     #print "parsefile: 2 opening file"
     if (f == NULL):
-        raise IOError("No such file %s." % file)
+        raise IOError("No such file %s" % file)
 
     #print "parsefile: 3 parse"
     root = ast.Root(file)
-    parse(f, file, root, config)
+    ret = parse(f, file, root, config)
 
     # Close the file
     fclose(f)
+
+    if ret == 0:
+        #raise bb.parse.ParseError(), file
+        print "ParseError"
+
     return root
+
 
 
 cdef public void e_assign(lex_t* container, char* key, char* what):
@@ -107,7 +112,7 @@ cdef public void e_postcat(lex_t* c, char* key, char* what):
     #postdot:
     # val = "%s%s" % ((bb.data.getVar(key, data) or ""), groupd["value"])
     tree = <object>c.tree
-    tree.add_statement( ast.Postcast( key, what ) )
+    tree.add_statement( ast.Postcat( key, what ) )
 
 cdef public int e_addtask(lex_t* c, char* name, char* before, char* after) except -1:
     #print "e_addtask", name
@@ -242,12 +247,10 @@ cdef public int e_def(lex_t* c, char* a, char* b, char* d) except -1:
 
     return 0
 
-#cdef public int e_parse_error(lex_t* c) except *:
 cdef public int e_parse_error(lex_t* c):
-    print "e_parse_error", c.name, "line:", lineError, "parse:", errorParse
+    print "e_parse_error", c.name, "line:", c.lineno, "parse:", c.error
 
-
-    #raise "Bla"
-    #bb.parse.ParseError("There was an parse error, sorry unable to give more information at the current time. File: %s Line: %d" % (c.name,lineError) )
+    if c.error == 0:
+        c.error  = 1010
     return 0
 

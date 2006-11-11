@@ -35,6 +35,8 @@ struct lex_t {
     char *name;
     PyObject *tree;
     int config;
+    int error;
+    int lineno;
 
     void* (*parse)(void*, int, bitbake_token_t, lex_t*);
 

@@ -49,7 +49,7 @@
 
 %token_destructor { $$.release_this (); }
 
-%syntax_error     { e_parse_error( lex ); }
+%syntax_error     { lex->lineno = lex->line(); e_parse_error( lex ); }
 
 program ::= statements.
 

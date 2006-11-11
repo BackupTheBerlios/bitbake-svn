@@ -14,6 +14,8 @@ typedef struct {
     char *name;
     PyObject *tree;
     int config;
+    int error;
+    int lineno;
 } lex_t;
 
 #endif
