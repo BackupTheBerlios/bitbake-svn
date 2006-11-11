@@ -130,6 +130,9 @@ class AddHandler:
     def eval(self, data, nodecache):
         pass
 
+    def __str__(self):
+        return "AddHandler: %s" % self.handler
+
 class ExportFunction:
     def __init__(self, function_name):
         self.function = function_name
