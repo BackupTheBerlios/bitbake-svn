@@ -133,6 +133,11 @@ cdef public int e_addtask(lex_t* c, char* name, char* before, char* after) excep
         return -1
 
     tree = <object>c.tree
+    if before == NULL:
+        before = ""
+    if after == NULL:
+        after = ""
+
     tree.add_statement( ast.AddTask( name, before, after ) )
 
     return 0
@@ -188,6 +193,11 @@ cdef public int e_proc(lex_t* c, char* key, char* what) except -1:
         raise bb.parse.ParseError("No inherits allowed in config files")
         return -1
 
+    if key == NULL:
+        key = ""
+    if what == NULL:
+        what = ""
+
     tree = <object>c.tree
     tree.add_statement( ast.Proc( key, what ) )
     return 0
@@ -199,6 +209,11 @@ cdef public int e_proc_python(lex_t* c, char* key, char* what) except -1:
         return -1
 
     tree = <object>c.tree
+    if key == NULL:
+        key = ""
+    if what == NULL:
+        what = ""
+
     tree.add_statement( ast.ProcPython( key, what ) )
 
     return 0
@@ -227,10 +242,12 @@ cdef public int e_def(lex_t* c, char* a, char* b, char* d) except -1:
 
     return 0
 
-cdef public int e_parse_error(lex_t* c) except -1:
+#cdef public int e_parse_error(lex_t* c) except *:
+cdef public int e_parse_error(lex_t* c):
     print "e_parse_error", c.name, "line:", lineError, "parse:", errorParse
 
 
-    raise bb.parse.ParseError("There was an parse error, sorry unable to give more information at the current time. File: %s Line: %d" % (c.name,lineError) )
-    return -1
+    #raise "Bla"
+    #bb.parse.ParseError("There was an parse error, sorry unable to give more information at the current time. File: %s Line: %d" % (c.name,lineError) )
+    return 0
 
