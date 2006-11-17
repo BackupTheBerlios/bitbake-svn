@@ -33,6 +33,7 @@ class Root:
     def __init__(self, filename):
         self.filename = filename
         self.statements = []
+        self.root = None
 
     def eval(self, data, nodecache):
         """
@@ -42,8 +43,16 @@ class Root:
             statement.eval(data, nodecache)
 
     def add_statement(self, statement):
+        statement.root = self
         self.statements.append( statement )
 
+
+    def expand(self, data, nodecache):
+        """
+        This will be used to fold the tree back to. E.g. due a inherit, include
+        needed expand...
+        """
+        
 
 class Assignment:
     """
@@ -54,7 +63,12 @@ class Assignment:
         self.what = what
 
     def eval(self, data, nodecache):
-        pass
+        """
+        Assign to the dictionary
+
+        Example is A = 'bla'
+        """
+        data.setVar(self.key, self.what)
 
 class ImmediateAssignment:
     def __init__(self, key, what):
@@ -62,15 +76,16 @@ class ImmediateAssignment:
         self.what  = what
 
     def eval(self, data, nodecache):
-        pass
-
+        if hasattr(self, 'root'):
+            self.root.expand(data, nodecache)
+        data.setVar(self.key, data.expand(self.what, None))
 
 class Export:
     def __init__(self, key):
         self.key = key
 
     def eval(self, data, nodecache):
-        pass
+        data.setVarFlag(self.key, "export", True)
 
 
 class Conditional:
@@ -79,7 +94,9 @@ class Conditional:
         self.what = what
 
     def eval(self, data, nodecache):
-        pass
+        if hasattr(self, 'root'):
+            self.root.expand(data, nodecache)
+        
 
 class Prepend:
     def __init__(self, key, what):
