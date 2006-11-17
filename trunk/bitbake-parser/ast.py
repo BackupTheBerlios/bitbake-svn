@@ -35,7 +35,31 @@ def mixing_factory(ast_name):
     import evaluator_data
     return evaluator_data.create(ast_name)
 
-class Root(mixing_factory(Ast.Root)):
+class AstItem():
+    def has_root(self):
+        return hasattr(self, 'root')
+
+    def get_direct_root(self):
+        return getattr(self, 'root')
+
+    def get_file_name(self):
+        if self.has_root():
+            return self.get_direct_root().file_name
+        else:
+            return ""
+
+    def has_super_root(self):
+        return hasattr(self, 'superroot')
+
+    def get_super_root(self):
+        "Return the toplevel node"
+        return getattr(self, 'superroor')
+
+    def expand(self, data, nodecache):
+        if self.has_root():
+            self.get_direct_root().expand(data, nodecache)
+
+class Root(AstItem,mixing_factory(Ast.Root)):
     """
     The root document
     """
@@ -43,7 +67,6 @@ class Root(mixing_factory(Ast.Root)):
     def __init__(self, filename):
         self.filename = filename
         self.statements = []
-        self.root = None
 
     def add_statement(self, statement):
         statement.root = self
@@ -56,7 +79,7 @@ class Root(mixing_factory(Ast.Root)):
         needed expand...
         """
         
-class Assignment(mixing_factory(Ast.Assignment)):
+class Assignment(AstItem,mixing_factory(Ast.Assignment)):
     """
     An assigment like A = 'foobar'
     """
@@ -64,86 +87,86 @@ class Assignment(mixing_factory(Ast.Assignment)):
         self.key  = key
         self.what = what
 
-class ImmediateAssignment(mixing_factory(Ast.ImmediateAssignment)):
+class ImmediateAssignment(AstItem,mixing_factory(Ast.ImmediateAssignment)):
     def __init__(self, key, what):
         self.key   = key
         self.what  = what
 
-class Export(mixing_factory(Ast.Export)):
+class Export(AstItem,mixing_factory(Ast.Export)):
     def __init__(self, key):
         self.key = key
 
-class Conditional(mixing_factory(Ast.ConditionalAssignment)):
+class Conditional(AstItem,mixing_factory(Ast.ConditionalAssignment)):
     def __init__(self, key, what):
         self.key = key
         self.what = what
 
-class Prepend(mixing_factory(Ast.Prepend)):
+class Prepend(AstItem,mixing_factory(Ast.Prepend)):
     def __init__(self, key, what):
         self.key = key
         self.what = what
 
-class Append(mixing_factory(Ast.Append)):
+class Append(AstItem,mixing_factory(Ast.Append)):
     def __init__(self, key, what):
         self.key  = key
         self.what = what
 
-class Precat(mixing_factory(Ast.Precat)):
+class Precat(AstItem,mixing_factory(Ast.Precat)):
     def __init__(self, key, what):
         self.key = key
         self.what = what
 
-class Postcat(mixing_factory(Ast.Postcat)):
+class Postcat(AstItem,mixing_factory(Ast.Postcat)):
     def __init__(self, key, what):
         self.key = key
         self.what = what
 
 
-class AddTask(mixing_factory(Ast.Task)):
+class AddTask(AstItem,mixing_factory(Ast.Task)):
     def __init__(self, name, before, after):
         self.name = name
         self.before = before
         self.after = after
 
-class AddHandler(mixing_factory(Ast.Handler)):
+class AddHandler(AstItem, mixing_factory(Ast.Handler)):
     def __init__(self, handler):
         self.handler = handler
 
     def __str__(self):
         return "AddHandler: %s" % self.handler
 
-class ExportFunction(mixing_factory(Ast.ExportFunction)):
+class ExportFunction(AstItem, mixing_factory(Ast.ExportFunction)):
     def __init__(self, function_name):
         self.function = function_name
 
-class Inherit(mixing_factory(Ast.Inherit)):
+class Inherit(AstItem, mixing_factory(Ast.Inherit)):
     def __init__(self, file):
         self.file = file
 
-class Include(mixing_factory(Ast.Include)):
+class Include(AstItem, mixing_factory(Ast.Include)):
     def __init__(self, file):
         self.file = file
 
-class Require(mixing_factory(Ast.Require)):
+class Require(AstItem, mixing_factory(Ast.Require)):
     def __init__(self, file):
         self.file = file
 
-class Proc(mixing_factory(Ast.Procedure)):
+class Proc(AstItem, mixing_factory(Ast.Procedure)):
     def __init__(self, key, what):
         self.key = key
         self.what = what
 
-class ProcPython(mixing_factory(Ast.ProcedurePython)):
+class ProcPython(AstItem, mixing_factory(Ast.ProcedurePython)):
     def __init__(self, key, what):
         self.key = key
         self.what = what
 
-class ProcFakeroot(mixing_factory(Ast.ProcedureFakeroot)):
+class ProcFakeroot(AstItem, mixing_factory(Ast.ProcedureFakeroot)):
     def __init__(self, key, what):
         self.key = key
         self.what = what
 
-class Def(mixing_factory(Ast.Definition)):
+class Def(AstItem, mixing_factory(Ast.Definition)):
     def __init__(self, a, b, c):
         self.a = a
         self.b = b

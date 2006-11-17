@@ -12,6 +12,10 @@ class EvaluateRoot(object):
         for statement in self.statements:
             statement.eval(data, nodecache)
 
+        # If we are the root, do some post processing
+    def expand(data,nodecache):
+        pass
+
 class EvaluateAssignment(object):
     def eval(self, data, nodecache):
         """
@@ -23,8 +27,7 @@ class EvaluateAssignment(object):
 
 class EvaluateImmediateAssignment(object):
     def eval(self, data, nodecache):
-        if hasattr(self, 'root'):
-            self.root.expand(data, nodecache)
+        self.expand(data, nodecache)
         data.setVar(self.key, data.expand(self.what, None))
 
 class EvaluateExport(object):
@@ -33,48 +36,60 @@ class EvaluateExport(object):
 
 class EvaluateConditionalAssigment(object):
     def eval(self, data, nodecache):
-        if hasattr(self, 'root'):
-            self.root.expand(data, nodecache)
+        self.expand(data, nodecache)
+        data.setVar(self.key, (data.getVar(self.key,False) or self.what))
 
 class EvaluatePrepend(object):
     def eval(self, data, nodecache):
-        pass
+        data.setVar(self.key, self.what + " " + (data.getVar(self.key,False) or ""))
 
 class EvaluateAppend(object):
     def eval(self, data, nodecache):
-        pass
+        data.setVar(self.key, (data.getVar(self.key,False) or "") + " " + self.what)
 
 class EvaluatePrecat(object):
     def eval(self, data, nodecache):
-        pass
+        data.setVar(self.key, self.what + (data.getVar(self.key,False) or ""))
 
 class EvaluatePostcat(object):
     def eval(self, data, nodecache):
-        pass
+        data.setVar(self.key, (data.getVar(self.key,False) or "") + " " + self.what)
 
 class EvaluateTask(object):
     def eval(self, data, nodecache):
-        pass
+        var = "do_" + self.name
+        data.setVarFlag(var, "task", True)
+
+        if self.after:
+            data.setVarFlag(var, "deps", self.after.split())
+        if self.before:
+            data.setVarFlag(var, "postdeps", self.before.split())
 
 class EvaluateHandler(object):
     def eval(self, data, nodecache):
-        pass
+        data.setVarFlag(self.handler, "handler", 1)
 
 class EvaluateExportFunction(object):
     def eval(self, data, nodecache):
-        pass
+        """
+        That is disguting. You can have EXPORT_FUNCTION and what this is doing
+        is appending a classname to the function. But it makes fun if you inherit
+        two classes...
+        """
+        self.get_root().expand( data, nodecache )
+        print self.function
 
 class EvaluateInherit(object):
     def eval(self, data, nodecache):
-        pass
+        self.get_root().expand( data, nodecache )
 
 class EvaluateInclude(object):
     def eval(self, data, nodecache):
-        pass
+        self.get_root().expand( data, nodecache )
 
 class EvaluateRequire(object):
     def eval(self, data, nodecache):
-        pass
+        self.get_root().expand( data, nodecache )
 
 class EvaluateProcedure(object):
     def eval(self, data, nodecache):
