@@ -28,7 +28,7 @@
 from ast_defines import Ast
 
 
-def mixing_factory(ast_name):
+def mixin_factory(ast_name):
     """
     Create a  class which implements the appropriate evaluation method
     """
@@ -59,7 +59,7 @@ class AstItem():
         if self.has_root():
             self.get_direct_root().expand(data, nodecache)
 
-class Root(AstItem,mixing_factory(Ast.Root)):
+class Root(AstItem,mixin_factory(Ast.Root)):
     """
     The root document
     """
@@ -79,7 +79,7 @@ class Root(AstItem,mixing_factory(Ast.Root)):
         needed expand...
         """
         
-class Assignment(AstItem,mixing_factory(Ast.Assignment)):
+class Assignment(AstItem,mixin_factory(Ast.Assignment)):
     """
     An assigment like A = 'foobar'
     """
@@ -87,86 +87,86 @@ class Assignment(AstItem,mixing_factory(Ast.Assignment)):
         self.key  = key
         self.what = what
 
-class ImmediateAssignment(AstItem,mixing_factory(Ast.ImmediateAssignment)):
+class ImmediateAssignment(AstItem,mixin_factory(Ast.ImmediateAssignment)):
     def __init__(self, key, what):
         self.key   = key
         self.what  = what
 
-class Export(AstItem,mixing_factory(Ast.Export)):
+class Export(AstItem,mixin_factory(Ast.Export)):
     def __init__(self, key):
         self.key = key
 
-class Conditional(AstItem,mixing_factory(Ast.ConditionalAssignment)):
+class Conditional(AstItem,mixin_factory(Ast.ConditionalAssignment)):
     def __init__(self, key, what):
         self.key = key
         self.what = what
 
-class Prepend(AstItem,mixing_factory(Ast.Prepend)):
+class Prepend(AstItem,mixin_factory(Ast.Prepend)):
     def __init__(self, key, what):
         self.key = key
         self.what = what
 
-class Append(AstItem,mixing_factory(Ast.Append)):
+class Append(AstItem,mixin_factory(Ast.Append)):
     def __init__(self, key, what):
         self.key  = key
         self.what = what
 
-class Precat(AstItem,mixing_factory(Ast.Precat)):
+class Precat(AstItem,mixin_factory(Ast.Precat)):
     def __init__(self, key, what):
         self.key = key
         self.what = what
 
-class Postcat(AstItem,mixing_factory(Ast.Postcat)):
+class Postcat(AstItem,mixin_factory(Ast.Postcat)):
     def __init__(self, key, what):
         self.key = key
         self.what = what
 
 
-class AddTask(AstItem,mixing_factory(Ast.Task)):
+class AddTask(AstItem,mixin_factory(Ast.Task)):
     def __init__(self, name, before, after):
         self.name = name
         self.before = before
         self.after = after
 
-class AddHandler(AstItem, mixing_factory(Ast.Handler)):
+class AddHandler(AstItem, mixin_factory(Ast.Handler)):
     def __init__(self, handler):
         self.handler = handler
 
     def __str__(self):
         return "AddHandler: %s" % self.handler
 
-class ExportFunction(AstItem, mixing_factory(Ast.ExportFunction)):
+class ExportFunction(AstItem, mixin_factory(Ast.ExportFunction)):
     def __init__(self, function_name):
         self.function = function_name
 
-class Inherit(AstItem, mixing_factory(Ast.Inherit)):
+class Inherit(AstItem, mixin_factory(Ast.Inherit)):
     def __init__(self, file):
         self.file = file
 
-class Include(AstItem, mixing_factory(Ast.Include)):
+class Include(AstItem, mixin_factory(Ast.Include)):
     def __init__(self, file):
         self.file = file
 
-class Require(AstItem, mixing_factory(Ast.Require)):
+class Require(AstItem, mixin_factory(Ast.Require)):
     def __init__(self, file):
         self.file = file
 
-class Proc(AstItem, mixing_factory(Ast.Procedure)):
+class Proc(AstItem, mixin_factory(Ast.Procedure)):
     def __init__(self, key, what):
         self.key = key
         self.what = what
 
-class ProcPython(AstItem, mixing_factory(Ast.ProcedurePython)):
+class ProcPython(AstItem, mixin_factory(Ast.ProcedurePython)):
     def __init__(self, key, what):
         self.key = key
         self.what = what
 
-class ProcFakeroot(AstItem, mixing_factory(Ast.ProcedureFakeroot)):
+class ProcFakeroot(AstItem, mixin_factory(Ast.ProcedureFakeroot)):
     def __init__(self, key, what):
         self.key = key
         self.what = what
 
-class Def(AstItem, mixing_factory(Ast.Definition)):
+class Def(AstItem, mixin_factory(Ast.Definition)):
     def __init__(self, a, b, c):
         self.a = a
         self.b = b
