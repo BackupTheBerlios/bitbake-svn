@@ -58,7 +58,7 @@ cdef public void e_assign(lex_t* container, char* key, char* what):
         what = ""
 
     tree = <object>container.tree
-    tree.add_statement( ast.Assignment( key, what ) )
+    tree.add_statement( ast.Assignment( key, what.replace("\\","") ) )
 
 cdef public void e_export(lex_t* c, char* what):
     #print "e_export", what
@@ -72,7 +72,7 @@ cdef public void e_immediate(lex_t* c, char* key, char* what):
     #colon:
     # val = bb.data.expand(groupd["value"], data)
     tree = <object>c.tree
-    tree.add_statement( ast.ImmediateAssignment( key, what ) )
+    tree.add_statement( ast.ImmediateAssignment( key, what.replace("\\","") ) )
 
 cdef public void e_cond(lex_t* c, char* key, char* what):
     #print "e_cond", key, what
@@ -85,35 +85,35 @@ cdef public void e_cond(lex_t* c, char* key, char* what):
         what = ""
 
     tree = <object>c.tree
-    tree.add_statement( ast.Conditional( key, what ) )
+    tree.add_statement( ast.Conditional( key, what.replace("\\","") ) )
 
 cdef public void e_prepend(lex_t* c, char* key, char* what):
     #print "e_prepend", key, what
     #prepend:
     # val = "%s %s" % (groupd["value"], (bb.data.getVar(key, data) or ""))
     tree = <object>c.tree
-    tree.add_statement( ast.Prepend( key, what ) )
+    tree.add_statement( ast.Prepend( key, what.replace("\\","") ) )
 
 cdef public void e_append(lex_t* c, char* key, char* what):
     #print "e_append", key, what
     #append:
     # val = "%s %s" % ((bb.data.getVar(key, data) or ""), groupd["value"])
     tree = <object>c.tree
-    tree.add_statement( ast.Append( key, what ) )
+    tree.add_statement( ast.Append( key, what.replace("\\","") ) )
 
 cdef public void e_precat(lex_t* c, char* key, char* what):
     #print "e_precat", key, what
     #predot:
     # val = "%s%s" % (groupd["value"], (bb.data.getVar(key, data) or ""))
     tree = <object>c.tree
-    tree.add_statement( ast.Precat( key, what ) )
+    tree.add_statement( ast.Precat( key, what.replace("\\","") ) )
 
 cdef public void e_postcat(lex_t* c, char* key, char* what):
     #print "e_postcat", key, what
     #postdot:
     # val = "%s%s" % ((bb.data.getVar(key, data) or ""), groupd["value"])
     tree = <object>c.tree
-    tree.add_statement( ast.Postcat( key, what ) )
+    tree.add_statement( ast.Postcat( key, what.replace("\\","") ) )
 
 cdef public int e_addtask(lex_t* c, char* name, char* before, char* after) except -1:
     #print "e_addtask", name
