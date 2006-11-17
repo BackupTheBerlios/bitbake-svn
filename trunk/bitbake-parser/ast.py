@@ -25,7 +25,17 @@
 
 """
 
-class Root:
+from ast_defines import Ast
+
+
+def mixing_factory(ast_type):
+    """
+    Create a  class which implements the appropriate evaluation method
+    """
+    import evalulator_data
+    return evalulator_data.create(ast_name)
+
+class Root(mixing_factory(Ast.Root)):
     """
     The root document
     """
@@ -34,13 +44,6 @@ class Root:
         self.filename = filename
         self.statements = []
         self.root = None
-
-    def eval(self, data, nodecache):
-        """
-        Evaluate the whole document
-        """
-        for statement in self.statements:
-            statement.eval(data, nodecache)
 
     def add_statement(self, statement):
         statement.root = self
@@ -53,8 +56,7 @@ class Root:
         needed expand...
         """
         
-
-class Assignment:
+class Assignment(mixing_factory(Ast.Assignment)):
     """
     An assigment like A = 'foobar'
     """
@@ -62,149 +64,88 @@ class Assignment:
         self.key  = key
         self.what = what
 
-    def eval(self, data, nodecache):
-        """
-        Assign to the dictionary
-
-        Example is A = 'bla'
-        """
-        data.setVar(self.key, self.what)
-
-class ImmediateAssignment:
+class ImmediateAssignment(mixing_factory(Ast.ImmediateAssignment)):
     def __init__(self, key, what):
         self.key   = key
         self.what  = what
 
-    def eval(self, data, nodecache):
-        if hasattr(self, 'root'):
-            self.root.expand(data, nodecache)
-        data.setVar(self.key, data.expand(self.what, None))
-
-class Export:
+class Export(mixing_factory(Ast.Export)):
     def __init__(self, key):
         self.key = key
 
-    def eval(self, data, nodecache):
-        data.setVarFlag(self.key, "export", True)
-
-
-class Conditional:
+class Conditional(mixing_factory(Ast.ConditionalAssignment)):
     def __init__(self, key, what):
         self.key = key
         self.what = what
 
-    def eval(self, data, nodecache):
-        if hasattr(self, 'root'):
-            self.root.expand(data, nodecache)
-        
-
-class Prepend:
+class Prepend(mixing_factory(Ast.Prepend)):
     def __init__(self, key, what):
         self.key = key
         self.what = what
 
-    def eval(self, data, nodecache):
-        pass
-
-class Append:
+class Append(mixing_factory(Ast.Append)):
     def __init__(self, key, what):
         self.key  = key
         self.what = what
 
-    def eval(self, data, nodecache):
-        pass
-
-class Precat:
+class Precat(mixing_factory(Ast.Precat)):
     def __init__(self, key, what):
         self.key = key
         self.what = what
 
-    def eval(self, data, nodecache):
-        pass
-
-class Postcat:
+class Postcat(mixing_factory(Ast.Postcat)):
     def __init__(self, key, what):
         self.key = key
         self.what = what
 
-    def eval(self, data, nodecache):
-        pass
 
-class AddTask:
+class AddTask(mixing_factory(Ast.Task)):
     def __init__(self, name, before, after):
         self.name = name
         self.before = before
         self.after = after
 
-    def eval(self, data, nodecache):
-        pass
-
-
-class AddHandler:
+class AddHandler(mixing_factory(Ast.Handler)):
     def __init__(self, handler):
         self.handler = handler
-
-    def eval(self, data, nodecache):
-        pass
 
     def __str__(self):
         return "AddHandler: %s" % self.handler
 
-class ExportFunction:
+class ExportFunction(mixing_factory(Ast.ExportFunction)):
     def __init__(self, function_name):
         self.function = function_name
 
-    def eval(self, data, nodecache):
-        pass
-
-class Inherit:
-    def __init__(self, file):
-        self.file = file
-    def eval(self, data, nodecache):
-        pass
-
-class Include:
+class Inherit(mixing_factory(Ast.Inherit)):
     def __init__(self, file):
         self.file = file
 
-    def eval(self, data, nodecache):
-        pass
-
-
-class Require:
+class Include(mixing_factory(Ast.Include)):
     def __init__(self, file):
         self.file = file
 
-    def eval(self, data, nodecache):
-        pass
+class Require(mixing_factory(Ast.Require)):
+    def __init__(self, file):
+        self.file = file
 
-
-class Proc:
-    def __init__(self, key, what):
-        self.key = key
-        self.what = what
-    def eval(self, data, nodecache):
-        pass
-
-class ProcPython:
-    def __init__(self, key, what):
-        self.key = key
-        self.what = what
-    def eval(self, data, nodecache):
-        pass
-
-class ProcFakeroot:
+class Proc(mixing_factory(Ast.Procedure)):
     def __init__(self, key, what):
         self.key = key
         self.what = what
 
-    def eval(self, data, nodecache):
-        pass
+class ProcPython(mixing_factory(Ast.ProcedurePython)):
+    def __init__(self, key, what):
+        self.key = key
+        self.what = what
 
-class Def:
+class ProcFakeroot(mixing_factory(Ast.ProcedureFakeroot)):
+    def __init__(self, key, what):
+        self.key = key
+        self.what = what
+
+class Def(mixing_factory(Ast.Definition)):
     def __init__(self, a, b, c):
         self.a = a
         self.b = b
         self.c = c
-    def eval(self, data, nodecache):
-        pass
+
