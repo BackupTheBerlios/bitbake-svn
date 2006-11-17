@@ -67,7 +67,7 @@ class Root(AstItem,mixin_factory(Ast.Root)):
     def __init__(self, filename):
         self.filename = filename
         self.statements = []
-        self.classes    = []
+        self.base_classes = {}
 
     def add_statement(self, statement):
         statement.root = self

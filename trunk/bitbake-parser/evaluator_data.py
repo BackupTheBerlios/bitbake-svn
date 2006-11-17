@@ -14,11 +14,24 @@ class EvaluateRoot(object):
         # We assume that base.bbclass and INHERITS have been
         # inherited already.
 
+        # Reset status
+        self.classes   = self.base_classes
+        self.anonqueue = []
+        self.tasks     = []
+        self.handler   = []
+
         for statement in self.statements:
             data.setVar('FILE', self.filename)
             statement.eval(data, nodecache)
 
-        # If we are the root, do some post processing
+        # Do some post processing by propagating vars to the
+        # upper one
+        if self.has_root():
+            self.root.classes = dict.fromkeys( self.root.classes.keys() + self.classes.keys() )
+            self.root.anonqueue+= self.anonqueue
+            self.root.tasks    += self.tasks
+            self.root.handler  += self.handler
+
     def expand(data,nodecache):
         """
         In future version only the expand could trigger
@@ -75,10 +88,12 @@ class EvaluateTask(object):
             data.setVarFlag(var, "deps", self.after.split())
         if self.before:
             data.setVarFlag(var, "postdeps", self.before.split())
+        self.root.tasks.append( var )
 
 class EvaluateHandler(object):
     def eval(self, data, nodecache):
         data.setVarFlag(self.handler, "handler", 1)
+        self.root.handler.append( self.handler )
 
 class EvaluateExportFunction(object):
     def eval(self, data, nodecache):
@@ -95,12 +110,17 @@ class EvaluateInherit(object):
     def eval(self, data, nodecache):
         if self.has_root():
             self.get_direct_root().expand( data, nodecache )
+            if self.file in self.root.classes:
+                return
+            
+            self.get_direct_root().classes[self.file] = 1
+
         inherit = data.expand(self.file, None)
 
         # Remember what we inherites
-        if self.has_root():
-            self.get_direct_root().classes.append( self.file )
         ast = nodecache.parse_class( self.file, bb.which(os.environ['BBPATH'], "classes/%s.bbclass" % self.file ) )
+        if self.has_root():
+            ast.root = self.root
         ast.eval( data, nodecache )
 
 class EvaluateInclude(object):
@@ -145,9 +165,7 @@ class EvaluateProcedurePython(object):
         """
         ### FIXME TODO transport this differently
         if self.key == "__anonymous" or self.key == "":
-            anonqueue = data.getVar('__anonqueue', False) or []
-            anonqueue.append( {'content' : self.what, 'flags' : { 'python' : 1, 'func' : 1}} )
-            data.setVar('__anonqueue', anonqueue )
+            self.root.anonqueue.append( self.what )
         else:
             data.setVar(self.key, self.what)
             data.setVarFlag(self.key, 'python', '1')

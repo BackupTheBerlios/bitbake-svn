@@ -22,14 +22,17 @@ def main():
 
     # micro optimisation INHERIT the bases once...
     import ast
-    require = ast.Inherit("none")
+    root = ast.Root("none")
     inherits = (my_init.getVar('INHERIT', True) or "").split()
     inherits.insert(0, "base")
     for inherit in inherits:
-        require.file = inherit
-        require.eval( my_init, cache )
+        print "Inheriting %s" % inherit
+        root.add_statement( ast.Inherit( inherit ) )
 
-
+    root.eval( my_init, cache )
+    base_classes = root.classes
+    print base_classes
+    #sys.exit(-1)
     # Initialize the fetcher stuff
     def set_additional_vars(the_data):
         """Deduce rest of variables, e.g. ${A} out of ${SRC_URI}"""
@@ -58,17 +61,18 @@ def main():
         bb.data.setVar('A', " ".join(a), the_data)
 
     # Finish up one file!
-    def finish_up(the_data):
+    def finish_up(ast,the_data):
         """
         This takes +*LOOOOONG* seconds... fix it
         """
         bb.data.expandKeys(the_data)
         bb.data.update_data(the_data)
 
-        anonqueue = bb.data.getVar("__anonqueue", the_data, 1) or []
-        for anon in anonqueue:
-            bb.data.setVar("__anonfunc", anon["content"], the_data)
-            bb.data.setVarFlags("__anonfunc", anon["flags"], the_data)
+
+        flag = {'python' : 1, 'func' : 1}
+        for anon in ast.anonqueue:
+            bb.data.setVar("__anonfunc"     , anon, the_data)
+            bb.data.setVarFlags("__anonfunc", flag, the_data)
             try: 
                 t = bb.data.getVar('T', the_data)
                 bb.data.setVar('T', '${TMPDIR}/', the_data)
@@ -79,7 +83,6 @@ def main():
             except Exception, e:
                 #bb.msg.debug(1, bb.msg.domain.Parsing, "executing anonymous function: %s" % e)
                 raise
-        bb.data.delVar("__anonqueue", the_data)
         bb.data.delVar("__anonfunc", the_data)
         set_additional_vars(the_data)
         bb.data.update_data(the_data)  
@@ -98,17 +101,17 @@ def main():
                 continue
             try:
                 data = my_init.createCopy()
-                ast.classes = inherits
+                ast.base_classes = base_classes
                 ast.eval( data, cache )
-                finish_up( data )
+                finish_up( ast, data )
             except Exception, e:
                 print "Error eval", e
             except:
                 pass
 
 
-import cProfile
-cProfile.run("main()")
-
+#import cProfile
+#cProfile.run("main()")
+main()
 import time
 #time.sleep( 60000 )
