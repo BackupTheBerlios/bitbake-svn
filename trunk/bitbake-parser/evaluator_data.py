@@ -11,21 +11,8 @@ class EvaluateRoot(object):
         Evaluate the whole document
         """
 
-        #
-        # Some black magic for the INHERIT stuff
-        #
-        #(root,ext) = os.path.splitext(os.path.basename(self.filename))
-        #if ext != ".conf" and ext != ".bbclass" and root != "base":
-        #    import ast
-        #    require = ast.Inherit("none")
-        #    require.root = self
-        #    inherits = (data.getVar('INHERIT', True) or "").split()
-        #    if not "base" in inherits:
-        #        inherits.insert(0, "base")
-        #    for inherit in inherits:
-        #        require.file = inherit
-        #        require.eval( data, nodecache )
-            
+        # We assume that base.bbclass and INHERITS have been
+        # inherited already.
 
         for statement in self.statements:
             data.setVar('FILE', self.filename)
@@ -33,6 +20,11 @@ class EvaluateRoot(object):
 
         # If we are the root, do some post processing
     def expand(data,nodecache):
+        """
+        In future version only the expand could trigger
+        write access to the cache.
+        E.g. on inherit,include,require and immediate assignment
+        """
         pass
 
 class EvaluateAssignment(object):
@@ -97,6 +89,8 @@ class EvaluateExportFunction(object):
         """
         self.get_direct_root().expand( data, nodecache )
 
+        ### TODO FIXME
+
 class EvaluateInherit(object):
     def eval(self, data, nodecache):
         if self.has_root():
@@ -141,19 +135,33 @@ class EvaluateRequire(object):
 
 class EvaluateProcedure(object):
     def eval(self, data, nodecache):
+        #print "Proc", self.key
         pass
 
 class EvaluateProcedurePython(object):
     def eval(self, data, nodecache):
-        pass
+        """
+        Is this anonymous at it to the queue
+        """
+        ### FIXME TODO transport this differently
+        if self.key == "__anonymous" or self.key == "":
+            anonqueue = data.getVar('__anonqueue', False) or []
+            anonqueue.append( {'content' : self.what, 'flags' : { 'python' : 1, 'func' : 1}} )
+            data.setVar('__anonqueue', anonqueue )
+        else:
+            data.setVar(self.key, self.what)
+            data.setVarFlag(self.key, 'python', '1')
+            
 
 class EvaluateProcedureFakeroot(object):
     def eval(self, data, nodecache):
-        pass
+        data.setVar(self.key, self.what)
+        data.setVarFlag(self.key, 'fakeroot', '1')
 
 class EvaluateDefinition(object):
     def eval(self, data, nodecache):
-        pass
+        code = "def %s%s\n%s" % (self.a, self.b, self.c)
+        bb.methodpool.insert_method( self.root.filename, code, self.root.filename )
 
 
 # this needs to match ast_defines.Ast
