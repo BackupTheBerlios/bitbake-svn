@@ -45,6 +45,7 @@ def parsefile(object file, object config):
     if ret == 0:
         #raise bb.parse.ParseError(), file
         print "ParseError"
+        return None
 
     return root
 
