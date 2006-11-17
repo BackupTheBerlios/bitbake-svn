@@ -28,12 +28,12 @@
 from ast_defines import Ast
 
 
-def mixing_factory(ast_type):
+def mixing_factory(ast_name):
     """
     Create a  class which implements the appropriate evaluation method
     """
-    import evalulator_data
-    return evalulator_data.create(ast_name)
+    import evaluator_data
+    return evaluator_data.create(ast_name)
 
 class Root(mixing_factory(Ast.Root)):
     """

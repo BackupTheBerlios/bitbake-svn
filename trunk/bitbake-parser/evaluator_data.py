@@ -119,4 +119,4 @@ node_list = [
 
 
 def create(ast_name):
-    pass
+    return node_list[ast_name]
