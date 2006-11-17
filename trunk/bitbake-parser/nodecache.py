@@ -10,7 +10,7 @@ class NodeCache:
 
     The secret of the class will be how we cache
     """
-    def __init__(parse_method):
+    def __init__(self,parse_method):
         self.parse_method = parse_method
         self.includes     = {}
         self.classes      = {}
@@ -24,14 +24,15 @@ class NodeCache:
             return self.classes[classname]
         except KeyError:
             try:
+                print "inheriting class %s %s" % (classname, classfile)
                 ast = self.parse_method(classfile,False)
                 if ast:
                     self.classes[classname] = ast
                     return ast
-                else:
-                    raise Exception(), "Can not inherit"
-            except:
-                raise Exception(), "Class not found/usable", classname
+                raise Exception("Can not inherit")
+            except Exception, e:
+                print e
+                raise Exception("Class not found/usable %s" % classname)
 
     def parse_include(self, includename):
         try:
@@ -43,5 +44,5 @@ class NodeCache:
                     self.includes[includename] = ast
                     return ast
             except:
-                raise Exception(), "Include not found/usable", includename
+                raise Exception("Include not found/usable %s" % includename)
 

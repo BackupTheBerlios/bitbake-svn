@@ -3,13 +3,32 @@ Evaluate the AST into a DataSmart
 """
 
 import ast_defines
+import os, bb
 
 class EvaluateRoot(object):
     def eval(self, data, nodecache):
         """
         Evaluate the whole document
         """
+
+        #
+        # Some black magic for the INHERIT stuff
+        #
+        #(root,ext) = os.path.splitext(os.path.basename(self.filename))
+        #if ext != ".conf" and ext != ".bbclass" and root != "base":
+        #    import ast
+        #    require = ast.Inherit("none")
+        #    require.root = self
+        #    inherits = (data.getVar('INHERIT', True) or "").split()
+        #    if not "base" in inherits:
+        #        inherits.insert(0, "base")
+        #    for inherit in inherits:
+        #        require.file = inherit
+        #        require.eval( data, nodecache )
+            
+
         for statement in self.statements:
+            data.setVar('FILE', self.filename)
             statement.eval(data, nodecache)
 
         # If we are the root, do some post processing
@@ -76,20 +95,49 @@ class EvaluateExportFunction(object):
         is appending a classname to the function. But it makes fun if you inherit
         two classes...
         """
-        self.get_root().expand( data, nodecache )
-        print self.function
+        self.get_direct_root().expand( data, nodecache )
 
 class EvaluateInherit(object):
     def eval(self, data, nodecache):
-        self.get_root().expand( data, nodecache )
+        if self.has_root():
+            self.get_direct_root().expand( data, nodecache )
+        inherit = data.expand(self.file, None)
+
+        # Remember what we inherites
+        if self.has_root():
+            self.get_direct_root().classes.append( self.file )
+        ast = nodecache.parse_class( self.file, bb.which(os.environ['BBPATH'], "classes/%s.bbclass" % self.file ) )
+        ast.eval( data, nodecache )
 
 class EvaluateInclude(object):
     def eval(self, data, nodecache):
-        self.get_root().expand( data, nodecache )
+        self.get_direct_root().expand( data, nodecache )
+        bbpath = os.environ['BBPATH']
+        if self.has_root():
+            bbpath = "%s:%s" % (os.path.dirname(self.root.filename), bbpath)
+
+        include = bb.which(bbpath, data.expand(self.file, None))
+
+        try:
+            ast = nodecache.parse_include(include)
+            ast.eval( data, nodecache )
+            bb.parse.mark_dependency(data, include)
+        except Exception, e:
+            print "Didn't work %s %s" % (self.file, include)
 
 class EvaluateRequire(object):
     def eval(self, data, nodecache):
-        self.get_root().expand( data, nodecache )
+        self.get_direct_root().expand( data, nodecache )
+        bbpath = os.environ['BBPATH']
+        if self.has_root():
+            bbpath = "%s:%s" % (os.path.dirname(self.root.filename), bbpath)
+
+        require = bb.which(bbpath, data.expand(self.file, None))
+
+        #print "Require", self.file, require, self.root.filename
+        ast = nodecache.parse_include(require)
+        ast.eval( data, nodecache )
+        bb.parse.mark_dependency(data, require)
 
 class EvaluateProcedure(object):
     def eval(self, data, nodecache):
