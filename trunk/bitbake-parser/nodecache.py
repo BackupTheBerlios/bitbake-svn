@@ -14,6 +14,7 @@ class NodeCache:
         self.parse_method = parse_method
         self.includes     = {}
         self.classes      = {}
+        self.base_classes = {}
 
 
     def parse_class(self, classname, classfile):

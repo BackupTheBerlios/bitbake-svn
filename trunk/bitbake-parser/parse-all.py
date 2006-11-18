@@ -1,5 +1,6 @@
 import bitbakec
 import bb
+import copy
 import os, sys
 import nodecache
 
@@ -10,6 +11,29 @@ bb.msg.set_debug_level( 0 )
 bb.msg.set_debug_domains([])
 
 
+def add_handler(ast, data):
+    for handler in ast.handler:
+        if not data.getVarFlag(handler, 'handler'):
+            print "BADness !!!"
+            continue
+        bb.event.register(handler,data.getVar(handler,False))
+
+def add_tasks(ast, data):
+    for task in ast.tasks:
+        if not data.getVarFlag(task, 'task'):
+            #print "BADness !!! %s" % task
+            continue
+
+        deps = data.getVarFlag(task, 'deps') or []
+        postdeps = data.getVarFlag(task, 'postdeps') or []
+        bb.build.add_task(task, deps, data)
+
+        for p in postdeps:
+            pdeps = data.getVarFlag(p, 'deps')
+            pdeps.append(task)
+            data.setVarFlag(p, 'deps', pdeps)
+            bb.build.add_task(p, pdeps, data)
+    
 def main():
     cache = nodecache.NodeCache(bitbakec.parsefile)
     # Read the Configuration
@@ -30,8 +54,14 @@ def main():
         root.add_statement( ast.Inherit( inherit ) )
 
     root.eval( my_init, cache )
-    base_classes = root.classes
-    print base_classes
+    cache.base_classes = root.classes
+    cache.task_base    = root.tasks
+    cache.queue_base   = root.anonqueue
+    print cache.base_classes
+
+    print root.handler
+    add_handler( root, my_init )
+    
     #sys.exit(-1)
     # Initialize the fetcher stuff
     def set_additional_vars(the_data):
@@ -61,7 +91,7 @@ def main():
         bb.data.setVar('A', " ".join(a), the_data)
 
     # Finish up one file!
-    def finish_up(ast,the_data):
+    def finish_up(ast,the_data, cache):
         """
         This takes +*LOOOOONG* seconds... fix it
         """
@@ -70,7 +100,8 @@ def main():
 
 
         flag = {'python' : 1, 'func' : 1}
-        for anon in ast.anonqueue:
+        queue = ast.anonqueue + cache.queue_base
+        for anon in queue:
             bb.data.setVar("__anonfunc"     , anon, the_data)
             bb.data.setVarFlags("__anonfunc", flag, the_data)
             try: 
@@ -101,9 +132,13 @@ def main():
                 continue
             try:
                 data = my_init.createCopy()
-                ast.base_classes = base_classes
+                #ast.base_classes = copy.copy(base_classes)
+                #ast.task_base    = copy.copy(task_base)
+                #ast.queue_base   = copy.copy(queue_base)
                 ast.eval( data, cache )
-                finish_up( ast, data )
+                #print ast.classes
+                finish_up( ast, data, cache )
+                add_tasks( ast, data )
             except Exception, e:
                 print "Error eval", e
             except:

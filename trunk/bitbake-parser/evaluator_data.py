@@ -15,9 +15,9 @@ class EvaluateRoot(object):
         # inherited already.
 
         # Reset status
-        self.classes   = self.base_classes
-        self.anonqueue = []
+        self.classes   = {}
         self.tasks     = []
+        self.anonqueue = []
         self.handler   = []
 
         for statement in self.statements:
@@ -108,19 +108,17 @@ class EvaluateExportFunction(object):
 
 class EvaluateInherit(object):
     def eval(self, data, nodecache):
-        if self.has_root():
-            self.get_direct_root().expand( data, nodecache )
-            if self.file in self.root.classes:
-                return
+        self.get_direct_root().expand( data, nodecache )
+        if self.file in self.root.classes or self.file in nodecache.base_classes:
+            return
             
-            self.get_direct_root().classes[self.file] = 1
+        self.get_direct_root().classes[self.file] = 1
 
         inherit = data.expand(self.file, None)
 
         # Remember what we inherites
         ast = nodecache.parse_class( self.file, bb.which(os.environ['BBPATH'], "classes/%s.bbclass" % self.file ) )
-        if self.has_root():
-            ast.root = self.root
+        ast.root = self.root
         ast.eval( data, nodecache )
 
 class EvaluateInclude(object):

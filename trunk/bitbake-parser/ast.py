@@ -68,7 +68,9 @@ class Root(AstItem,mixin_factory(Ast.Root)):
         self.filename = filename
         self.statements = []
         self.base_classes = {}
-
+        self.task_base    = []
+        self.queue_base   = []
+        
     def add_statement(self, statement):
         statement.root = self
         self.statements.append( statement )
