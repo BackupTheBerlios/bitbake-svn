@@ -82,6 +82,14 @@ statement ::= EXPORT variable(s) OP_IMMEDIATE STRING(v).
         { e_immediate ( lex, s.string(), v.string() );
           e_export( lex, s.string() );
           s.release_this(); v.release_this(); }
+statement ::= EXPORT variable(s) OP_PREPEND STRING(v).
+        { e_prepend( lex, s.string(), v.string() );
+          e_export( lex, s.string() );
+          s.release_this(); v.release_this(); }
+statement ::= EXPORT variable(s) OP_APPEND STRING(v).
+        { e_append( lex, s.string() , v.string() );
+          e_export( lex, s.string() );
+          s.release_this(); v.release_this(); }
 statement ::= EXPORT variable(s) OP_COND STRING(v).
         { e_cond( lex, s.string(), v.string() );
           s.release_this(); v.release_this(); }
