@@ -59,6 +59,16 @@
      C_SB - symbol body
      C_SP - whitespace
 
+   Zecke's NOTES:
+
+    we have lines like:
+
+    SRC_URI = "abc \
+    # FIXME make this patch work \
+    more stuff "
+
+    Now we need a new statemachine for this...
+
 */
 
 %option never-interactive
@@ -134,9 +144,12 @@ K_FAKEROOT      "fakeroot"
 K_EXPORT        "export"
 K_EXPORT_FUNC   "EXPORT_FUNCTIONS"
 
-STRING          \"([^\n\r]|"\\\n")*\"
-SSTRING         \'([^\n\r]|"\\\n")*\'
+STRING          [\"\'][^\n\r]*[\"\']
 VALUE           ([^'" \t\n])|([^'" \t\n]([^\n]|(\\\n))*[^'" \t\n])
+STRING_MULTI    [\"\'][^\n\r]*\\\n
+STRING_MULTI_IN [^\n\r]*\\\n
+STRING_COMMENT  #[^\n\r]*\\\n
+STRING_MULTI_END [^\n\r]*[\"\']
 
 C_SS            [a-zA-Z_]
 C_SB            [a-zA-Z0-9_+-./]
@@ -156,6 +169,7 @@ PROC            \({C_SP}*\)
 %s S_REQUIRE
 %s S_PROC
 %s S_RVALUE
+%s S_RVALUE_MULTI
 %s S_TASK
 
 %%
@@ -182,17 +196,33 @@ PROC            \({C_SP}*\)
                                       --cb;
                                   yytext[cb - 1] = 0;
                                   yyextra->accept (T_STRING, yytext + 1); }
-<S_RVALUE>{SSTRING}             { BEGIN INITIAL;
-                                  size_t cb = yyleng;
-                                  while (cb && isspace (yytext[cb - 1]))
-                                      --cb;
-                                  yytext[cb - 1] = 0;
-                                  yyextra->accept (T_STRING, yytext + 1); }
 
 <S_RVALUE>{VALUE}               { ERROR (errorUnexpectedInput);  }
 <S_RVALUE>{C_SP}*\n+            { BEGIN INITIAL;
                                   yyextra->accept (T_STRING, NULL); }
 
+<S_RVALUE>{STRING_MULTI}        { BEGIN S_RVALUE_MULTI;
+                                  size_t cb = yyleng-1;
+                                  while (cb && isspace (yytext[cb - 1]))
+                                      --cb;
+                                  yytext[cb - 1] = 0;
+                                  yyextra->accept (T_STRING_MULTI, yytext + 1); }
+<S_RVALUE_MULTI>{STRING_COMMENT} {}
+<S_RVALUE_MULTI>{STRING_MULTI_IN}  {
+                                  size_t cb = yyleng-1;
+                                  while (cb && isspace (yytext[cb - 1]))
+                                      --cb;
+                                  yytext[cb - 1] = 0;
+                                  yyextra->accept (T_STRING_MULTI, yytext); }
+
+<S_RVALUE_MULTI>{STRING_MULTI_END} { BEGIN INITIAL;
+                                  size_t cb = yyleng;
+                                  while (cb && isspace (yytext[cb - 1]))
+                                      --cb;
+                                  yytext[cb - 1] = 0;
+                                  yyextra->accept (T_STRING_MULTI, yytext); }
+<S_RVALUE_MULTI>{C_SP}*\n+      { BEGIN INITIAL;
+                                  yyextra->accept (T_STRING_MULTI, NULL); }
 {K_INCLUDE}                     { BEGIN S_INCLUDE;
                                   yyextra->accept (T_INCLUDE); }
 {K_REQUIRE}                     { BEGIN S_REQUIRE;

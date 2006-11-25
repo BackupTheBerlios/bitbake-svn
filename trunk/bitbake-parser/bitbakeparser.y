@@ -66,53 +66,75 @@ variable(r) ::= VARIABLE(v).
           v.assignString( 0 );
           v.release_this(); }
 
-statement ::= EXPORT variable(s) OP_ASSIGN STRING(v).
+string(r) ::= STRING(s).
+        {
+            r.assignString( (char*)s.string() );
+            s.assignString( 0 );
+            s.release_this(); }
+
+string(r) ::= STRING_MULTI(s).
+        {
+            r.assignString( (char*)s.string() );
+            s.assignString( 0 );
+            s.release_this(); }
+
+string(r) ::= string(s) STRING_MULTI(t).
+        {
+            r.assignString( (char*)s.string() );
+            s.assignString( 0 );
+            s.release_this();
+
+            r.appendString( (char*)t.string() );
+            t.assignString( 0 );
+            t.release_this(); }
+
+statement ::= EXPORT variable(s) OP_ASSIGN string(v).
         { e_assign( lex, s.string(), v.string() );
           e_export( lex, s.string() );
           s.release_this(); v.release_this(); }
-statement ::= EXPORT variable(s) OP_PREDOT STRING(v).
+statement ::= EXPORT variable(s) OP_PREDOT string(v).
         { e_precat( lex, s.string(), v.string() );
           e_export( lex, s.string() );
           s.release_this(); v.release_this(); }
-statement ::= EXPORT variable(s) OP_POSTDOT STRING(v).
+statement ::= EXPORT variable(s) OP_POSTDOT string(v).
         { e_postcat( lex, s.string(), v.string() );
           e_export( lex, s.string() );
           s.release_this(); v.release_this(); }
-statement ::= EXPORT variable(s) OP_IMMEDIATE STRING(v).
+statement ::= EXPORT variable(s) OP_IMMEDIATE string(v).
         { e_immediate ( lex, s.string(), v.string() );
           e_export( lex, s.string() );
           s.release_this(); v.release_this(); }
-statement ::= EXPORT variable(s) OP_PREPEND STRING(v).
+statement ::= EXPORT variable(s) OP_PREPEND string(v).
         { e_prepend( lex, s.string(), v.string() );
           e_export( lex, s.string() );
           s.release_this(); v.release_this(); }
-statement ::= EXPORT variable(s) OP_APPEND STRING(v).
+statement ::= EXPORT variable(s) OP_APPEND string(v).
         { e_append( lex, s.string() , v.string() );
           e_export( lex, s.string() );
           s.release_this(); v.release_this(); }
-statement ::= EXPORT variable(s) OP_COND STRING(v).
+statement ::= EXPORT variable(s) OP_COND string(v).
         { e_cond( lex, s.string(), v.string() );
           s.release_this(); v.release_this(); }
 
-statement ::= variable(s) OP_ASSIGN STRING(v).
+statement ::= variable(s) OP_ASSIGN string(v).
         { e_assign( lex, s.string(), v.string() );
           s.release_this(); v.release_this(); }
-statement ::= variable(s) OP_PREDOT STRING(v).
+statement ::= variable(s) OP_PREDOT string(v).
         { e_precat( lex, s.string(), v.string() );
           s.release_this(); v.release_this(); }
-statement ::= variable(s) OP_POSTDOT STRING(v).
+statement ::= variable(s) OP_POSTDOT string(v).
         { e_postcat( lex, s.string(), v.string() );
           s.release_this(); v.release_this(); }
-statement ::= variable(s) OP_PREPEND STRING(v).
+statement ::= variable(s) OP_PREPEND string(v).
         { e_prepend( lex, s.string(), v.string() );
           s.release_this(); v.release_this(); }
-statement ::= variable(s) OP_APPEND STRING(v).
+statement ::= variable(s) OP_APPEND string(v).
         { e_append( lex, s.string() , v.string() );
           s.release_this(); v.release_this(); }
-statement ::= variable(s) OP_IMMEDIATE STRING(v).
+statement ::= variable(s) OP_IMMEDIATE string(v).
         { e_immediate( lex, s.string(), v.string() );
           s.release_this(); v.release_this(); }
-statement ::= variable(s) OP_COND STRING(v).
+statement ::= variable(s) OP_COND string(v).
         { e_cond( lex, s.string(), v.string() );
           s.release_this(); v.release_this(); }
 

@@ -43,6 +43,7 @@ struct bitbake_token_t {
     static char* concatString(const char* l, const char* r);
     void assignString(char* str);
     void copyString(const char* str);
+    void appendString(const char *str);
 
     void release_this();
 
@@ -70,6 +71,17 @@ inline char* bitbake_token_t::concatString(const char* l, const char* r)
     strcat (r_sz, r);
 
     return r_sz;
+}
+
+/*
+ * unoptimized append operation
+ */
+inline void bitbake_token_t::appendString(const char* str)
+{
+    char *tmp = bitbake_token_t::concatString( m_string, str );
+    release_this();
+    m_string = tmp;
+    m_stringLen = strlen(m_string);
 }
 
 inline void bitbake_token_t::assignString(char* str)
