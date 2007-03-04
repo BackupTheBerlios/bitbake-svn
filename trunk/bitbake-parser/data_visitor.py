@@ -136,7 +136,8 @@ class EvaluateRoot(object):
         # Remember what we inherites
         ast = nodecache.parse_class( node.file, bb.which(os.environ['BBPATH'], "classes/%s.bbclass" % node.file ) )
         ast.root = node.root
-        ast.eval( data, nodecache )
+        root = EvaluateRoot()
+        root.accept( ast, data, nodecache )
 
     @AstDecorator(Ast.Include)
     def visitInclude(self, data, nodecache):
@@ -149,7 +150,8 @@ class EvaluateRoot(object):
 
         try:
             ast = nodecache.parse_include(include)
-            ast.eval( data, nodecache )
+            root = EvaluateRoot()
+            root.accept( ast, data, nodecache )
             bb.parse.mark_dependency(data, include)
         except Exception, e:
             print "Didn't work %s %s" % (node.file, include)
@@ -165,7 +167,8 @@ class EvaluateRoot(object):
 
         #print "Require", node.file, require, node.root.filename
         ast = nodecache.parse_include(require)
-        ast.eval( data, nodecache )
+        root = EvaluateRoot()
+        root.accept( ast, data, nodecache )
         bb.parse.mark_dependency(data, require)
 
     @AstDecorator(Ast.Procedure)
