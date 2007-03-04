@@ -101,19 +101,19 @@ def main():
 
         flag = {'python' : 1, 'func' : 1}
         queue = ast.anonqueue + cache.queue_base
-        for anon in queue:
-            bb.data.setVar("__anonfunc"     , anon, the_data)
-            bb.data.setVarFlags("__anonfunc", flag, the_data)
-            try: 
-                t = bb.data.getVar('T', the_data)
-                bb.data.setVar('T', '${TMPDIR}/', the_data)
-                bb.build.exec_func("__anonfunc", the_data)
-                bb.data.delVar('T', the_data)
-                if t:
-                    bb.data.setVar('T', t, the_data)
-            except Exception, e:
-                #bb.msg.debug(1, bb.msg.domain.Parsing, "executing anonymous function: %s" % e)
-                raise
+        body = "\n".join(queue)
+        bb.data.setVar("__anonfunc"     , body, the_data)
+        bb.data.setVarFlags("__anonfunc", flag, the_data)
+        try: 
+            t = bb.data.getVar('T', the_data)
+            bb.data.setVar('T', '${TMPDIR}/', the_data)
+            bb.build.exec_func("__anonfunc", the_data)
+            bb.data.delVar('T', the_data)
+            if t:
+                bb.data.setVar('T', t, the_data)
+        except Exception, e:
+            #bb.msg.debug(1, bb.msg.domain.Parsing, "executing anonymous function: %s" % e)
+            raise
         bb.data.delVar("__anonfunc", the_data)
         set_additional_vars(the_data)
         bb.data.update_data(the_data)  
@@ -146,7 +146,7 @@ def main():
 
 
 #import cProfile
-#cProfile.run("main()")
+#cProfile.run("main()", "foo.log")
 main()
 import time
 #time.sleep( 60000 )
