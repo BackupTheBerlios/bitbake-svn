@@ -188,12 +188,12 @@ class EvaluateRoot(object):
             
 
     @AstDecorator(Ast.ProcedureFakeroot)
-    def eval(self, node, data, nodecache):
+    def visitProcFakeroot(self, node, data, nodecache):
         data.setVar(node.key, node.what)
         data.setVarFlag(node.key, 'fakeroot', '1')
 
     @AstDecorator(Ast.Definition)
-    def eval(self, node, data, nodecache):
+    def visitDefinition(self, node, data, nodecache):
         code = "def %s%s\n%s" % (node.a, node.b, node.c)
         bb.methodpool.insert_method( node.root.filename, code, node.root.filename )
 
