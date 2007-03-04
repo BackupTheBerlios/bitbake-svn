@@ -21,6 +21,12 @@ class AstDecorator:
 
 class EvaluateRoot(object):
 
+    def __init__(self, parent = None)
+        self.parent = parent
+        self.master = self
+        if self.parent:
+            self.master = self.parent.master
+
     def accept(self, root, data, nodecache):
         """
         Evaluate the whole document
@@ -43,11 +49,11 @@ class EvaluateRoot(object):
 
         # Do some post processing by propagating vars to the
         # upper one
-        if root.has_root():
-            root.root.classes = dict.fromkeys( root.root.classes.keys() + root.classes.keys() )
-            root.root.anonqueue+= self.anonqueue
-            root.root.tasks    += self.tasks
-            root.root.handler  += self.handler
+        if self.master:
+            self.master.classes = dict.fromkeys( self.master.classes.keys() + self.classes.keys() )
+            self.master.anonqueue+= self.anonqueue
+            self.master.tasks    += self.tasks
+            self.master.handler  += self.handler
 
     def expand(data,nodecache):
         """
@@ -125,8 +131,8 @@ class EvaluateRoot(object):
 
     @AstDecorator(Ast.Inherit)
     def visitInherit(self, node, data, nodecache):
-        node.get_direct_root().expand( data, nodecache )
-        if node.file in node.root.classes or node.file in nodecache.base_classes:
+        self.master.expand( data, nodecache )
+        if node.file in self.classes or node.file in nodecache.base_classes:
             return
             
         node.get_direct_root().classes[node.file] = 1
@@ -136,7 +142,7 @@ class EvaluateRoot(object):
         # Remember what we inherites
         ast = nodecache.parse_class( node.file, bb.which(os.environ['BBPATH'], "classes/%s.bbclass" % node.file ) )
         ast.root = node.root
-        root = EvaluateRoot()
+        root = EvaluateRoot(self)
         root.accept( ast, data, nodecache )
 
     @AstDecorator(Ast.Include)
@@ -150,7 +156,7 @@ class EvaluateRoot(object):
 
         try:
             ast = nodecache.parse_include(include)
-            root = EvaluateRoot()
+            root = EvaluateRoot(self)
             root.accept( ast, data, nodecache )
             bb.parse.mark_dependency(data, include)
         except Exception, e:
@@ -167,7 +173,7 @@ class EvaluateRoot(object):
 
         #print "Require", node.file, require, node.root.filename
         ast = nodecache.parse_include(require)
-        root = EvaluateRoot()
+        root = EvaluateRoot(self)
         root.accept( ast, data, nodecache )
         bb.parse.mark_dependency(data, require)
 

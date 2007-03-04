@@ -1,0 +1,8 @@
+-Separate the Ast from the Visitor. I already removed methods from AstItem
+ now the Visitor needs to be cleaned
+-Implement the visitor methods with xxx, FIXME, TODO
+-Test the parser
+-Integrate the parser into BitBake and write a special compare utility.
+ We will parse the data with the new and old parser and then compare
+ the dictionary key by key. We also need to take a look at the defined
+ methods. This should give us pretty good results.

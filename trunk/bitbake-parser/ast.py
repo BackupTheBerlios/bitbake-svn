@@ -32,28 +32,6 @@ class AstItem():
     def __init__(self, type):
         self._ast_type = type
     
-    def has_root(self):
-        return hasattr(self, 'root')
-
-    def get_direct_root(self):
-        return getattr(self, 'root')
-
-    def get_file_name(self):
-        if self.has_root():
-            return self.get_direct_root().file_name
-        else:
-            return ""
-
-    def has_super_root(self):
-        return hasattr(self, 'superroot')
-
-    def get_super_root(self):
-        "Return the toplevel node"
-        return getattr(self, 'superroor')
-
-    def expand(self, data, nodecache):
-        if self.has_root():
-            self.get_direct_root().expand(data, nodecache)
 
 class Root(AstItem):
     """
