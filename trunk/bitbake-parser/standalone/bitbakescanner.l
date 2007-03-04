@@ -309,7 +309,7 @@ extern "C" {
         /* printf("parse bbparseTrace\n"); */
 
         if (result != T_EOF)
-           printf ("premature end of file\n");
+           printf ("premature end of file: %s\n", lex.name);
 
         yylex_destroy (scanner);
         bbparseFree (parser, free);
