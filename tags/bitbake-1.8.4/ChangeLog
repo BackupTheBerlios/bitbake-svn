@@ -1,0 +1,154 @@
+Changes in Bitbake 1.8.x:
+
+Changes in Bitbake 1.8.4:
+	- Make sure __inherit_cache is updated before calling include() (from Michael Krelin)
+	- Fix bug when target was in ASSUME_PROVIDED (#2236)
+	- Raise ParseError for filenames with multiple underscores instead of infinitely looping (#2062)
+	- Fix invalid regexp in BBMASK error handling (missing import) (#1124)
+	- Don't run build sanity checks on incomplete builds
+	- Promote certain warnings from debug to note 2 level
+	- Update manual
+
+Changes in Bitbake 1.8.2:
+	- Catch truncated cache file errors
+	- Add PE (Package Epoch) support from Philipp Zabel (pH5)
+	- Add code to handle inter-task dependencies
+	- Allow operations other than assignment on flag variables
+	- Fix cache errors when generation dotGraphs
+
+Changes in Bitbake 1.8.0:
+	- Release 1.7.x as a stable series
+
+Changes in BitBake 1.7.x:
+	- Major updates of the dependency handling and execution
+	  of tasks. Code from bin/bitbake replaced with runqueue.py
+	  and taskdata.py
+	- New task execution code supports multithreading with a simplistic
+	  threading algorithm controlled by BB_NUMBER_THREADS
+	- Change of the SVN Fetcher to keep the checkout around
+	  courtsey of Paul Sokolovsky (#1367)
+	- PATH fix to bbimage (#1108)
+	- Allow debug domains to be specified on the commandline (-l)
+	- Allow 'interactive' tasks
+	- Logging message improvements
+	- Drop now uneeded BUILD_ALL_DEPS variable
+	- Add support for wildcards to -b option
+	- Major overhaul of the fetchers making a large amount of code common
+	  including mirroring code
+	- Fetchers now touch md5 stamps upon access (to show activity)
+	- Fix -f force option when used without -b (long standing bug)
+	- Add expand_cache to data_cache.py, caching expanded data (speedup)
+	- Allow version field in DEPENDS (ignored for now)
+	- Add abort flag support to the shell
+	- Make inherit fail if the class doesn't exist (#1478)
+	- Fix data.emit_env() to expand keynames as well as values
+	- Add ssh fetcher
+	- Add perforce fetcher
+	- Make PREFERRED_PROVIDER_foobar defaults to foobar if available
+	- Share the parser's mtime_cache, reducing the number of stat syscalls
+	- Compile all anonfuncs at once! 
+	  *** Anonfuncs must now use common spacing format ***
+	- Memorise the list of handlers in __BBHANDLERS and tasks in __BBTASKS
+	  This removes 2 million function calls resulting in a 5-10% speedup
+	- Add manpage
+	- Update generateDotGraph to use taskData/runQueue improving accuracy
+	  and also adding a task dependency graph
+	- Fix/standardise on GPLv2 licence
+	- Move most functionality from bin/bitbake to cooker.py and split into
+	  separate funcitons
+	- CVS fetcher: Added support for non-default port
+	- Add BBINCLUDELOGS_LINES, the number of lines to read from any logfile
+	- Drop shebangs from lib/bb scripts
+
+Changes in Bitbake 1.6.0:
+	- Better msg handling
+	- COW dict implementation from Tim Ansell (mithro) leading
+	  to better performance
+	- Speed up of -s
+
+Changes in Bitbake 1.4.4:
+	- SRCDATE now handling courtsey Justin Patrin
+	- #1017 fix to work with rm_work
+
+Changes in BitBake 1.4.2:
+	- Send logs to oe.pastebin.com instead of pastebin.com
+	  fixes #856
+	- Copy the internal bitbake data before building the
+	  dependency graph. This fixes nano not having a
+	  virtual/libc dependency
+	- Allow multiple TARBALL_STASH entries
+	- Cache, check if the directory exists before changing
+	  into it
+	- git speedup cloning by not doing a checkout
+	- allow to have spaces in filenames (.conf, .bb, .bbclass)
+
+Changes in BitBake 1.4.0:
+	- Fix to check both RDEPENDS and RDEPENDS_${PN}
+	- Fix a RDEPENDS parsing bug in utils:explode_deps()
+	- Update git fetcher behaviour to match git changes
+	- ASSUME_PROVIDED allowed to include runtime packages
+	- git fetcher cleanup and efficency improvements
+	- Change the format of the cache
+	- Update usermanual to document the Fetchers
+	- Major changes to caching with a new strategy
+	  giving a major performance increase when reparsing
+	  with few data changes
+
+Changes in BitBake 1.3.3:
+	- Create a new Fetcher module to ease the
+	  development of new Fetchers.
+	  Issue #438 fixed by rpurdie@openedhand.com
+	- Make the Subversion fetcher honor the SRC Date
+	  (CVSDATE).
+	  Issue #555 fixed by chris@openedhand.com
+	- Expand PREFERRED_PROVIDER properly
+	  Issue #436 fixed by rprudie@openedhand.com
+	- Typo fix for Issue #531 by Philipp Zabel for the
+	  BitBake Shell
+	- Introduce a new special variable SRCDATE as
+	  a generic naming to replace CVSDATE.
+	- Introduce a new keyword 'required'. In contrast
+	  to 'include' parsing will fail if a to be included
+	  file can not be found.
+	- Remove hardcoding of the STAMP directory. Patch
+	  courtsey pHilipp Zabel
+	- Track the RDEPENDS of each package (rpurdie@openedhand.com)
+	- Introduce BUILD_ALL_DEPS to build all RDEPENDS. E.g
+	  this is used by the OpenEmbedded Meta Packages.
+	  (rpurdie@openedhand.com).
+
+Changes in BitBake 1.3.2:
+	- reintegration of make.py into BitBake
+	- bbread is gone, use bitbake -e
+	- lots of shell updates and bugfixes
+	- Introduction of the .= and =. operator
+	- Sort variables, keys and groups in bitdoc
+	- Fix regression in the handling of BBCOLLECTIONS
+	- Update the bitbake usermanual
+
+Changes in BitBake 1.3.0:
+	- add bitbake interactive shell (bitbake -i)
+	- refactor bitbake utility in OO style
+	- kill default arguments in methods in the bb.data module
+	- kill default arguments in methods in the bb.fetch module
+	- the http/https/ftp fetcher will fail if the to be 
+	  downloaded file was not found in DL_DIR (this is needed
+	  to avoid unpacking the sourceforge mirror page)
+	- Switch to a cow like data instance for persistent and non
+	  persisting mode (called data_smart.py)
+	- Changed the callback of bb.make.collect_bbfiles to carry
+	  additional parameters
+	- Drastically reduced the amount of needed RAM by not holding
+	  each data instance in memory when using a cache/persistent
+	  storage
+
+Changes in BitBake 1.2.1:
+	The 1.2.1 release is meant as a intermediate release to lay the
+	ground for more radical changes. The most notable changes are:
+
+	- Do not hardcode {}, use bb.data.init() instead if you want to
+	  get a instance of a data class
+	- bb.data.init() is a factory and the old bb.data methods are delegates
+	- Do not use deepcopy use bb.data.createCopy() instead.
+	- Removed default arguments in bb.fetch
+
