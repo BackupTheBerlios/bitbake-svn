@@ -1,0 +1,7 @@
+The BitBake project is now maintained in a git repository stored on
+git.openembedded.org.  This svn is deprecated, and any commits here will not
+flow into releases.
+
+RO Clone URL: git://git.openembedded.org/bitbake.git
+RW Clone URL: git@git.openembedded.org:bitbake
+Web URL: http://cgit.openembedded.org/cgit.cgi/bitbake/
